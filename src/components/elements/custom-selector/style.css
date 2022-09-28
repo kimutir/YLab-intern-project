@@ -1,0 +1,101 @@
+.CustomSelector {
+  width: 240px;
+  box-sizing: border-box;
+}
+
+.CustomSelector-head {
+  width: 100%;
+  height: 30px;
+  display: flex;
+  align-items: center;
+}
+
+.CustomSelector-choosen {
+  width: 90%;
+}
+
+.CustomSelector-body {
+  width: 240px;
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.CustomSelector-btn {
+  position: relative;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  width: 30px;
+  padding: 0;
+  height: 100%;
+}
+.CustomSelector-btn::after,
+.CustomSelector-btn::before {
+  position: absolute;
+  content: "";
+  width: 10px;
+  height: 2px;
+  background-color: black;
+  border-radius: 1px;
+  left: 45%;
+}
+
+.CustomSelector-btn::after {
+  transform: translateX(-60%) rotate(45deg);
+}
+.CustomSelector-btn::before {
+  transform: rotate(-45deg);
+}
+
+.CustomSelector-search {
+  /* width: 240px; */
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  /* display: block; */
+  font-style: italic;
+  border: none;
+  outline: none;
+}
+
+.CustomSelector-search::placeholder {
+  color: #cccdd4;
+}
+
+.CustomSelector-list {
+  /* box-sizing: border-box; */
+  /* width: 240px; */
+  width: 100%;
+  max-height: 120px;
+  box-shadow: 0px 8px 8px rgba(60, 60, 63, 0.25);
+  background-color: #fff;
+  overflow-y: scroll;
+}
+
+.CustomSelector-list::-webkit-scrollbar {
+  -webkit-appearance: none;
+}
+
+.CustomSelector-list::-webkit-scrollbar:vertical {
+  width: 11px;
+}
+
+.CustomSelector-list::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  border: 2px solid white; /* should match background, can't be transparent */
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.CustomSelector-list-show {
+  box-sizing: border-box;
+  display: block;
+}
+
+.CustomSelector-wrapper {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+}

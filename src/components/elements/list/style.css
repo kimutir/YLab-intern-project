@@ -1,11 +1,13 @@
 /*Список*/
-.List{
-
+.List {
+  border: 1px solid black;
+  overflow: scroll;
+  height: 500px;
 }
-.List-item{
-    border-bottom: 1px dashed #ccc;
+.List-item {
+  border-bottom: 1px dashed #ccc;
 }
 
-.List-item:first-child{
-    border-top: 1px dashed #ccc;
+.List-item:first-child {
+  border-top: 1px dashed #ccc;
 }

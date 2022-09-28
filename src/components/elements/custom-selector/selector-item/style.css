@@ -1,0 +1,45 @@
+.SelectorItem {
+  /* width: 100%; */
+  white-space: nowrap;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  overflow: hidden;
+}
+.SelectorItem-selected {
+  /* width: 100%; */
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+  color: #fff;
+  background-color: #808dff;
+}
+
+.SelectorItem-head {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.SelectorItem:hover {
+  background-color: #dbdfff;
+}
+
+.SelectorItem-icon {
+  font-size: 8px;
+  color: #fff;
+  margin: 6px;
+  min-width: 18px;
+  min-height: 18px;
+  background-color: #6f7eff;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.SelectorItem-title {
+  font-size: 15px;
+}

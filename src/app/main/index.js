@@ -11,22 +11,27 @@ import ToolsContainer from "@src/containers/tools";
 function Main() {
   const store = useStore();
 
-  useInit(async () => {
-    await Promise.all([
-      store.get('catalog').initParams(),
-      store.get('categories').load()
-    ]);
-  }, [], {backForward: true});
+  useInit(
+    async () => {
+      await Promise.all([
+        store.get("catalog").initParams(),
+        store.get("categories").load(),
+        store.get("countries").setParams(),
+      ]);
+    },
+    [],
+    { backForward: true }
+  );
 
   return (
     <Layout>
-      <TopContainer/>
-      <HeadContainer/>
-      <ToolsContainer/>
-      <CatalogFilter/>
-      <CatalogList/>
+      <TopContainer />
+      <HeadContainer />
+      <ToolsContainer />
+      <CatalogFilter />
+      <CatalogList />
     </Layout>
-  )
+  );
 }
 
 export default React.memo(Main);
