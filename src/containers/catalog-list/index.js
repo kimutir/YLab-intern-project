@@ -10,8 +10,11 @@ import Item from "@src/components/catalog/item";
 function CatalogList() {
   const store = useStore();
 
+  // console.log("render CatalogList");
+
   const [load, setLoad] = React.useState(false);
-  const [page, setPage] = React.useState(2);
+  const [page, setPage] = React.useState(1);
+  // console.log("page:", page);
 
   const select = useSelector((state) => ({
     items: state.catalog.items,
@@ -27,10 +30,8 @@ function CatalogList() {
     // Добавление в корзину
     addToBasket: useCallback((_id) => store.get("basket").addToBasket(_id), []),
     // Пагианция
-    onPaginate: useCallback(
-      (page) => store.get("catalog").setParams({ page }),
-      []
-    ),
+    onPaginate: useCallback((page) => store.get("catalog").setParams(page), []),
+    getCatalog: useCallback(() => store.get("catalog").initParams(), []),
   };
 
   const renders = {
@@ -49,36 +50,56 @@ function CatalogList() {
 
   const handleScroll = React.useCallback((event) => {
     if (
-      event.currentTarget.scrollHeight -
-        (event.currentTarget.clientHeight + event.currentTarget.scrollTop) <
+      event.target.scrollHeight -
+        (event.target.clientHeight + event.target.scrollTop) <
       200
     ) {
       setLoad(true);
     }
   }, []);
 
+  const paginationFunc = async () => {
+    await callbacks.onPaginate({ page });
+    setPage((prev) => prev + 1);
+    setLoad(false);
+  };
+
   React.useEffect(() => {
     if (load) {
-      callbacks.onPaginate({ page });
-      setPage((prev) => prev + 1);
-      setLoad(false);
+      paginationFunc();
     }
   }, [load]);
 
   return (
-    <Spinner active={select.waiting}>
+    // <Spinner active={select.waiting}>
+    //   <div>
+    <>
       <List
-        onScroll={handleScroll}
+        onScroll={(e) => handleScroll(e)}
         items={select.items}
         renderItem={renders.item}
-      />
+      ></List>
+
       <Pagination
         count={select.count}
         page={page}
         limit={select.limit}
         onChange={callbacks.onPaginate}
       />
-    </Spinner>
+    </>
+
+    //   </div>
+    // </Spinner>
+
+    // <Spinner >
+
+    //   <Pagination
+    //     count={select.count}
+    //     page={page}
+    //     limit={select.limit}
+    //     onChange={callbacks.onPaginate}
+    //   />
+    // </Spinner>
   );
 }
 

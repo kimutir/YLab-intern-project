@@ -6,11 +6,14 @@ import "./style.css";
 function List(props) {
   const cn = bem("List");
 
+  console.log("render List");
+
   return (
     <div onScroll={props.onScroll} className={cn()}>
       {props.items.map((item) => (
         <div key={item._id} className={cn("item")}>
           {props.renderItem(item)}
+          {/* <h1>{item.title}</h1> */}
         </div>
       ))}
     </div>

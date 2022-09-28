@@ -1,6 +1,6 @@
-import React from 'react';
-import {useSelector as useSelectorRedux} from 'react-redux'
-import {Routes, Route} from "react-router-dom";
+import React from "react";
+import { useSelector as useSelectorRedux } from "react-redux";
+import { Routes, Route } from "react-router-dom";
 import useSelector from "@src/hooks/use-selector";
 import useInit from "@src/hooks/use-init";
 import useStore from "@src/hooks/use-store";
@@ -16,25 +16,31 @@ import Profile from "./profile";
  * @return {React.ReactElement} Виртуальные элементы React
  */
 function App() {
-
   const store = useStore();
 
-  useInit(async ()=>{
-    await store.get('session').remind();
-  })
+  useInit(async () => {
+    await store.get("session").remind();
+  });
 
   //const modal = useSelector(state => state.modals.name);
-  const modal = useSelectorRedux(state => state.modals.name);
+  const modal = useSelectorRedux((state) => state.modals.name);
 
   return (
     <>
       <Routes>
-        <Route path={''} element={<Main/>}/>
-        <Route path={"/articles/:id"} element={<Article/>}/>
-        <Route path={"/login"} element={<Login/>}/>
-        <Route path={"/profile"} element={<Protected redirect={'/login'}><Profile/></Protected>}/>
+        <Route path={""} element={<Main />} />
+        <Route path={"/articles/:id"} element={<Article />} />
+        <Route path={"/login"} element={<Login />} />
+        <Route
+          path={"/profile"}
+          element={
+            <Protected redirect={"/login"}>
+              <Profile />
+            </Protected>
+          }
+        />
       </Routes>
-      {modal === 'basket' && <Basket/>}
+      {modal === "basket" && <Basket />}
     </>
   );
 }

@@ -67,6 +67,7 @@ class CatalogState extends StateModule {
    */
   async setParams(params = {}, historyReplace = false) {
     const newParams = { ...this.getState().params, ...params };
+    // console.log("newParams:", newParams);
 
     // Установка новых параметров и признака загрузки
     this.setState(
@@ -81,7 +82,7 @@ class CatalogState extends StateModule {
     const apiParams = diff(
       {
         limit: newParams.limit,
-        skip: (newParams.page.page - 1) * newParams.limit,
+        skip: (newParams.page - 1) * newParams.limit,
         fields: "items(*),count",
         sort: newParams.sort,
         search: {
@@ -97,9 +98,9 @@ class CatalogState extends StateModule {
       url: `/api/v1/articles${qs.stringify(apiParams)}`,
     });
 
-    console.log("apiParams", apiParams);
-    console.log(newParams.page.page);
-    console.log(newParams.limit);
+    // console.log("apiParams", apiParams);
+    // console.log(newParams.page.page);
+    // console.log(newParams.limit);
 
     // Установка полученных данных и сброс признака загрузки
     this.setState(
