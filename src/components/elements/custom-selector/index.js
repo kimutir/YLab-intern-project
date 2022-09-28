@@ -12,6 +12,7 @@ function CustomSelector(props) {
 
   const listRef = React.useRef();
   const bodyRef = React.useRef();
+  const selectorRef = React.useRef();
 
   // показываем - убираем всплывашку
   const show = React.useCallback(
@@ -25,6 +26,17 @@ function CustomSelector(props) {
     },
     [visible]
   );
+
+  const onClose = (e) => {
+    if (!visible && !selectorRef.current.contains(e.target)) {
+      setVisible(false);
+      console.log(e.target);
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener("click", onClose);
+  }, []);
 
   const onKeyShow = React.useCallback((e) => {
     e.code === "Enter" && show(true);
@@ -70,9 +82,7 @@ function CustomSelector(props) {
         ...bodyRef.current.childNodes[1].childNodes,
       ];
 
-      // const items = listRef.current.children;
-
-      bodyRef.current.addEventListener(
+      selectorRef.current.addEventListener(
         "keydown",
         (e) => {
           // e.preventDefault();
@@ -88,7 +98,12 @@ function CustomSelector(props) {
   }, [visible]);
 
   return (
-    <div className={cn()} tabIndex="0" onKeyDown={(e) => onKeyShow(e)}>
+    <div
+      className={cn()}
+      tabIndex="0"
+      onKeyDown={(e) => onKeyShow(e)}
+      ref={selectorRef}
+    >
       <div className={cn("head")}>
         <div className={cn("choosen")}>{renderSelectedItem()}</div>
         <button
@@ -102,7 +117,7 @@ function CustomSelector(props) {
 
       {visible && (
         // <div className={cn("wrapper")}>
-        <div className={cn("body")} tabIndex="0" ref={bodyRef}>
+        <div className={cn("body")} ref={bodyRef}>
           <input
             tabIndex="0"
             type="text"
