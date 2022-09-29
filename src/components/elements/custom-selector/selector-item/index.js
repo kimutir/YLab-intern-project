@@ -15,7 +15,6 @@ function SelectorItem(props) {
     itemRef.current.addEventListener("keydown", (e) => {
       e.preventDefault();
       if (e.code === "Enter") {
-        console.log("clicked");
         props.onSelect(props.item._id);
       }
     });

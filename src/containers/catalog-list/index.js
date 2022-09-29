@@ -10,11 +10,11 @@ import Item from "@src/components/catalog/item";
 function CatalogList() {
   const store = useStore();
 
-  // console.log("render CatalogList");
+  const listRef = React.useRef();
+  const lastItemRef = React.createRef();
 
   const [load, setLoad] = React.useState(false);
   const [page, setPage] = React.useState(1);
-  // console.log("page:", page);
 
   const select = useSelector((state) => ({
     items: state.catalog.items,
@@ -48,37 +48,63 @@ function CatalogList() {
     ),
   };
 
-  const handleScroll = React.useCallback((event) => {
-    if (
-      event.target.scrollHeight -
-        (event.target.clientHeight + event.target.scrollTop) <
-      200
-    ) {
-      setLoad(true);
-    }
-  }, []);
+  // scroll with element measures
+  // const handleScroll = React.useCallback((event) => {
+  //   if (
+  //     event.target.scrollHeight -
+  //       (event.target.clientHeight + event.target.scrollTop) <
+  //     200
+  //   ) {
+  //     setLoad(true);
+  //   }
+  // }, []);
 
-  const paginationFunc = async () => {
-    await callbacks.onPaginate({ page });
-    setPage((prev) => prev + 1);
-    setLoad(false);
+  // const paginationFunc = React.useCallback(async () => {
+  //   await callbacks.onPaginate({ page });
+  //   setPage((prev) => prev + 1);
+  //   setLoad(false);
+  // }, [page]);
+
+  // loading items
+  // React.useEffect(() => {
+  //   if (load) {
+  //     paginationFunc();
+  //   }
+  // }, [load]);
+
+  // scroll with IntersectionObserver
+  const options = {
+    root: listRef.current,
+    rootMargin: "0px 0px 0px 0px",
+    threshold: 0.1,
   };
 
+  const callback = React.useCallback(
+    (entries, observer) => {
+      if (entries[0].isIntersecting) {
+        callbacks.onPaginate({ page });
+        setPage((prev) => prev + 1);
+        observer.disconnect();
+      }
+    },
+    [page]
+  );
+
+  const observer = new IntersectionObserver(callback, options);
+
+  // subscribe target
   React.useEffect(() => {
-    if (load) {
-      paginationFunc();
-    }
-  }, [load]);
+    lastItemRef.current && observer.observe(lastItemRef.current);
+  }, [select.items]);
 
   return (
-    // <Spinner active={select.waiting}>
-    //   <div>
     <>
       <List
-        onScroll={(e) => handleScroll(e)}
+        ref={lastItemRef}
+        // onScroll={handleScroll}
         items={select.items}
         renderItem={renders.item}
-      ></List>
+      />
 
       <Pagination
         count={select.count}
@@ -87,19 +113,6 @@ function CatalogList() {
         onChange={callbacks.onPaginate}
       />
     </>
-
-    //   </div>
-    // </Spinner>
-
-    // <Spinner >
-
-    //   <Pagination
-    //     count={select.count}
-    //     page={page}
-    //     limit={select.limit}
-    //     onChange={callbacks.onPaginate}
-    //   />
-    // </Spinner>
   );
 }
 
