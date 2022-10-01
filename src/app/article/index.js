@@ -25,8 +25,8 @@ function Article() {
   const storeRedux = useStoreRedux();
 
   useInit(async () => {
-    await store.get("article").load(params.id);
-    // storeRedux.dispatch(actionsArticle.load(params.id));
+    // await store.get("article").load(params.id);
+    storeRedux.dispatch(actionsArticle.load(params.id));
   }, [params.id]);
 
   const select = useSelectorRedux(

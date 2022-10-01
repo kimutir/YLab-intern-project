@@ -28,7 +28,7 @@ function CustomSelector(props) {
   );
 
   const onClose = (e) => {
-    if (!visible && !selectorRef.current.contains(e.target)) {
+    if (!visible && !selectorRef.current?.contains(e.target)) {
       setVisible(false);
     }
   };

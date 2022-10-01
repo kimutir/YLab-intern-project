@@ -16,10 +16,14 @@ class CatalogState extends StateModule {
       count: 0,
       params: {
         page: 1,
-        limit: 20,
+        limit: 10,
         sort: "order",
         query: "",
         category: "",
+      },
+      initialLoad: {
+        isLoaded: false,
+        limit: 0,
       },
       waiting: false,
     };
@@ -65,15 +69,18 @@ class CatalogState extends StateModule {
    * @param historyReplace {Boolean} Заменить адрес (true) или сделаит новую запис в истории браузера (false)
    * @returns {Promise<void>}
    */
-  async setParams(params = {}, historyReplace = false) {
+  async setParams(params = {}, resetItems = false, historyReplace = false) {
+    // console.log("params:", params);
+
     const newParams = { ...this.getState().params, ...params };
-    // console.log("newParams:", newParams);
 
     // Установка новых параметров и признака загрузки
     this.setState(
       {
         ...this.getState(),
+        // params: resetItems ? { ...newParams, page: 1 } : newParams,
         params: newParams,
+        items: resetItems ? [] : this.getState().items,
         waiting: true,
       },
       "Смена параметров каталога"
@@ -82,7 +89,8 @@ class CatalogState extends StateModule {
     const apiParams = diff(
       {
         limit: newParams.limit,
-        skip: (newParams.page - 1) * newParams.limit,
+        // skip: (newParams.page - 1) * newParams.limit,
+        skip: newParams.skip,
         fields: "items(*),count",
         sort: newParams.sort,
         search: {
@@ -98,10 +106,6 @@ class CatalogState extends StateModule {
       url: `/api/v1/articles${qs.stringify(apiParams)}`,
     });
 
-    // console.log("apiParams", apiParams);
-    // console.log(newParams.page.page);
-    // console.log(newParams.limit);
-
     // Установка полученных данных и сброс признака загрузки
     this.setState(
       {
@@ -112,7 +116,6 @@ class CatalogState extends StateModule {
       },
       "Обновление списка товара"
     );
-
     // Запоминаем параметры в URL, которые отличаются от начальных
     let queryString = qs.stringify(diff(newParams, this.initState().params));
     const url = window.location.pathname + queryString + window.location.hash;
@@ -121,6 +124,59 @@ class CatalogState extends StateModule {
     } else {
       window.history.pushState({}, "", url);
     }
+  }
+
+  async initialLoadItems(query) {
+    this.setState(
+      {
+        ...this.getState(),
+        waiting: true,
+      },
+      "Загрузка списка товара"
+    );
+
+    const pageURL = query.match(/page=(\d*)&/);
+    const limitURL = query.match(/limit=(\d*)&/);
+
+    const json = await this.services.api.request({
+      url: `/api/v1/articles${
+        pageURL && limitURL ? `?skip=${(pageURL[1] - 1) * limitURL[1]}&` : "?"
+      }fields=items(*),count&sort=order${
+        limitURL ? `&limit=${limitURL[1]}` : ""
+      }`,
+    });
+
+    this.setState(
+      {
+        ...this.getState(),
+        items: json.result.items,
+        count: json.result.count,
+        params: {
+          ...this.getState().params,
+          page: pageURL ? +pageURL[1] : 1,
+          // page: 2,
+          limit: limitURL ? +limitURL[1] : 10,
+        },
+        waiting: false,
+      },
+      "Загрузка списка товара"
+    );
+  }
+
+  newParams(params = {}) {
+    this.setState(
+      {
+        ...this.getState(),
+
+        params: {
+          ...this.getState().params,
+          limit: params.limit ? params.limit : this.getState().params.limit,
+          page: params.page ? params.page : this.getState().params.page,
+        },
+      },
+      "Загрузка списка товара"
+    );
+    console.log("store params after initial load", this.getState().params);
   }
 }
 

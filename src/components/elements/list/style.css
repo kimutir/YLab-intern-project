@@ -2,7 +2,7 @@
 .List {
   border: 1px solid black;
   overflow: scroll;
-  height: 500px;
+  height: 700px;
 }
 .List-item {
   border-bottom: 1px dashed #ccc;

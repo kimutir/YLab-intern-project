@@ -16,6 +16,8 @@ function CatalogFilter() {
   const select = useSelector((state) => ({
     sort: state.catalog.params.sort,
     query: state.catalog.params.query,
+    page: state.catalog.params.page,
+    limit: state.catalog.params.limit,
     category: state.catalog.params.category,
     categories: state.categories.items,
     countries: state.countries.items,
@@ -26,11 +28,15 @@ function CatalogFilter() {
 
   const callbacks = {
     // Сортировка
-    onSort: useCallback((sort) => store.get("catalog").setParams({ sort }), []),
-    // onSortCountries: useCallback((sort) => store.get("countries").setParams({ sort }), []),
+    onSort: useCallback(
+      (sort, page, skip, reset) =>
+        store.get("catalog").setParams({ sort, page, skip }, reset),
+      []
+    ),
     // Поиск
     onSearch: useCallback(
-      (query) => store.get("catalog").setParams({ query, page: 1 }),
+      (query, skip, page, reset) =>
+        store.get("catalog").setParams({ query, skip, page }, reset),
       []
     ),
     onSearchCountries: useCallback(
@@ -42,7 +48,8 @@ function CatalogFilter() {
     onReset: useCallback(() => store.get("catalog").resetParams(), []),
     // Фильтр по категории
     onCategory: useCallback(
-      (category) => store.get("catalog").setParams({ category }),
+      (category, page, skip, reset) =>
+        store.get("catalog").setParams({ category, page, skip }, reset),
       []
     ),
   };
@@ -85,8 +92,11 @@ function CatalogFilter() {
       />
       <Input
         onChange={callbacks.onSearch}
+        onReset={callbacks.onReset}
         value={select.query}
         placeholder={"Поиск"}
+        limit={select.limit}
+        page={select.page}
         theme="big"
       />
       <button onClick={callbacks.onReset}>{t("filter.reset")}</button>

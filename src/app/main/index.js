@@ -14,7 +14,7 @@ function Main() {
   useInit(
     async () => {
       await Promise.all([
-        store.get("catalog").initParams(),
+        // store.get("catalog").initParams(),
         store.get("categories").load(),
         store.get("countries").setParams(),
       ]);

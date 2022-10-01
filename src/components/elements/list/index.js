@@ -9,10 +9,11 @@ const List = React.forwardRef((props, ref) => {
   return (
     <div
       // onScroll={(e) => props.onScroll(e)}
+      id="list"
       className={cn()}
     >
       {props.items.map((item, index) => {
-        if (index + 5 === props.items.length) {
+        if (index + 1 === props.items.length) {
           return (
             <div key={item._id} className={cn("item")} ref={ref}>
               {props.renderItem(item)}
