@@ -10,6 +10,7 @@ import Basket from "./basket";
 import Article from "./article";
 import Login from "./login";
 import Profile from "./profile";
+import ModalCatalog from "@src/components/modals/modal-catalog";
 
 /**
  * Приложение
@@ -22,8 +23,8 @@ function App() {
     await store.get("session").remind();
   });
 
-  //const modal = useSelector(state => state.modals.name);
-  const modal = useSelectorRedux((state) => state.modals.name);
+  const modals = useSelector((state) => state.modals.name);
+  // const modal = useSelectorRedux((state) => state.modals.name);
 
   return (
     <>
@@ -40,7 +41,11 @@ function App() {
           }
         />
       </Routes>
-      {modal === "basket" && <Basket />}
+      {modals.map((modal) => {
+        if (modal === "basket") return <Basket />;
+        if (modal === "catalog") return <ModalCatalog />;
+        // if (modal === "add-amount") return <AddAmount />;
+      })}
     </>
   );
 }

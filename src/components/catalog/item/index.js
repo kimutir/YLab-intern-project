@@ -4,6 +4,7 @@ import { cn as bem } from "@bem-react/classname";
 import { Link } from "react-router-dom";
 import numberFormat from "@src/utils/number-format";
 import "./style.css";
+import useSelector from "@src/hooks/use-selector";
 
 function Item(props) {
   const cn = bem("Item");
@@ -13,7 +14,12 @@ function Item(props) {
       (e) => props.onAdd(props.item._id),
       [props.onAdd, props.item]
     ),
+    onOpenAddAmount: useCallback((e) => {
+      props.onAdd(props.item._id);
+      props.onOpenAddAmount();
+    }, []),
   };
+  const modals = useSelector((state) => state.modals.name);
 
   return (
     <div className={cn()}>
@@ -28,7 +34,7 @@ function Item(props) {
         <div className={cn("price")}>
           {numberFormat(props.item.price)} {props.labelCurr}
         </div>
-        <button onClick={callbacks.onAdd}>{props.labelAdd}</button>
+        <button onClick={callbacks.onOpenAddAmount}>{props.labelAdd}</button>
       </div>
     </div>
   );

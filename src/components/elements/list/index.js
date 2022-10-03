@@ -3,23 +3,12 @@ import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 
-const List = React.forwardRef((props, ref) => {
+const List = (props) => {
   const cn = bem("List");
 
   return (
-    <div
-      // onScroll={(e) => props.onScroll(e)}
-      id="list"
-      className={cn()}
-    >
-      {props.items.map((item, index) => {
-        if (index + 1 === props.items.length) {
-          return (
-            <div key={item._id} className={cn("item")} ref={ref}>
-              {props.renderItem(item)}
-            </div>
-          );
-        }
+    <div className={cn()}>
+      {props.items.map((item) => {
         return (
           <div key={item._id} className={cn("item")}>
             {props.renderItem(item)}
@@ -28,7 +17,7 @@ const List = React.forwardRef((props, ref) => {
       })}
     </div>
   );
-});
+};
 
 List.propTypes = {
   items: propTypes.arrayOf(propTypes.object).isRequired,

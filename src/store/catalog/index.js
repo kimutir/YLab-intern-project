@@ -21,10 +21,7 @@ class CatalogState extends StateModule {
         query: "",
         category: "",
       },
-      initialLoad: {
-        isLoaded: false,
-        limit: 0,
-      },
+
       waiting: false,
     };
   }
@@ -70,8 +67,6 @@ class CatalogState extends StateModule {
    * @returns {Promise<void>}
    */
   async setParams(params = {}, resetItems = false, historyReplace = false) {
-    // console.log("params:", params);
-
     const newParams = { ...this.getState().params, ...params };
 
     // Установка новых параметров и признака загрузки
@@ -126,7 +121,7 @@ class CatalogState extends StateModule {
     }
   }
 
-  async initialLoadItems(query) {
+  async initialLoadItems(query = "") {
     this.setState(
       {
         ...this.getState(),
@@ -135,15 +130,16 @@ class CatalogState extends StateModule {
       "Загрузка списка товара"
     );
 
-    const pageURL = query.match(/page=(\d*)&/);
+    const pageURL = query?.match(/\?page=(\d*)&/);
     const limitURL = query.match(/limit=(\d*)&/);
 
+    const newURL = pageURL && query.replace(pageURL[0], "");
+
     const json = await this.services.api.request({
-      url: `/api/v1/articles${
-        pageURL && limitURL ? `?skip=${(pageURL[1] - 1) * limitURL[1]}&` : "?"
-      }fields=items(*),count&sort=order${
-        limitURL ? `&limit=${limitURL[1]}` : ""
-      }`,
+      url: `/api/v1/articles?fields=items(*),count&sort=order${
+        newURL && "&" + newURL
+      }
+      `,
     });
 
     this.setState(
@@ -154,7 +150,6 @@ class CatalogState extends StateModule {
         params: {
           ...this.getState().params,
           page: pageURL ? +pageURL[1] : 1,
-          // page: 2,
           limit: limitURL ? +limitURL[1] : 10,
         },
         waiting: false,
@@ -176,7 +171,7 @@ class CatalogState extends StateModule {
       },
       "Загрузка списка товара"
     );
-    console.log("store params after initial load", this.getState().params);
+    // console.log("store params after initial load", this.getState().params);
   }
 }
 

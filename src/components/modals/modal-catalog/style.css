@@ -1,0 +1,15 @@
+.AmountModal-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.AmountModal-top {
+  margin-bottom: 40px;
+}
+
+.AmountModal-wrapper button {
+  cursor: pointer;
+}

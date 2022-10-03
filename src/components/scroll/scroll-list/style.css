@@ -1,0 +1,13 @@
+/*Список*/
+.ScrollList {
+  border: 1px solid black;
+  overflow: scroll;
+  height: 500px;
+}
+.ScrollList-item {
+  border-bottom: 1px dashed #ccc;
+}
+
+.ScrollList-item:first-child {
+  border-top: 1px dashed #ccc;
+}

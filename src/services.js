@@ -3,7 +3,6 @@ import APIService from "./api";
 import createStoreRedux from "./store-redux";
 
 class Services {
-
   constructor(config) {
     this.config = config;
   }
@@ -12,7 +11,7 @@ class Services {
    * Сервис Store
    * @returns {Store}
    */
-  get store(){
+  get store() {
     if (!this._store) {
       this._store = new Store(this, this.config.store);
     }
@@ -23,7 +22,7 @@ class Services {
    * Сервис АПИ
    * @returns {APIService}
    */
-  get api(){
+  get api() {
     if (!this._api) {
       this._api = new APIService(this, this.config.api);
     }
@@ -33,7 +32,7 @@ class Services {
   /**
    * Redux store
    */
-  get storeRedux(){
+  get storeRedux() {
     if (!this._storeRedux) {
       this._storeRedux = createStoreRedux(this, this.config.storeRedux);
     }

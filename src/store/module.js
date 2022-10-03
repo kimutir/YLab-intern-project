@@ -1,5 +1,4 @@
 class StateModule {
-
   /**
    * @param store {Store}
    * @param config {Object}
@@ -10,7 +9,7 @@ class StateModule {
     this.services = store.services;
   }
 
-  defaultConfig(){
+  defaultConfig() {
     return {};
   }
 
@@ -26,13 +25,15 @@ class StateModule {
     return this.store.getState()[this.config.name];
   }
 
-  setState(newState, description = 'setState'){
-    this.store.setState({
-      ...this.store.getState(),
-      [this.config.name]: newState
-    }, description)
+  setState(newState, description = "setState") {
+    this.store.setState(
+      {
+        ...this.store.getState(),
+        [this.config.name]: newState,
+      },
+      description
+    );
   }
-
 }
 
 export default StateModule;

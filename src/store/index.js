@@ -1,7 +1,6 @@
-import * as modules from './exports.js';
+import * as modules from "./exports.js";
 
 class Store {
-
   /**
    * @param services {Services}
    * @param config {Object}
@@ -11,8 +10,8 @@ class Store {
     this.services = services;
     this.config = {
       log: false,
-      ...config
-    }
+      ...config,
+    };
     // Состояние приложения (данные)
     this.state = {};
     // Слушатели изменений state
@@ -22,10 +21,40 @@ class Store {
     this.modules = {};
     for (const name of Object.keys(modules)) {
       // Экземпляр модуля. Передаём ему ссылку на store и навзание модуля.
-      this.modules[name] = new modules[name](this, {name, ...this.config.modules[name] || {}});
+      this.modules[name] = new modules[name](this, {
+        name,
+        ...(this.config.modules[name] || {}),
+      });
       // По названию модля устанавливается свойство с анчальным состоянием от модуля
       this.state[name] = this.modules[name].initState();
     }
+  }
+
+  // newCatalog() {
+  //   this.modules.catalog1 = new modules.catalog(this, {
+  //     name: "catalog1",
+  //     ...(this.config.modules.catalog || {}),
+  //   });
+  //   this.state.catalog1 = this.modules.catalog1.initState();
+  // }
+
+  newState(name, newName) {
+    this.modules[newName] = new modules[name](this, {
+      name: newName,
+      ...(this.config.modules[name] || {}),
+    });
+    this.state[newName] = this.modules[newName].initState();
+    console.log("modules before", this.modules);
+  }
+
+  removeState(name) {
+    const keys = Object.keys(this.modules);
+
+    if (keys.includes(name)) {
+      delete this.modules[name];
+    }
+
+    console.log("modules after", this.modules);
   }
 
   /**
@@ -49,15 +78,15 @@ class Store {
    * @param newState {Object}
    * @param [description] {String} Описание действия для логирования
    */
-  setState(newState, description = 'setState') {
+  setState(newState, description = "setState") {
     if (this.config.log) {
       console.group(
-        `%c${'store.setState'} %c${description}`,
-        `color: ${'#777'}; font-weight: normal`,
-        `color: ${'#333'}; font-weight: bold`,
+        `%c${"store.setState"} %c${description}`,
+        `color: ${"#777"}; font-weight: normal`,
+        `color: ${"#333"}; font-weight: bold`
       );
-      console.log(`%c${'prev:'}`, `color: ${'#d77332'}`, this.state);
-      console.log(`%c${'next:'}`, `color: ${'#2fa827'}`, newState);
+      console.log(`%c${"prev:"}`, `color: ${"#d77332"}`, this.state);
+      console.log(`%c${"next:"}`, `color: ${"#2fa827"}`, newState);
       console.groupEnd();
     }
     this.state = newState;
@@ -76,8 +105,8 @@ class Store {
     this.listeners.push(callback);
     // Возвращаем функцию для удаления слушателя
     return () => {
-      this.listeners = this.listeners.filter(item => item !== callback);
-    }
+      this.listeners = this.listeners.filter((item) => item !== callback);
+    };
   }
 }
 
