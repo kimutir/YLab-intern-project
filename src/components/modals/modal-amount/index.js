@@ -6,6 +6,7 @@ import useTranslate from "@src/hooks/use-translate";
 import LayoutModal from "@src/components/layouts/layout-modal";
 import "./style.css";
 import { cn as bem } from "@bem-react/classname";
+import { compose } from "redux";
 
 function ModalAmount(props) {
   const store = useStore();
@@ -27,26 +28,26 @@ function ModalAmount(props) {
   const select = useSelector((state) => ({
     selected: state.basket.selected,
   }));
-
+  React.useEffect(() => {
+    console.log("from amount-item", props.title);
+  }, []);
   const callbacks = {
-    // Закрытие модалки
-    closeModal: useCallback(() => {
-      store.get("modals").close();
-    }, []),
     // Добавление в корзину
     addToBasket: useCallback(() => {
       if (!itemAmount) return;
-      store.get("basket").addToBasket(select.selected, itemAmount);
+      props.addToBasket(select.selected, itemAmount);
+      // store.get("basket").addToBasket(select.selected, itemAmount);
       setItemAmount(0);
-      store.get("modals").close();
+      props.close();
+      // store.get("modals").close();
     }, [select.selected, itemAmount]),
   };
 
   return (
     <LayoutModal
-      title="Введите количество товара"
+      title={props.title}
       labelClose={t("basket.close")}
-      onClose={callbacks.closeModal}
+      onClose={props.close}
     >
       <div className={cn("wrapper")}>
         <div className={cn("top")}>

@@ -28,7 +28,7 @@ function Main() {
       <TopContainer />
       <HeadContainer />
       <ToolsContainer />
-      <CatalogFilter />
+      <CatalogFilter catalog="catalog" />
       <CatalogList />
     </Layout>
   );

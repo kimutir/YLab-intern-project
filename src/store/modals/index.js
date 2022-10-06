@@ -6,7 +6,7 @@ import StateModule from "@src/store/module";
 class ModalsState extends StateModule {
   initState() {
     return {
-      name: [],
+      modals: [],
     };
   }
 
@@ -14,29 +14,19 @@ class ModalsState extends StateModule {
    * Открытие модального окна по названию
    * @param name {String} Название модалки
    */
-  open(name) {
-    this.setState(
-      {
-        name: [...this.getState().name, name],
-        // name: this.getState().name.push("name"),
-      },
-      `Открытие модалки ${name}`
-    );
+  open(name, props = {}) {
+    this.setState({
+      modals: [...this.getState().modals, { name, props }],
+    });
   }
 
   /**
    * Закрытие модального окна
    */
-  close() {
-    const newArr = [...this.getState().name];
-    newArr.pop();
-
-    this.setState(
-      {
-        name: newArr,
-      },
-      `Закрытие модалки`
-    );
+  close(name) {
+    this.setState({
+      modals: this.getState().modals.filter((modal) => modal.name !== name),
+    });
   }
 }
 

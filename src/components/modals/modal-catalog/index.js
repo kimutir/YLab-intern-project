@@ -8,73 +8,67 @@ import ModalAmount from "@src/components/modals/modal-amount";
 import ScrollList from "@src/components/scroll/scroll-list";
 import LayoutModal from "@src/components/layouts/layout-modal";
 import Scroll from "@src/containers/scroll";
+import CatalogFilter from "@src/containers/catalog-filter";
 
-function ModalCatalog() {
+function ModalCatalog(props) {
   const store = useStore();
 
   const listRef = React.useRef();
   const lastItemRef = React.useRef();
 
+  const [selectedItems, setSelectedItems] = React.useState([]);
+
+  const onSelectItem = React.useCallback(
+    (id) => {
+      const index = selectedItems.indexOf(id);
+      if (index !== -1) {
+        const newItems = [...selectedItems];
+        newItems.splice(index, 1);
+        setSelectedItems(newItems);
+      } else {
+        setSelectedItems((prev) => [...prev, id]);
+      }
+    },
+    [selectedItems]
+  );
+
+  const { t } = useTranslate();
+
+  React.useEffect(() => {
+    return () => props.removeCatalog();
+  }, []);
+
   const select = useSelector((state) => ({
-    catalog: state.catalog,
+    catalog: state.catalog1,
     items: state.catalog1.items,
     page: state.catalog1.params.page,
     limit: state.catalog1.params.limit,
     count: state.catalog1.count,
-    modals: state.modals.name,
   }));
 
-  const { t } = useTranslate();
-
-  const callbacks = {
-    // Закрытие модалки
-    closeModal: useCallback(() => {
-      store.get("modals").close();
-      store.removeState("catalog1");
-    }, []),
-    // Добавление в корзину
-    addToBasket: useCallback(
-      (_id, amount) => store.get("basket").addToBasket(_id, amount),
-      []
-    ),
-    // Пагианция
-    onPaginate: useCallback(
-      (page, skip, limit, reset) =>
-        store.get("catalog1").setParams({ page, skip, limit }, reset),
-      []
-    ),
-    // Установка параметров после первой загрузки
-    setNewParams: useCallback(
-      (limit, page, skip) =>
-        store.get("catalog1").newParams({ limit, page, skip }),
-      []
-    ),
-    // Первоначальная загрузка
-    onInitialLoadItems: useCallback(
-      (query) => store.get("catalog1").initialLoadItems(query),
-      []
-    ),
-    // Открытие модалки "Количество товара"
-    onOpenAddAmount: useCallback(
-      () => store.get("modals").open("add-amount/modal"),
-      []
-    ),
-    // Добавление в корзину
-    onAddSelected: useCallback((id) => store.get("basket").addSelected(id), []),
-  };
+  const onAddAll = React.useCallback(async () => {
+    for (const item of selectedItems) {
+      // await store.get("basket").addToBasket(item);
+      await props.addToBasket(item);
+    }
+    props.closeModal("catalog");
+  }, [selectedItems]);
 
   const renders = {
     item: useCallback(
       (item) => (
         <Item
+          closeModal={props.closeModal}
+          selectedItems={selectedItems}
+          onSelectItem={onSelectItem}
           item={item}
-          onOpenAddAmount={callbacks.onOpenAddAmount}
-          onAdd={callbacks.onAddSelected}
+          onOpenAddAmount={props.onOpenAddAmount}
           link={`/articles/${item._id}`}
+          onAdd={props.onAddSelected}
           labelAdd={t("article.add")}
         />
       ),
-      [t]
+      [t, selectedItems, onSelectItem]
     ),
   };
 
@@ -82,18 +76,20 @@ function ModalCatalog() {
     <LayoutModal
       title="Введите количество товара"
       labelClose={t("basket.close")}
-      onClose={callbacks.closeModal}
+      onClose={() => props.closeModal("catalog")}
     >
+      <CatalogFilter catalog="catalog1" />
+      <button onClick={onAddAll}>Добавить в корзину</button>
       <Pagination
         count={select.count}
         page={select.page}
         limit={select.limit}
-        onChange={callbacks.onPaginate}
+        onChange={props.onPaginate}
       />
       <Scroll
-        onInitialLoadItems={callbacks.onInitialLoadItems}
-        onPaginate={callbacks.onPaginate}
-        setNewParams={callbacks.setNewParams}
+        onAdditionalLoad={props.onAdditionalLoad}
+        onPaginate={props.onPaginate}
+        setNewParams={props.setNewParams}
         object={select.catalog}
         target={lastItemRef}
         root={listRef}
@@ -105,11 +101,6 @@ function ModalCatalog() {
           renderItem={renders.item}
         />
       </Scroll>
-
-      {select.modals.map((modal) => {
-        if (modal === "add-amount/modal")
-          return <ModalAmount onAdd={callbacks.addToBasket} />;
-      })}
     </LayoutModal>
   );
 }

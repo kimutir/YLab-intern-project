@@ -45,7 +45,10 @@ class BasketState extends StateModule {
       });
 
       const item = json.result;
+      console.log("item:", item);
       items.push({ ...item, amount: amount });
+      console.log("items:", items);
+
       // Досчитываем сумму
       sum += item.price * amount;
     }
@@ -59,6 +62,8 @@ class BasketState extends StateModule {
       },
       "Добавление в корзину"
     );
+
+    console.log(this.getState());
   }
 
   /**

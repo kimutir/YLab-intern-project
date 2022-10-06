@@ -14,7 +14,7 @@ function BasketSimple({ sum, amount, onOpen, t }) {
           ? `${amount} ${t("basket.articles", amount)} / ${numberFormat(sum)} ₽`
           : t("basket.empty")}
       </span>
-      <button className="BasketSimple__button" onClick={onOpen}>
+      <button className="BasketSimple__button" onClick={() => onOpen("basket")}>
         {t("basket.open")}
       </button>
     </div>

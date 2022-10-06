@@ -11,6 +11,7 @@ import Article from "./article";
 import Login from "./login";
 import Profile from "./profile";
 import ModalCatalog from "@src/components/modals/modal-catalog";
+import ModalAmount from "@src/components/modals/modal-amount";
 
 /**
  * Приложение
@@ -23,7 +24,7 @@ function App() {
     await store.get("session").remind();
   });
 
-  const modals = useSelector((state) => state.modals.name);
+  const modals = useSelector((state) => state.modals.modals);
   // const modal = useSelectorRedux((state) => state.modals.name);
 
   return (
@@ -42,9 +43,10 @@ function App() {
         />
       </Routes>
       {modals.map((modal) => {
-        if (modal === "basket") return <Basket />;
-        if (modal === "catalog") return <ModalCatalog />;
-        // if (modal === "add-amount") return <AddAmount />;
+        if (modal.name === "basket") return <Basket />;
+        if (modal.name === "catalog") return <ModalCatalog {...modal.props} />;
+        if (modal.name === "add-amount")
+          return <ModalAmount {...modal.props} />;
       })}
     </>
   );

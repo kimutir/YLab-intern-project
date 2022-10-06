@@ -13,6 +13,7 @@ class CatalogState extends StateModule {
   initState() {
     return {
       items: [],
+      selectedItems: [],
       count: 0,
       params: {
         page: 1,
@@ -84,8 +85,7 @@ class CatalogState extends StateModule {
     const apiParams = diff(
       {
         limit: newParams.limit,
-        // skip: (newParams.page - 1) * newParams.limit,
-        skip: newParams.skip,
+        skip: (newParams.page - 1) * newParams.limit,
         fields: "items(*),count",
         sort: newParams.sort,
         search: {
@@ -93,7 +93,7 @@ class CatalogState extends StateModule {
           category: newParams.category, // -> search[category]=id
         },
       },
-      { skip: 0, search: { query: "", category: "" } }
+      { skip: 0, search: { query: "", category: "" }, limit: 10 }
     );
 
     // ?search[query]=text&search[category]=id
@@ -121,57 +121,80 @@ class CatalogState extends StateModule {
     }
   }
 
-  async initialLoadItems(query = "") {
-    this.setState(
-      {
-        ...this.getState(),
-        waiting: true,
-      },
-      "Загрузка списка товара"
-    );
-
-    const pageURL = query?.match(/\?page=(\d*)&/);
-    const limitURL = query.match(/limit=(\d*)&/);
-
-    const newURL = pageURL && query.replace(pageURL[0], "");
-
-    const json = await this.services.api.request({
-      url: `/api/v1/articles?fields=items(*),count&sort=order${
-        newURL && "&" + newURL
-      }
-      `,
+  chooseItem(id) {
+    this.setState({
+      ...this.getState(),
+      selectedItems: [...this.getState().selectedItems, id],
     });
-
-    this.setState(
-      {
-        ...this.getState(),
-        items: json.result.items,
-        count: json.result.count,
-        params: {
-          ...this.getState().params,
-          page: pageURL ? +pageURL[1] : 1,
-          limit: limitURL ? +limitURL[1] : 10,
-        },
-        waiting: false,
-      },
-      "Загрузка списка товара"
-    );
   }
 
   newParams(params = {}) {
+    // Установка новых параметров и признака загрузки
     this.setState(
       {
         ...this.getState(),
-
         params: {
           ...this.getState().params,
-          limit: params.limit ? params.limit : this.getState().params.limit,
-          page: params.page ? params.page : this.getState().params.page,
+          limit: params.limit,
         },
       },
-      "Загрузка списка товара"
+      "Смена параметров каталога"
     );
-    // console.log("store params after initial load", this.getState().params);
+  }
+
+  async additionalLoad(
+    params = {},
+    resetItems = false,
+    historyReplace = false
+  ) {
+    const newParams = { ...this.getState().params, ...params };
+
+    // Установка новых параметров и признака загрузки
+    this.setState(
+      {
+        ...this.getState(),
+        // params: resetItems ? { ...newParams, page: 1 } : newParams,
+        items: resetItems ? [] : this.getState().items,
+        waiting: true,
+      },
+      "Смена параметров каталога"
+    );
+
+    const apiParams = diff(
+      {
+        limit: newParams.limit,
+        skip: newParams.skip,
+        fields: "items(*),count",
+        sort: newParams.sort,
+        search: {
+          query: newParams.query, // search[query]=text
+          category: newParams.category, // -> search[category]=id
+        },
+      },
+      { skip: 0, search: { query: "", category: "" }, limit: 10 }
+    );
+
+    // ?search[query]=text&search[category]=id
+    const json = await this.services.api.request({
+      url: `/api/v1/articles${qs.stringify(apiParams)}`,
+    });
+
+    // Установка полученных данных и сброс признака загрузки
+    this.setState({
+      ...this.getState(),
+      items: [...this.getState().items, ...json.result.items],
+      // count: json.result.count,
+      waiting: false,
+    });
+    // Запоминаем параметры в URL, которые отличаются от начальных
+    const paramsAfter = { ...newParams, limit: newParams.limit + 10 };
+    let queryString = qs.stringify(diff(paramsAfter, this.initState().params));
+    const url = window.location.pathname + queryString + window.location.hash;
+    if (historyReplace) {
+      window.history.replaceState({}, "", url);
+    } else {
+      window.history.pushState({}, "", url);
+    }
   }
 }
 

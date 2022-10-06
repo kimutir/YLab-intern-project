@@ -1,12 +1,24 @@
 import React, { useCallback } from "react";
 import divisibleByFive from "@src/utils/divisible-by-five";
+import { useLocation } from "react-router-dom";
 
 function Scroll(props) {
   const [isInitialLoaded, setIsInitialLoaded] = React.useState(false);
+  const location = useLocation();
 
   // loading 1st page
   React.useEffect(() => {
-    props.onInitialLoadItems(props.params);
+    const query = location.search;
+    const pageURL = query?.match(/page=(\d*)&/);
+    const limitURL = query?.match(/limit=(\d*)&/);
+    const limit = limitURL?.length ? limitURL[1] : 10;
+    const page = pageURL?.length ? pageURL[1] : 1;
+
+    if (limit !== 10) {
+      props.setNewParams(Number(limit));
+    }
+
+    props.onPaginate(Number(page));
   }, []);
 
   // options for observer
@@ -26,7 +38,6 @@ function Scroll(props) {
           props.object.count
       ) {
         const root = props.root.current;
-
         if (
           !isInitialLoaded &&
           props.target.current?.offsetTop < root.offsetTop + root.clientHeight
@@ -36,22 +47,16 @@ function Scroll(props) {
           const initalItemsAmount = Math.ceil(rootHeight / targetHeight) + 2;
           const requestedLimit = divisibleByFive(initalItemsAmount);
           requestedLimit != props.object.params.limit &&
-            props.onPaginate(
-              props.object.params.page,
-              props.object.params.limit,
-              requestedLimit - props.object.params.limit
-            );
+            props.setNewParams(requestedLimit);
+          props.onAdditionalLoad(
+            props.object.params.limit,
+            requestedLimit - props.object.params.limit,
+            false
+          );
           setIsInitialLoaded(true);
-
-          props.setNewParams(requestedLimit);
           observer.unobserve(props.target.current);
         } else {
-          props.onPaginate(
-            props.object.params.page + 1,
-            props.object.params.page * props.object.params.limit,
-            props.object.params.limit
-          );
-
+          props.onPaginate(props.object.params.page + 1);
           observer.unobserve(props.target.current);
         }
         setIsInitialLoaded(true);

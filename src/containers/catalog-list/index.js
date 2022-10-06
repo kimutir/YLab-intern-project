@@ -23,7 +23,7 @@ function CatalogList() {
     page: state.catalog.params.page,
     limit: state.catalog.params.limit,
     count: state.catalog.count,
-    modals: state.modals.name,
+    modals: state.modals.modals,
   }));
 
   const { t } = useTranslate();
@@ -36,24 +36,28 @@ function CatalogList() {
     ),
     // Пагианция
     onPaginate: useCallback(
-      (page, skip, limit, reset) =>
-        store.get("catalog").setParams({ page, skip, limit }, reset),
+      (page, reset) => store.get("catalog").setParams({ page }, reset),
       []
     ),
-    // Установка параметров после первой загрузки
+    onAdditionalLoad: useCallback(
+      (skip, limit, reset) =>
+        store.get("catalog").additionalLoad({ skip, limit }, reset),
+      []
+    ),
+    // Параметры после первоначальной загрузки
     setNewParams: useCallback(
-      (limit, page, skip) =>
-        store.get("catalog").newParams({ limit, page, skip }),
-      []
-    ),
-    // Первоначальная загрузка
-    onInitialLoadItems: useCallback(
-      (query) => store.get("catalog").initialLoadItems(query),
+      (limit) => store.get("catalog").newParams({ limit }),
       []
     ),
     // Открытие модалки "Количество товара"
     onOpenAddAmount: useCallback(
-      () => store.get("modals").open("add-amount"),
+      () =>
+        store.get("modals").open("add-amount", {
+          title: "Введите количество",
+          close: store.get("modals").close,
+          addToBasket: (id, amount) =>
+            store.get("basket").addToBasket(id, amount),
+        }),
       []
     ),
     // Добавление в корзину
@@ -85,13 +89,13 @@ function CatalogList() {
       />
 
       <Scroll
-        onInitialLoadItems={callbacks.onInitialLoadItems}
+        onAdditionalLoad={callbacks.onAdditionalLoad}
         onPaginate={callbacks.onPaginate}
-        setNewParams={callbacks.setNewParams}
         object={select.catalog}
         target={lastItemRef}
         root={listRef}
         params={location.search}
+        setNewParams={callbacks.setNewParams}
       >
         <ScrollList
           ref={{ lastItemRef, listRef }}
@@ -99,11 +103,6 @@ function CatalogList() {
           renderItem={renders.item}
         />
       </Scroll>
-
-      {select.modals.map((modal) => {
-        if (modal === "add-amount")
-          return <ModalAmount onAdd={callbacks.addToBasket} />;
-      })}
     </>
   );
 }

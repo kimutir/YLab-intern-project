@@ -28,17 +28,10 @@ function TopContainer() {
     onSignOut: useCallback(() => {
       store.get("session").signOut();
     }, [location.pathname]),
-
-    //============ test ========
-    onOpenModalCatalog: useCallback(() => {
-      store.get("modals").open("catalog");
-      store.newState("catalog", "catalog1");
-    }, []),
   };
 
   return (
     <LayoutFlex flex="end" indent="small">
-      <button onClick={callbacks.onOpenModalCatalog}>Открыть окно</button>
       {select.exists && <Link to="/profile">{select.user.profile.name}</Link>}
       {select.exists ? (
         <button onClick={callbacks.onSignOut}>{t("session.signOut")}</button>

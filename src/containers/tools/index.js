@@ -26,7 +26,7 @@ function ToolsContainer() {
 
   const callbacks = {
     // Открытие корзины
-    openModalBasket: useCallback(() => {
+    openModal: useCallback(() => {
       store.get("modals").open("basket");
       // storeRedux.dispatch(actionsModals.open('basket'));
     }, []),
@@ -40,7 +40,7 @@ function ToolsContainer() {
     <LayoutFlex flex="between" indent="big">
       <Menu items={options.menu} />
       <BasketSimple
-        onOpen={callbacks.openModalBasket}
+        onOpen={callbacks.openModal}
         amount={select.amount}
         sum={select.sum}
         t={t}

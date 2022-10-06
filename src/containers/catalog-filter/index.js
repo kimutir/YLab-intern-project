@@ -5,20 +5,19 @@ import useTranslate from "@src/hooks/use-translate";
 import Select from "@src/components/elements/select";
 import Input from "@src/components/elements/input";
 import LayoutFlex from "@src/components/layouts/layout-flex";
-import { categories } from "@src/store/exports";
 import listToTree from "@src/utils/list-to-tree";
 import treeToList from "@src/utils/tree-to-list";
 import CustomSelector from "@src/components/elements/custom-selector";
 
-function CatalogFilter() {
+function CatalogFilter(props) {
   const store = useStore();
 
   const select = useSelector((state) => ({
-    sort: state.catalog.params.sort,
-    query: state.catalog.params.query,
-    page: state.catalog.params.page,
-    limit: state.catalog.params.limit,
-    category: state.catalog.params.category,
+    sort: state[props.catalog].params.sort,
+    query: state[props.catalog].params.query,
+    page: state[props.catalog].params.page,
+    limit: state[props.catalog].params.limit,
+    category: state[props.catalog].params.category,
     categories: state.categories.items,
     countries: state.countries.items,
     selectedCountry: state.countries.selected,
@@ -29,14 +28,14 @@ function CatalogFilter() {
   const callbacks = {
     // Сортировка
     onSort: useCallback(
-      (sort, page, skip, reset) =>
-        store.get("catalog").setParams({ sort, page, skip }, reset),
+      (sort, page, reset) =>
+        store.get(props.catalog).setParams({ sort, page }, reset),
       []
     ),
     // Поиск
     onSearch: useCallback(
-      (query, skip, page, reset) =>
-        store.get("catalog").setParams({ query, skip, page }, reset),
+      (query, page, reset) =>
+        store.get(props.catalog).setParams({ query, page }, reset),
       []
     ),
     onSearchCountries: useCallback(
@@ -45,11 +44,11 @@ function CatalogFilter() {
     ),
     onSelect: useCallback((id) => store.get("countries").selectCountry(id), []),
     // Сброс
-    onReset: useCallback(() => store.get("catalog").resetParams(), []),
+    onReset: useCallback(() => store.get(props.catalog).resetParams(), []),
     // Фильтр по категории
     onCategory: useCallback(
-      (category, page, skip, reset) =>
-        store.get("catalog").setParams({ category, page, skip }, reset),
+      (category, page, reset) =>
+        store.get(props.catalog).setParams({ category, page }, reset),
       []
     ),
   };

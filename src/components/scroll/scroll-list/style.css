@@ -2,7 +2,7 @@
 .ScrollList {
   border: 1px solid black;
   overflow: scroll;
-  height: 500px;
+  height: 700px;
 }
 .ScrollList-item {
   border-bottom: 1px dashed #ccc;

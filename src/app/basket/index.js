@@ -24,8 +24,30 @@ function Basket() {
   const callbacks = {
     // Закрытие любой модалки
     closeModal: useCallback(() => {
-      store.get("modals").close();
+      store.get("modals").close("basket");
       // storeRedux.dispatch(actionsModals.close());
+    }, []),
+    onOpenModalCatalog: useCallback(() => {
+      store.get("modals").open("catalog", {
+        closeModal: (name) => store.get("modals").close(name),
+        addToBasket: (_id, amount) =>
+          store.get("basket").addToBasket(_id, amount),
+        onPaginate: (page, reset) =>
+          store.get("catalog1").setParams({ page }, reset),
+        setNewParams: (limit) => store.get("catalog1").newParams({ limit }),
+        onOpenAddAmount: () =>
+          store.get("modals").open("add-amount", {
+            title: "Введите количество",
+            close: store.get("modals").close,
+            addToBasket: (id, amount) =>
+              store.get("basket").addToBasket(id, amount),
+          }),
+        onAdditionalLoad: (skip, limit, reset) =>
+          store.get("catalog1").additionalLoad({ skip, limit }, reset),
+        onAddSelected: (id) => store.get("basket").addSelected(id),
+        removeCatalog: () => store.removeState("catalog1"),
+      });
+      store.newState("catalog", "catalog1");
     }, []),
     // Удаление из корзины
     removeFromBasket: useCallback(
@@ -57,7 +79,11 @@ function Basket() {
       onClose={callbacks.closeModal}
     >
       <List items={select.items} renderItem={renders.itemBasket} />
-      <BasketTotal sum={select.sum} t={t} />
+      <BasketTotal
+        sum={select.sum}
+        t={t}
+        onOpenModalCatalog={callbacks.onOpenModalCatalog}
+      />
     </LayoutModal>
   );
 }

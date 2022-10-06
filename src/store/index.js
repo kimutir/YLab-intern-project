@@ -30,14 +30,6 @@ class Store {
     }
   }
 
-  // newCatalog() {
-  //   this.modules.catalog1 = new modules.catalog(this, {
-  //     name: "catalog1",
-  //     ...(this.config.modules.catalog || {}),
-  //   });
-  //   this.state.catalog1 = this.modules.catalog1.initState();
-  // }
-
   newState(name, newName) {
     this.modules[newName] = new modules[name](this, {
       name: newName,
