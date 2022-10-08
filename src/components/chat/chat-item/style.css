@@ -1,0 +1,33 @@
+/* Пункт списка */
+.ChatItem {
+  display: flex;
+  /* display: inline-flex; */
+  align-items: flex-start;
+  transition: background-color 1s;
+  padding-left: 30px;
+  padding-right: 30px;
+  flex-direction: column;
+}
+.ChatItem_pos_right {
+  /* display: inline-flex; */
+  color: blue;
+  align-items: flex-end;
+}
+.ChatItem-top {
+  color: gray;
+  display: flex;
+}
+.ChatItem-user {
+  margin-right: 10px;
+}
+.ChatItem-date {
+}
+.ChatItem-text {
+  /* width: 100%; */
+  /* text-align: left; */
+  margin-bottom: 10px;
+}
+
+.ChatItem-text_color_red {
+  color: red;
+}

@@ -94,27 +94,3 @@ function Scroll(props) {
 }
 
 export default React.memo(Scroll);
-
-// scroll with element measures
-// const handleScroll = React.useCallback((event) => {
-//   if (
-//     event.target.scrollHeight -
-//       (event.target.clientHeight + event.target.scrollTop) <
-//     200
-//   ) {
-//     setLoad(true);
-//   }
-// }, []);
-
-// const paginationFunc = React.useCallback(async () => {
-//   await callbacks.onPaginate({ page });
-//   setPage((prev) => prev + 1);
-//   setLoad(false);
-// }, [page]);
-
-// loading items
-// React.useEffect(() => {
-//   if (load) {
-//     paginationFunc();
-//   }
-// }, [load]);

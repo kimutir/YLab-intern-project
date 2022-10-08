@@ -1,5 +1,5 @@
-import React, {useCallback, useState} from "react";
-import {useLocation, useNavigate} from "react-router-dom";
+import React, { useCallback, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import useTranslate from "@src/hooks/use-translate";
 import Layout from "@src/components/layouts/layout";
 import LayoutFlex from "@src/components/layouts/layout-flex";
@@ -13,64 +13,78 @@ import useSelector from "@src/hooks/use-selector";
 import Spinner from "@src/components/elements/spinner";
 
 function Login() {
-  const {t} = useTranslate();
+  const { t } = useTranslate();
   const store = useStore();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const select = useSelector(state => ({
+  const select = useSelector((state) => ({
     waiting: state.session.waiting,
-    errors: state.session.errors
-  }))
+    errors: state.session.errors,
+  }));
 
   const [data, setData] = useState({
-    login: '',
-    password: ''
+    login: "",
+    password: "",
   });
-
+  React.useEffect(() => {
+    console.log("data:", data);
+  }, [data]);
   const callbacks = {
     onChange: useCallback((value, name) => {
-      setData(prevData => ({...prevData, [name]: value}));
+      setData((prevData) => ({ ...prevData, [name]: value }));
     }, []),
 
-    onSubmit: useCallback((e) => {
-      e.preventDefault();
-      store.get('session').signIn(data, () => {
-        // Возврат на страницу, с которой пришли
-        const back = location.state?.back && location.state?.back !== location.pathname
-          ? location.state?.back
-          : '/';
-        navigate(back);
-      });
-    }, [data, location.state])
+    onSubmit: useCallback(
+      (e) => {
+        e.preventDefault();
+        store.get("session").signIn(data, () => {
+          // Возврат на страницу, с которой пришли
+          const back =
+            location.state?.back && location.state?.back !== location.pathname
+              ? location.state?.back
+              : "/";
+          navigate(back);
+        });
+      },
+      [data, location.state]
+    ),
   };
 
   return (
     <Layout>
-      <TopContainer/>
-      <HeadContainer/>
-      <ToolsContainer/>
+      <TopContainer />
+      <HeadContainer />
+      <ToolsContainer />
 
       <LayoutFlex>
         <form onSubmit={callbacks.onSubmit}>
-          <h2>{t('auth.title')}</h2>
-          <Field label={t('auth.login')} error={select.errors?.login}>
-            <Input name="login" onChange={callbacks.onChange}
-                   value={data.login}/>
+          <h2>{t("auth.title")}</h2>
+          <Field label={t("auth.login")} error={select.errors?.login}>
+            <Input
+              name="login"
+              onChange={(e) => callbacks.onChange(e, "login")}
+              value={data.login}
+            />
           </Field>
-          <Field label={t('auth.password')} error={select.errors?.password}>
-            <Input name="password" type="password" onChange={callbacks.onChange}
-                   value={data.password}/>
+          <Field label={t("auth.password")} error={select.errors?.password}>
+            <Input
+              name="password"
+              type="password"
+              onChange={(e) => callbacks.onChange(e, "password")}
+              value={data.password}
+            />
           </Field>
-          <Field error={select.errors?.other}/>
+          <Field error={select.errors?.other} />
           <Field>
-            <button disabled={select.waiting} type="submit">{t('auth.signIn')}</button>
+            <button disabled={select.waiting} type="submit">
+              {t("auth.signIn")}
+            </button>
           </Field>
         </form>
       </LayoutFlex>
-
     </Layout>
-  )
+  );
 }
 
 export default React.memo(Login);
