@@ -1,33 +1,62 @@
 /* Пункт списка */
 .ChatItem {
+  box-sizing: border-box;
+  width: 100%;
   display: flex;
-  /* display: inline-flex; */
   align-items: flex-start;
-  transition: background-color 1s;
   padding-left: 30px;
   padding-right: 30px;
   flex-direction: column;
 }
 .ChatItem_pos_right {
-  /* display: inline-flex; */
-  color: blue;
+  text-align: right;
+  word-wrap: break-word;
   align-items: flex-end;
 }
 .ChatItem-top {
   color: gray;
   display: flex;
 }
-.ChatItem-user {
+.ChatItem-userName {
   margin-right: 10px;
 }
-.ChatItem-date {
+
+.ChatItem-avatar {
+  border-radius: 50%;
+  min-width: 40px;
+  height: 40px;
+  background-color: blueviolet;
+  margin-right: 10px;
+  margin: 0 10px;
 }
-.ChatItem-text {
-  /* width: 100%; */
-  /* text-align: left; */
-  margin-bottom: 10px;
+.ChatItem-bottom {
+  display: flex;
+  align-items: center;
+  width: 60%;
+  margin: 10px 0;
+}
+.ChatItem-bottom_user_message {
+  width: 60%;
+  flex-direction: column;
+  align-items: flex-end;
 }
 
-.ChatItem-text_color_red {
-  color: red;
+.ChatItem-message_user_message {
+  display: flex;
+  flex-direction: row-reverse;
+
+  align-items: center;
+}
+.ChatItem-message {
+  display: flex;
+  align-items: center;
+}
+
+.ChatItem-text {
+  width: 100%;
+  word-wrap: break-word;
+}
+.ChatItem-status {
+  margin-top: 5px;
+  color: gray;
 }

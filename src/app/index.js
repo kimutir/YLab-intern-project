@@ -34,7 +34,14 @@ function App() {
         <Route path={""} element={<Main />} />
         <Route path={"/articles/:id"} element={<Article />} />
         <Route path={"/login"} element={<Login />} />
-        <Route path={"/chat"} element={<Chat />} />
+        <Route
+          path={"/chat"}
+          element={
+            <Protected redirect={"/login"}>
+              <Chat />
+            </Protected>
+          }
+        />
         <Route
           path={"/profile"}
           element={

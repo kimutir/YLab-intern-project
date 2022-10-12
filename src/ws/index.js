@@ -1,5 +1,3 @@
-import { method } from "lodash";
-
 class WSService {
   /**
    * @param services {Services} Менеджер сервисов
@@ -10,53 +8,40 @@ class WSService {
     this.config = config;
   }
 
-  connect(token, success, onclose) {
-    let socket;
-    const fun = () => {
-      socket = new WebSocket(this.config.url);
+  connect(token, callback, onclose) {
+    this.socket = new WebSocket(this.config.url);
 
-      socket.onopen = () => {
-        socket.send(
-          JSON.stringify({
-            method: "auth",
-            payload: {
-              token,
-            },
-          })
-        );
-      };
-
-      socket.onmessage = (res) => {
-        const data = JSON.parse(res.data);
-        // учесть ошибку авторизации
-
-        if (data?.method === "auth") {
-          this.socket = socket;
-          success(data);
-        }
-      };
-
-      socket.onclose = (res) => {
-        if (!res.wasClean) {
-          onclose();
-          fun();
-        } else {
-          onclose();
-        }
-      };
+    this.socket.onopen = () => {
+      this.socket.send(
+        JSON.stringify({
+          method: "auth",
+          payload: {
+            token,
+          },
+        })
+      );
     };
 
-    fun();
+    this.socket.onmessage = (res) => {
+      // const data = JSON.parse(res.data);
+      callback(res);
+      // if (data?.method === "auth") {
+      //   callback(data);
+      // }
+    };
+
+    this.socket.onclose = (res) => {
+      if (!res.wasClean) {
+        this.connect(token, success, onclose);
+      } else {
+        onclose();
+      }
+    };
+  }
+
+  disconnect() {
+    this.socket.close();
   }
 }
 
 export default WSService;
-
-const userMessages = (keys, messages) => {
-  console.log("keys:", keys);
-  // const
-  return messages.map((i) => {
-    if (keys.includes(i._key)) return { ...i, userMesage: true };
-    return { ...i, userMesage: false };
-  });
-};

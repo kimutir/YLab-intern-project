@@ -1,71 +1,65 @@
 import React, { useCallback } from "react";
 import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
-import { Link } from "react-router-dom";
-import numberFormat from "@src/utils/number-format";
+import { v4 as uuidv4 } from "uuid";
 import "./style.css";
+import useStore from "@src/hooks/use-store";
+import useSelector from "@src/hooks/use-selector";
 
-function Item(props) {
-  const cn = bem("Item");
+function ChatForm() {
+  const store = useStore();
+  const cn = bem("ChatForm");
+  const [text, setText] = React.useState("");
+
+  const select = useSelector((state) => ({
+    id: state.session.user._id,
+  }));
 
   const callbacks = {
-    onAdd: useCallback(
-      (e) => props.onAdd(props.item._id),
-      [props.onAdd, props.item]
+    send: React.useCallback(
+      (text, _key) => {
+        if (!text) return;
+        store.get("chat").load("post", { text, _key });
+        setText("");
+      },
+      [text]
     ),
-    onSelectItem: useCallback(() => {
-      props.onSelectItem(props.item._id);
-    }, [props.onSelectItem, props.item]),
-    onOpenAddAmount: useCallback((e) => {
-      e.stopPropagation();
-      props.onAdd(props.item._id);
-      props.onOpenAddAmount();
-    }, []),
-    onItemDescription: useCallback((e) => {
-      e.stopPropagation();
-      // тупое решение
-      props.closeModal();
-      props.closeModal();
-    }, []),
+    postMessage: React.useCallback(
+      (key, text, id) => {
+        store.get("chat").postMessage(key, text, id);
+      },
+      [text]
+    ),
+  };
+
+  const onHandleSubmit = (key, text, id) => {
+    if (!text) return;
+    callbacks.postMessage(key, text, id);
+    callbacks.send(text, key);
   };
 
   return (
-    <div className={cn()} onClick={callbacks.onSelectItem}>
-      <div className={cn("title")}>
-        {props.link ? (
-          <Link to={props.link} onClick={(e) => callbacks.onItemDescription(e)}>
-            {props.item.title}
-          </Link>
-        ) : (
-          props.item.title
-        )}
-      </div>
-      <div className={cn("right")}>
-        <div className={cn("price")}>
-          {props.selectedItems?.includes(props.item._id) && <p>выбрано</p>}
-          {numberFormat(props.item.price)} {props.labelCurr}
-        </div>
-        <button onClick={(e) => callbacks.onOpenAddAmount(e)}>
-          {props.labelAdd}
-        </button>
-      </div>
-    </div>
+    <form
+      className={cn()}
+      onSubmit={(e) => {
+        e.preventDefault();
+        onHandleSubmit(uuidv4(), text, select.id);
+        // callbacks.send(text, uuidv4());
+      }}
+    >
+      <input
+        className={cn("input")}
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <input type="submit" />
+    </form>
   );
 }
 
-Item.propTypes = {
-  item: propTypes.object.isRequired,
-  onAdd: propTypes.func,
-  link: propTypes.string,
-  labelCurr: propTypes.string,
-  labelAdd: propTypes.string,
-};
+ChatForm.propTypes = {};
 
-Item.defaultProps = {
-  onSelectItem: () => {},
-  onAdd: () => {},
-  labelCurr: "₽",
-  labelAdd: "Добавить",
-};
+ChatForm.defaultProps = {};
 
-export default React.memo(Item);
+export default React.memo(ChatForm);
