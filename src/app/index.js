@@ -13,6 +13,7 @@ import Profile from "./profile";
 import ModalCatalog from "@src/components/modals/modal-catalog";
 import ModalAmount from "@src/components/modals/modal-amount";
 import Chat from "@src/app/chat";
+import Canvas from "@src/components/canvas";
 
 /**
  * Приложение
@@ -34,6 +35,7 @@ function App() {
         <Route path={""} element={<Main />} />
         <Route path={"/articles/:id"} element={<Article />} />
         <Route path={"/login"} element={<Login />} />
+        <Route path={"/canvas"} element={<Canvas />} />
         <Route
           path={"/chat"}
           element={

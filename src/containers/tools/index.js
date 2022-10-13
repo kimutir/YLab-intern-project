@@ -37,6 +37,7 @@ function ToolsContainer() {
       () => [
         { key: 1, title: t("menu.main"), link: "/" },
         { key: 2, title: "Чат", link: "/chat" },
+        { key: 2, title: "Канвас", link: "/canvas" },
       ],
       [t]
     ),
