@@ -12,20 +12,27 @@ import useSelector from "@src/hooks/use-selector";
 function Canvas() {
   const cn = bem("Canvas");
 
+  const timeOfCreate = React.useRef();
+  const timeOfOtherCreate = React.useRef([]);
+
+  const lifeOfDropping = React.useRef([]);
+  //   const timeOfCreate = React.useRef([]);
+
   const canvasRef = React.useRef();
   const canvasFieldRef = React.useRef();
   const store = useStore();
 
-  const [deltaY, setDeltaY] = React.useState(0);
-  const [deltaX, setDeltaX] = React.useState(0);
-  const [scale, setScale] = React.useState(0);
+  const [dropStep, setDropStep] = React.useState([0]);
   const [drop, setDrop] = React.useState(false);
+  const [index, setIndex] = React.useState(0);
   const [isMouseDown, setIsMouseDown] = React.useState(false);
 
   const select = useSelector((state) => ({
     rectangles: state.canvas.rectangles,
     triangles: state.canvas.triangles,
     circles: state.canvas.circles,
+    delta: state.canvas.delta,
+    scale: state.canvas.scale,
   }));
 
   const callbacks = {
@@ -41,17 +48,27 @@ function Canvas() {
           ]),
       []
     ),
-    addCircle: React.useCallback(
-      () =>
-        store
-          .get("canvas")
-          .addCoordinates("circles", [
-            Math.random() * 500,
-            Math.random() * 500,
+    addCircle: React.useCallback(() => {
+      if (drop) {
+        setIndex((prev) => prev + 1);
+        timeOfOtherCreate.current = [
+          ...timeOfOtherCreate.current,
+          Date.now() - timeOfCreate.current,
+        ];
+      }
+
+      store
+        .get("canvas")
+        .addCoordinates(
+          "circles",
+          [
+            Math.random() * 1000,
+            Math.random() * 2400 - 1500,
             Math.random() * 100,
-          ]),
-      []
-    ),
+          ],
+          index
+        );
+    }, [timeOfCreate.current, index, drop]),
     addTriangle: React.useCallback(() => {
       const xStart = Math.random() * 500;
       const yStart = Math.random() * 500;
@@ -61,18 +78,24 @@ function Canvas() {
         [xStart + Math.random() * 100, yStart + Math.random() * 350],
       ]);
     }, []),
-    onMouseMove: React.useCallback((e) => {
-      setDeltaY((prev) => prev + e.movementY);
-      setDeltaX((prev) => prev + e.movementX);
+    changeDelta: React.useCallback((x, y) => {
+      store.get("canvas").changeDelta(x, y);
+    }, []),
+    changeScale: React.useCallback((value) => {
+      store.get("canvas").changeScale(value);
+    }, []),
+    onMouseDown: React.useCallback((e) => {
+      store.get("canvas").changeDelta(e.movementX, e.movementY);
     }, []),
   };
 
+  // слушатели и скролл
   React.useEffect(() => {
     canvasFieldRef.current?.addEventListener("wheel", (e) => {
       if (e.shiftKey) {
-        setScale((prev) => prev - e.deltaY / 10);
+        callbacks.changeScale(-e.deltaY / 10);
       } else {
-        setDeltaY((prev) => prev - e.deltaY);
+        callbacks.changeDelta(0, -e.deltaY);
       }
     });
 
@@ -85,61 +108,96 @@ function Canvas() {
     });
   }, []);
 
+  // перемещение при зажатой ЛКМ
   React.useEffect(() => {
     if (isMouseDown) {
       canvasFieldRef.current?.addEventListener(
         "mousemove",
-        callbacks.onMouseMove
+        callbacks.onMouseDown
       );
     }
 
     return () =>
       canvasFieldRef.current?.removeEventListener(
         "mousemove",
-        callbacks.onMouseMove
+        callbacks.onMouseDown
       );
   }, [isMouseDown]);
 
+  // отрисовка фигур
   React.useEffect(() => {
     const width = canvasRef.current.clientWidth;
     const height = canvasRef.current.clientHeight - 50;
+    // console.log("height:", height);
     canvasFieldRef.current.width = width;
     canvasFieldRef.current.height = height;
 
     const ctx = canvasFieldRef.current.getContext("2d");
 
-    console.log("scale:", scale);
-    generateRectangle(ctx, select.rectangles, deltaX, deltaY, height, scale);
-
-    generateCircle(ctx, select.circles, deltaX, deltaY, height, scale);
-
-    generateTriangle(ctx, select.triangles, deltaX, deltaY, height);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 1;
+    // generateRectangle(
+    //   ctx,
+    //   select.rectangles,
+    //   select.delta,
+    //   height,
+    //   select.scale,
+    //   dropStep
+    // );
+    console.log("dropStep:", dropStep);
+    select.circles.length &&
+      generateCircle(
+        ctx,
+        select.circles,
+        select.delta,
+        height,
+        select.scale,
+        dropStep
+      );
+    // const a = generateTriangle(ctx, select.triangles, deltaX, deltaY, height);
+    // select.triangles.lenght  && a();
   }, [
-    deltaY,
-    deltaX,
-    scale,
+    select.delta,
+    select.scale,
     select.rectangles,
     select.circles,
     select.triangles,
+    dropStep,
   ]);
 
-  const test = React.useCallback(() => {
-    setDrop(!drop);
-    let delayTest = 100;
-    const delayId = setInterval(() => {
-      console.log("delayTest:", delayTest);
+  const requestRef = React.useRef();
+  const previousTimeRef = React.useRef();
+  const timeOfDropping = React.useRef(0);
+  const prevTimeOfDroppping = React.useRef(0);
 
-      if (delayTest === 0) {
-        console.log("asasd");
-        clearInterval(delayId);
-      }
-      delayTest -= 10;
-      const diffId = setInterval(() => {
-        console.log("delta");
-        setDeltaY((prev) => prev + 1);
-      }, delayTest);
-    }, 500);
+  const animate = React.useCallback((time) => {
+    timeOfDropping.current =
+      prevTimeOfDroppping.current + Date.now() - timeOfCreate.current;
+
+    lifeOfDropping.current = [
+      timeOfDropping.current,
+      ...timeOfOtherCreate.current.map((time) => timeOfDropping.current - time),
+    ];
+
+    setDropStep(() => lifeOfDropping.current.map((i) => estimateDrop(i)));
+
+    requestRef.current = requestAnimationFrame(animate);
   }, []);
+
+  function estimateDrop(time) {
+    return Math.pow(time * 0.001, 2) * 20;
+  }
+
+  React.useEffect(() => {
+    if (drop) {
+      timeOfCreate.current = Date.now();
+      requestRef.current = requestAnimationFrame(animate);
+    } else {
+      prevTimeOfDroppping.current = 0;
+      prevTimeOfDroppping.current += timeOfDropping.current;
+      cancelAnimationFrame(requestRef.current);
+    }
+  }, [drop]);
 
   return (
     <Layout>
@@ -148,7 +206,7 @@ function Canvas() {
           <button onClick={callbacks.addRectangle}>Rect</button>
           <button onClick={callbacks.addCircle}>Circle</button>
           <button onClick={callbacks.addTriangle}>Triangle</button>
-          <button onClick={test}>Drop</button>
+          <button onClick={() => setDrop((prev) => !prev)}>Drop</button>
         </div>
         <canvas ref={canvasFieldRef} className={cn("field")}></canvas>
       </div>
