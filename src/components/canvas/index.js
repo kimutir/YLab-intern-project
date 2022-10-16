@@ -8,22 +8,17 @@ import generateRectangle from "./generators/rectangle";
 import generateTriangle from "./generators/triangle";
 import useStore from "@src/hooks/use-store";
 import useSelector from "@src/hooks/use-selector";
+import useAnimate from "@src/hooks/use-animation";
 
 function Canvas() {
   const cn = bem("Canvas");
 
-  const timeOfCreate = React.useRef();
-  const timeOfOtherCreate = React.useRef([]);
-
-  const lifeOfDropping = React.useRef([]);
-  //   const timeOfCreate = React.useRef([]);
-
   const canvasRef = React.useRef();
   const canvasFieldRef = React.useRef();
+
   const store = useStore();
 
-  const [dropStep, setDropStep] = React.useState([0]);
-  const [drop, setDrop] = React.useState(false);
+  const [isDropped, setIsDropped] = React.useState(false);
   const [index, setIndex] = React.useState(0);
   const [isMouseDown, setIsMouseDown] = React.useState(false);
 
@@ -33,7 +28,14 @@ function Canvas() {
     circles: state.canvas.circles,
     delta: state.canvas.delta,
     scale: state.canvas.scale,
+    animationLifeTime: state.canvas.animationLifeTime,
   }));
+
+  // хук возвращает время начала и вызывает callback
+  const { startTime } = useAnimate(
+    (value) => store.get("canvas").changeTime(value),
+    isDropped
+  );
 
   const callbacks = {
     addRectangle: React.useCallback(
@@ -49,14 +51,10 @@ function Canvas() {
       []
     ),
     addCircle: React.useCallback(() => {
+      // нужно изменить логику добавления индекса
       if (drop) {
         setIndex((prev) => prev + 1);
-        timeOfOtherCreate.current = [
-          ...timeOfOtherCreate.current,
-          Date.now() - timeOfCreate.current,
-        ];
       }
-
       store
         .get("canvas")
         .addCoordinates(
@@ -66,9 +64,10 @@ function Canvas() {
             Math.random() * 2400 - 1500,
             Math.random() * 100,
           ],
-          index
+          index,
+          startTime ? Date.now() - startTime : 0
         );
-    }, [timeOfCreate.current, index, drop]),
+    }, [index, isDropped]),
     addTriangle: React.useCallback(() => {
       const xStart = Math.random() * 500;
       const yStart = Math.random() * 500;
@@ -128,14 +127,11 @@ function Canvas() {
   React.useEffect(() => {
     const width = canvasRef.current.clientWidth;
     const height = canvasRef.current.clientHeight - 50;
-    // console.log("height:", height);
     canvasFieldRef.current.width = width;
     canvasFieldRef.current.height = height;
 
     const ctx = canvasFieldRef.current.getContext("2d");
 
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 1;
     // generateRectangle(
     //   ctx,
     //   select.rectangles,
@@ -144,7 +140,6 @@ function Canvas() {
     //   select.scale,
     //   dropStep
     // );
-    console.log("dropStep:", dropStep);
     select.circles.length &&
       generateCircle(
         ctx,
@@ -152,7 +147,7 @@ function Canvas() {
         select.delta,
         height,
         select.scale,
-        dropStep
+        select.animationLifeTime
       );
     // const a = generateTriangle(ctx, select.triangles, deltaX, deltaY, height);
     // select.triangles.lenght  && a();
@@ -162,42 +157,13 @@ function Canvas() {
     select.rectangles,
     select.circles,
     select.triangles,
-    dropStep,
+    select.animationLifeTime,
   ]);
 
-  const requestRef = React.useRef();
-  const previousTimeRef = React.useRef();
-  const timeOfDropping = React.useRef(0);
-  const prevTimeOfDroppping = React.useRef(0);
+  // создать ограничение вызова requestAnimationFrame
 
-  const animate = React.useCallback((time) => {
-    timeOfDropping.current =
-      prevTimeOfDroppping.current + Date.now() - timeOfCreate.current;
-
-    lifeOfDropping.current = [
-      timeOfDropping.current,
-      ...timeOfOtherCreate.current.map((time) => timeOfDropping.current - time),
-    ];
-
-    setDropStep(() => lifeOfDropping.current.map((i) => estimateDrop(i)));
-
-    requestRef.current = requestAnimationFrame(animate);
-  }, []);
-
-  function estimateDrop(time) {
-    return Math.pow(time * 0.001, 2) * 20;
-  }
-
-  React.useEffect(() => {
-    if (drop) {
-      timeOfCreate.current = Date.now();
-      requestRef.current = requestAnimationFrame(animate);
-    } else {
-      prevTimeOfDroppping.current = 0;
-      prevTimeOfDroppping.current += timeOfDropping.current;
-      cancelAnimationFrame(requestRef.current);
-    }
-  }, [drop]);
+  // ограничить падение фигур
+  // не рисовать фигуры вне поля, а просто считать координаты
 
   return (
     <Layout>
@@ -206,7 +172,7 @@ function Canvas() {
           <button onClick={callbacks.addRectangle}>Rect</button>
           <button onClick={callbacks.addCircle}>Circle</button>
           <button onClick={callbacks.addTriangle}>Triangle</button>
-          <button onClick={() => setDrop((prev) => !prev)}>Drop</button>
+          <button onClick={() => setIsDropped((prev) => !prev)}>Drop</button>
         </div>
         <canvas ref={canvasFieldRef} className={cn("field")}></canvas>
       </div>

@@ -15,14 +15,17 @@ class CanvasState extends StateModule {
       rectangles: [],
       triangles: [],
       circles: [],
-      dropStep: {},
+      animationLifeTime: 0,
     };
   }
 
-  addCoordinates(type, coordinates, index) {
+  addCoordinates(type, coordinates, index, timeDifference) {
     this.setState({
       ...this.getState(),
-      [type]: [...this.getState()[type], [...coordinates, { index }]],
+      [type]: [
+        ...this.getState()[type],
+        [...coordinates, { index, timeDifference }],
+      ],
     });
   }
 
@@ -37,6 +40,12 @@ class CanvasState extends StateModule {
     this.setState({
       ...this.getState(),
       scale: this.getState().scale + value,
+    });
+  }
+  changeTime(value) {
+    this.setState({
+      ...this.getState(),
+      animationLifeTime: value,
     });
   }
 }

@@ -4,11 +4,16 @@ export default function generateCircle(
   delta,
   bottom,
   scale,
-  dropStep
+  animationLifeTime
 ) {
   for (const [x, y, r, params] of arr) {
-    console.log("params:", params);
-    if (y + delta.y + r + dropStep[params.index] < bottom) {
+    if (
+      y +
+        delta.y +
+        r +
+        estimateDrop(animationLifeTime - params.timeDifference) <
+      bottom
+    ) {
       if (r + scale < 1) {
         ctx.beginPath();
         ctx.arc(x + delta.x, y + delta.y, 1, 0, 2 * Math.PI);
@@ -18,7 +23,7 @@ export default function generateCircle(
         ctx.beginPath();
         ctx.arc(
           x + delta.x,
-          y + dropStep[params.index] + delta.y,
+          y + estimateDrop(animationLifeTime - params.timeDifference) + delta.y,
           r + scale,
           0,
           2 * Math.PI
@@ -33,4 +38,9 @@ export default function generateCircle(
       ctx.stroke();
     }
   }
+}
+
+function estimateDrop(time) {
+  if (!time) return 0;
+  return Math.pow(time * 0.001, 2) * 20;
 }
