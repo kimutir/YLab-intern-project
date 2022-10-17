@@ -19,7 +19,6 @@ function Canvas() {
   const store = useStore();
 
   const [isDropped, setIsDropped] = React.useState(false);
-  const [index, setIndex] = React.useState(0);
   const [isMouseDown, setIsMouseDown] = React.useState(false);
 
   const select = useSelector((state) => ({
@@ -34,7 +33,8 @@ function Canvas() {
   // хук возвращает время начала и вызывает callback
   const { startTime } = useAnimate(
     (value) => store.get("canvas").changeTime(value),
-    isDropped
+    isDropped,
+    16
   );
 
   const callbacks = {
@@ -42,32 +42,32 @@ function Canvas() {
       () =>
         store
           .get("canvas")
-          .addCoordinates("rectangles", [
-            Math.random() * 500,
-            Math.random() * 500 - 300,
-            Math.random() * 100 + 10,
-            Math.random() * 100 + 10,
-          ]),
-      []
+          .addCoordinates(
+            "rectangles",
+            [
+              Math.random() * 1000,
+              Math.random() * 1400 - 700,
+              Math.random() * 100 + 10,
+              Math.random() * 100 + 10,
+            ],
+            !startTime && !isDropped ? 0 : select.animationLifeTime
+          ),
+      [startTime, isDropped, select.animationLifeTime]
     ),
-    addCircle: React.useCallback(() => {
-      // нужно изменить логику добавления индекса
-      if (drop) {
-        setIndex((prev) => prev + 1);
-      }
-      store
-        .get("canvas")
-        .addCoordinates(
+    addCircle: React.useCallback(
+      () =>
+        store.get("canvas").addCoordinates(
           "circles",
           [
             Math.random() * 1000,
-            Math.random() * 2400 - 1500,
+            Math.random() * 1400 - 700,
             Math.random() * 100,
           ],
-          index,
-          startTime ? Date.now() - startTime : 0
-        );
-    }, [index, isDropped]),
+
+          !startTime && !isDropped ? 0 : select.animationLifeTime
+        ),
+      [startTime, isDropped, select.animationLifeTime]
+    ),
     addTriangle: React.useCallback(() => {
       const xStart = Math.random() * 500;
       const yStart = Math.random() * 500;
@@ -132,23 +132,25 @@ function Canvas() {
 
     const ctx = canvasFieldRef.current.getContext("2d");
 
-    // generateRectangle(
-    //   ctx,
-    //   select.rectangles,
-    //   select.delta,
-    //   height,
-    //   select.scale,
-    //   dropStep
-    // );
-    select.circles.length &&
-      generateCircle(
-        ctx,
-        select.circles,
-        select.delta,
-        height,
-        select.scale,
-        select.animationLifeTime
-      );
+    generateRectangle(
+      ctx,
+      select.rectangles,
+      select.delta,
+      height,
+      width,
+      select.scale,
+      select.animationLifeTime
+    );
+
+    generateCircle(
+      ctx,
+      select.circles,
+      select.delta,
+      height,
+      width,
+      select.scale,
+      select.animationLifeTime
+    );
     // const a = generateTriangle(ctx, select.triangles, deltaX, deltaY, height);
     // select.triangles.lenght  && a();
   }, [
@@ -160,10 +162,8 @@ function Canvas() {
     select.animationLifeTime,
   ]);
 
-  // создать ограничение вызова requestAnimationFrame
-
-  // ограничить падение фигур
-  // не рисовать фигуры вне поля, а просто считать координаты
+  // как перестать считать падение для фигуры, если она на дне
+  // вычитать время, которое находилось на дне?
 
   return (
     <Layout>

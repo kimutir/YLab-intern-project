@@ -19,12 +19,12 @@ class CanvasState extends StateModule {
     };
   }
 
-  addCoordinates(type, coordinates, index, timeDifference) {
+  addCoordinates(type, coordinates, timeDifference) {
     this.setState({
       ...this.getState(),
       [type]: [
         ...this.getState()[type],
-        [...coordinates, { index, timeDifference }],
+        [...coordinates, { timeDifference, bottomTime: 0 }],
       ],
     });
   }
