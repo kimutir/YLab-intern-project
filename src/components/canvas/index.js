@@ -20,6 +20,8 @@ function Canvas() {
 
   const [isDropped, setIsDropped] = React.useState(false);
   const [isMouseDown, setIsMouseDown] = React.useState(false);
+  const [start, setStart] = React.useState(0);
+  console.log("start:", start);
 
   const select = useSelector((state) => ({
     rectangles: state.canvas.rectangles,
@@ -31,11 +33,7 @@ function Canvas() {
   }));
 
   // хук возвращает время начала и вызывает callback
-  const { startTime } = useAnimate(
-    (value) => store.get("canvas").changeTime(value),
-    isDropped,
-    16
-  );
+  const { startTime } = useAnimate((value) => setStart(value), isDropped);
 
   const callbacks = {
     addRectangle: React.useCallback(
@@ -64,9 +62,9 @@ function Canvas() {
             Math.random() * 100,
           ],
 
-          !startTime && !isDropped ? 0 : select.animationLifeTime
+          start
         ),
-      [startTime, isDropped, select.animationLifeTime]
+      [startTime, isDropped, start]
     ),
     addTriangle: React.useCallback(() => {
       const xStart = Math.random() * 500;
@@ -86,6 +84,10 @@ function Canvas() {
     onMouseDown: React.useCallback((e) => {
       store.get("canvas").changeDelta(e.movementX, e.movementY);
     }, []),
+    changeBottomTime: React.useCallback((type, value) => {
+      store.get("canvas").changeBottomTime(type, value);
+    }, []),
+    resetStore: React.useCallback(() => store.get("canvas").resetStore()),
   };
 
   // слушатели и скролл
@@ -148,22 +150,21 @@ function Canvas() {
       select.delta,
       height,
       width,
-      select.scale,
-      select.animationLifeTime
+      select.scale
     );
-    // const a = generateTriangle(ctx, select.triangles, deltaX, deltaY, height);
-    // select.triangles.lenght  && a();
+    generateTriangle(ctx, select.triangles, select.delta, height);
   }, [
     select.delta,
     select.scale,
     select.rectangles,
     select.circles,
     select.triangles,
-    select.animationLifeTime,
+    start,
   ]);
 
   // как перестать считать падение для фигуры, если она на дне
   // вычитать время, которое находилось на дне?
+  // вычитать расстояние, которое фигура прошла бы?
 
   return (
     <Layout>
@@ -173,6 +174,7 @@ function Canvas() {
           <button onClick={callbacks.addCircle}>Circle</button>
           <button onClick={callbacks.addTriangle}>Triangle</button>
           <button onClick={() => setIsDropped((prev) => !prev)}>Drop</button>
+          <button onClick={callbacks.resetStore}>Clear</button>
         </div>
         <canvas ref={canvasFieldRef} className={cn("field")}></canvas>
       </div>

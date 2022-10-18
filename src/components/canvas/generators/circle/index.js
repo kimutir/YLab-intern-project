@@ -4,20 +4,17 @@ export default function generateCircle(
   delta,
   canvasHeight,
   canvasWidth,
-  scale,
-  animationLifeTime
+  scale
 ) {
   for (const [x, y, r, params] of arr) {
+    console.log("params:", params);
+    console.log(Date.now() - params.timeDifference);
     if (
-      y +
-        delta.y +
-        r +
-        estimateDrop(animationLifeTime - params.timeDifference) <
+      y + delta.y + r + estimateDrop(Date.now() - params.timeDifference) <
       canvasHeight
     ) {
       if (
-        y + delta.y + estimateDrop(animationLifeTime - params.timeDifference) <
-          50 ||
+        y + delta.y + estimateDrop(Date.now() - params.timeDifference) < 50 ||
         x + delta.x < 50 ||
         x + delta.x > canvasWidth - 50
       ) {
@@ -29,12 +26,17 @@ export default function generateCircle(
         draw(
           ctx,
           x + delta.x,
-          y + estimateDrop(animationLifeTime - params.timeDifference) + delta.y,
+          y + estimateDrop(Date.now() - params.timeDifference) + delta.y,
           r + scale
         );
       }
     } else {
-      draw(ctx, x + delta.x, canvasHeight - r - scale, r + scale);
+      draw(
+        ctx,
+        x + delta.x,
+        canvasHeight - r - scale,
+        r + scale < 1 ? 1 : r + scale
+      );
     }
   }
 }
@@ -49,4 +51,9 @@ function draw(ctx, x, y, r) {
 function estimateDrop(time) {
   if (!time) return 0;
   return Math.pow(time * 0.001, 2) * 20;
+}
+
+function xOffset(time) {
+  if (time < 3000) return -1;
+  if (time < 6000) return 1;
 }

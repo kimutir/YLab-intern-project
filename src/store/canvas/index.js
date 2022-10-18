@@ -22,10 +22,7 @@ class CanvasState extends StateModule {
   addCoordinates(type, coordinates, timeDifference) {
     this.setState({
       ...this.getState(),
-      [type]: [
-        ...this.getState()[type],
-        [...coordinates, { timeDifference, bottomTime: 0 }],
-      ],
+      [type]: [...this.getState()[type], [...coordinates, { timeDifference }]],
     });
   }
 
@@ -42,10 +39,17 @@ class CanvasState extends StateModule {
       scale: this.getState().scale + value,
     });
   }
-  changeTime(value) {
+
+  // changeTime(value) {
+  //   this.setState({
+  //     ...this.getState(),
+  //     animationLifeTime: value,
+  //   });
+  // }
+
+  resetStore() {
     this.setState({
-      ...this.getState(),
-      animationLifeTime: value,
+      ...this.initState(),
     });
   }
 }

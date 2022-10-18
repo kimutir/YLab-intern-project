@@ -7,7 +7,7 @@ export default function generateRectangle(
   scale,
   animationLifeTime
 ) {
-  ctx.lineWidth = 10;
+  ctx.lineWidth = 5;
   for (const [x, y, width, height, params] of arr) {
     if (
       y +
