@@ -19,7 +19,7 @@ export default function useAnimate(callback, isStarted) {
       // if (!veryBeginingTimeRef.current) {
       //   veryBeginingTimeRef.current = Date.now();
       // }
-      console.log("animation");
+
       // startTimeRef.current = Date.now();
       requestRef.current = requestAnimationFrame(fun);
     } else {
