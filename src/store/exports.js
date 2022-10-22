@@ -9,3 +9,4 @@ export { default as profile } from "./profile";
 export { default as countries } from "./countries";
 export { default as chat } from "./chat";
 export { default as canvas } from "./canvas";
+export { default as drawFun } from "./draw-fun";
