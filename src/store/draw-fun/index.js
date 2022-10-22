@@ -48,7 +48,7 @@ class DrawFun extends StateModule {
         x: e.offsetX + scroll.x,
         y: e.offsetY + scroll.y,
       };
-      console.log("cursorPrev:", cursorPrev);
+      // console.log("cursorPrev:", cursorPrev);
 
       // // масштабируем его
       // const center = {
