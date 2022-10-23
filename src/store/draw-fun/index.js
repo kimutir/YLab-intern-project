@@ -66,8 +66,6 @@ class DrawFun extends StateModule {
         ...this.getState(),
         scroll: { x: centerCur.x - e.offsetX, y: centerCur.y - e.offsetY },
       });
-
-
     } else {
       this.setState({
         ...this.getState(),
@@ -116,49 +114,6 @@ class DrawFun extends StateModule {
           selected: !this.getState().circles[date].selected,
         },
       },
-    });
-  }
-
-  changeFallDistance(date, fallDistance) {
-    this.setState({
-      ...this.getState(),
-      circles: {
-        ...this.getState().circles,
-        [date]: { ...this.getState().circles[date], fallDistance },
-      },
-    });
-  }
-
-  changeScale({ mult, cursor }) {
-    const delta = this.getState().delta;
-    const scale = this.getState().scale;
-    const cursorPrev = {
-      x: cursor.x + delta.x,
-      y: cursor.y + delta.y,
-    };
-
-    const center = {
-      x: cursorPrev.x / scale,
-      y: cursorPrev.y / scale,
-    };
-
-    console.log("before", this.getState().scale * mult);
-
-    this.setState({
-      ...this.getState(),
-      scale: this.getState().scale * mult,
-    });
-
-    console.log("after", this.getState().scale * mult);
-
-    const centerCur = {
-      x: center.x * scale,
-      y: center.y * scale,
-    };
-
-    this.setState({
-      ...this.getState(),
-      delta: { x: centerCur.x - cursor.x, y: centerCur.y - cursor.y },
     });
   }
 

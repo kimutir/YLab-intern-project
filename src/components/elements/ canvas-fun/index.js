@@ -32,12 +32,9 @@ const CanvasFun = (props) => {
   React.useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     ctx.save();
-    // очистка
     ctx.fillStyle = "aliceblue";
     ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    // scroll
     ctx.translate(-props.scroll.x, -props.scroll.y);
-    // scale
     ctx.scale(props.scale, props.scale);
 
     draw({
@@ -45,6 +42,10 @@ const CanvasFun = (props) => {
       figures: props.figures,
       scroll: props.scroll,
       scale: props.scale,
+      view: {
+        width: canvasRef.current.width,
+        height: canvasRef.current.height,
+      },
     });
     ctx.restore();
   }, [props.figures, props.scroll, props.scale]);
