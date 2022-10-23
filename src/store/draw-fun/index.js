@@ -13,6 +13,7 @@ class DrawFun extends StateModule {
       isMouseDown: false,
       figures: {},
       total: 0,
+      selected: 0,
       scroll: { x: 0, y: 0 },
       scale: 1,
       cursor: {},
@@ -20,7 +21,7 @@ class DrawFun extends StateModule {
   }
 
   // добавление фигуры
-  addFigure(type, coordinates, date) {
+  addFigure({ type, coordinates, date }) {
     this.setState({
       ...this.getState(),
       total: this.getState().total + 1,
@@ -89,11 +90,51 @@ class DrawFun extends StateModule {
   }
 
   // нажатие на ЛКМ
-  setIsMouseDown() {
+  setIsMouseDown(e) {
+    const cursor = { x: e.offsetX, y: e.offsetY };
+    const figures = this.getState().figures;
+    let lastSelected = 0;
+    const prevSelected = this.getState().selected;
+    console.log("prevSelected:", prevSelected);
+
+    for (const key in figures) {
+      const [x, y, r] = figures[key].coordinates;
+      if (
+        cursor.x > x - r &&
+        cursor.x < x + r &&
+        cursor.y < y + r &&
+        cursor.y > y - r
+      ) {
+        if (key > lastSelected) {
+          lastSelected = key;
+        }
+      }
+    }
+
     this.setState({
       ...this.getState(),
-      isMouseDown: !this.getState().isMouseDown,
+      selected: lastSelected,
+      figures: lastSelected
+        ? {
+            ...this.getState().figures,
+            [lastSelected]: {
+              ...this.getState().figures[lastSelected],
+              date: 0,
+            },
+          }
+        : {
+            ...this.getState().figures,
+            [prevSelected]: {
+              ...this.getState().figures[prevSelected],
+              date: performance.now(),
+            },
+          },
     });
+
+    // this.setState({
+    //   ...this.getState(),
+    //   isMouseDown: !this.getState().isMouseDown,
+    // });
   }
 
   // отслеживание позиции курсора
@@ -104,17 +145,28 @@ class DrawFun extends StateModule {
     });
   }
 
-  changeSelected(date) {
-    this.setState({
-      ...this.getState(),
-      circles: {
-        ...this.getState().circles,
-        [date]: {
-          ...this.getState().circles[date],
-          selected: !this.getState().circles[date].selected,
-        },
-      },
-    });
+  // падение
+  fall({ height }) {
+    const figures = this.getState().figures;
+    for (const figure in figures) {
+      let [x, y, r] = figures[figure].coordinates;
+
+      // if (y + r < height) {
+      if (y + r < height && figures[figure].date) {
+        y +=
+          3 * Math.pow((performance.now() - figures[figure].date) / 10000, 2);
+        this.setState({
+          ...this.getState(),
+          figures: {
+            ...this.getState().figures,
+            [figure]: {
+              ...this.getState().figures[figure],
+              coordinates: [x, y, r],
+            },
+          },
+        });
+      }
+    }
   }
 
   resetStore() {

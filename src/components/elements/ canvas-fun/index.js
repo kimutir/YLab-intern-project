@@ -3,6 +3,7 @@ import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 import draw from "./draw-functions/draw";
+import useAnimate from "@src/hooks/use-animation";
 
 const CanvasFun = (props) => {
   const cn = bem("CanvasFun");
@@ -17,16 +18,17 @@ const CanvasFun = (props) => {
 
     canvasRef.current.addEventListener("wheel", props.onMouseWheel);
     canvasRef.current.addEventListener("mousedown", props.setIsMouseDown);
-    canvasRef.current.addEventListener("mouseup", props.setIsMouseDown);
+    // canvasRef.current.addEventListener("mouseup", props.setIsMouseDown);
   }, []);
+
+  useAnimate(() => props.fall(canvasRef.current.height), true);
 
   React.useEffect(() => {
     if (props.isMouseDown) {
       canvasRef.current.addEventListener("mousemove", props.onMouseMove);
-    }
-
-    return () =>
+    } else {
       canvasRef.current.removeEventListener("mousemove", props.onMouseMove);
+    }
   }, [props.isMouseDown]);
 
   React.useEffect(() => {
@@ -46,9 +48,10 @@ const CanvasFun = (props) => {
         width: canvasRef.current.width,
         height: canvasRef.current.height,
       },
+      selected: props.selected,
     });
     ctx.restore();
-  }, [props.figures, props.scroll, props.scale]);
+  }, [props.figures, props.scroll, props.scale, props.selected]);
 
   return (
     <div className={cn()} ref={wrapperRef}>

@@ -1,10 +1,10 @@
 import isVisible from "./isVisible";
 
-export default function draw({ ctx, figures, scroll, scale, cursor, view }) {
-  for (const figure in figures) {
+export default function draw({ ctx, figures, scroll, scale, view, selected }) {
+  for (const key in figures) {
     if (
       isVisible({
-        figure: figures[figure],
+        figure: figures[key],
         border: {
           x1: scroll.x / scale,
           x2: (view.width + scroll.x) / scale,
@@ -13,14 +13,19 @@ export default function draw({ ctx, figures, scroll, scale, cursor, view }) {
         },
       })
     ) {
-      if (figures[figure].type === "circle")
-        drawCircle({ figure: figures[figure], ctx });
+      if (figures[key].type === "circle")
+        drawCircle({
+          figure: figures[key],
+          ctx,
+          selected: key === selected,
+        });
     }
   }
 }
 
-function drawCircle({ ctx, figure }) {
+function drawCircle({ ctx, figure, selected }) {
   const [x, y, r] = figure.coordinates;
+  ctx.strokeStyle = selected ? "red" : "black";
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI);
   ctx.closePath();
