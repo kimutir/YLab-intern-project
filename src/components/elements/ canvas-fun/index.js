@@ -18,12 +18,6 @@ const CanvasFun = (props) => {
     canvasRef.current.addEventListener("wheel", props.onMouseWheel);
     canvasRef.current.addEventListener("mousedown", props.setIsMouseDown);
     canvasRef.current.addEventListener("mouseup", props.setIsMouseDown);
-
-    return () => {
-      // canvasRef.current.removeEventListener("wheel", props.onMouseWheel);
-      // canvasRef.current.removeEventListener("mousedown", props.setIsMouseDown);
-      // canvasRef.current.removeEventListener("mouseup", props.setIsMouseDown);
-    };
   }, []);
 
   React.useEffect(() => {
@@ -37,16 +31,25 @@ const CanvasFun = (props) => {
 
   React.useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
-
+    ctx.save();
+    // очистка
     ctx.fillStyle = "aliceblue";
     ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
 
+    // scroll
+    ctx.translate(props.scroll.x, props.scroll.y);
+    // scale
+    ctx.scale(props.scale, props.scale);
+
+    ctx.fillStyle = "#777";
+    ctx.fillRect(10, 50, 200, 400);
     draw({
       ctx,
       figures: props.figures,
       scroll: props.scroll,
       scale: props.scale,
     });
+    ctx.restore();
   }, [props.figures, props.scroll, props.scale]);
 
   return (

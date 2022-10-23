@@ -8,13 +8,13 @@ import CanvasFun from "@src/components/elements/ canvas-fun";
 import CanvasTools from "@src/components/elements/ canvas-fun/canvas-tools";
 import useSelector from "@src/hooks/use-selector";
 
-function DrawFun() {
+function DrawClass() {
   const store = useStore();
 
   const callbacks = {
     addCircle: React.useCallback(() => {
       store
-        .get("drawFun")
+        .get("drawClass")
         .addFigure(
           "circle",
           [Math.random() * 800, Math.random() * 700, Math.random() * 100 + 20],
@@ -23,14 +23,14 @@ function DrawFun() {
         [];
     }),
     onMouseWheel: React.useCallback((e) => {
-      store.get("drawFun").onMouseWheel(e);
+      store.get("drawClass").onMouseWheel(e);
     }, []),
     setIsMouseDown: React.useCallback(
-      () => store.get("drawFun").setIsMouseDown(),
+      () => store.get("drawClass").setIsMouseDown(),
       []
     ),
     onMouseMove: React.useCallback(
-      (e) => store.get("drawFun").onMouseMove(e),
+      (e) => store.get("drawClass").onMouseMove(e),
       []
     ),
   };
@@ -63,4 +63,4 @@ function DrawFun() {
   );
 }
 
-export default React.memo(DrawFun);
+export default React.memo(DrawClass);

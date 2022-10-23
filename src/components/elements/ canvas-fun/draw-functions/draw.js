@@ -7,15 +7,12 @@ export default function draw({ ctx, figures, scroll, scale, cursor }) {
 
 function drawCircle({ ctx, params, scale, scroll }) {
   const [x, y, r] = params.coordinates;
-  console.log("scroll:", scroll);
-  ctx.save();
-  ctx.translate(scroll.x, scroll.y);
+  // ctx.save();
   ctx.beginPath();
-  ctx.scale(scale, scale);
   ctx.arc(x, y, r, 0, 2 * Math.PI);
   ctx.closePath();
   ctx.stroke();
-  ctx.restore();
+  // ctx.restore();
 }
 
 function drawDots() {}

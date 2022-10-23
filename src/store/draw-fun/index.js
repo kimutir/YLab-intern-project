@@ -37,41 +37,40 @@ class DrawFun extends StateModule {
 
   // событие на колесо
   onMouseWheel(e) {
-    // console.log("e:", e);
     if (e.shiftKey) {
-      const value = e.deltaY > 0 ? 1.03 : 0.95;
-      const scroll = this.getState().scroll;
-      const scale = this.getState().scale;
-      // const cursor = this.getState().cursor;
+      console.log(e.offsetX);
+      const value = e.deltaY > 0 ? 0.01 : -0.01;
+      console.log(this.getState().scroll);
+      // console.log(this.getState().scale);
       // находим старый относительный центр
       const cursorPrev = {
-        x: e.offsetX + scroll.x,
-        y: e.offsetY + scroll.y,
+        x: e.offsetX + this.getState().scroll.x,
+        y: e.offsetY + this.getState().scroll.y,
       };
-      // console.log("cursorPrev:", cursorPrev);
 
       // // масштабируем его
-      // const center = {
-      //   x: cursorPrev.x / scale,
-      //   y: cursorPrev.y / scale,
-      // };
-
-      // console.log(center);
+      const center = {
+        x: cursorPrev.x / this.getState().scale,
+        y: cursorPrev.y / this.getState().scale,
+      };
 
       this.setState({
         ...this.getState(),
-        scale: Math.max(0.2, (this.getState().scale *= value)),
+        scale: Math.max(0.2, (this.getState().scale += value)),
       });
 
-      // const centerCur = {
-      //   x: center.x * scale,
-      //   y: center.y * scale,
-      // };
-      // console.log(centerCur);
-      // this.setState({
-      //   ...this.getState(),
-      //   scroll: { x: centerCur.x - e.offsetX, y: centerCur.y - e.offsetY },
-      // });
+      const centerCur = {
+        x: center.x * this.getState().scale,
+        y: center.y * this.getState().scale,
+      };
+
+      this.setState({
+        ...this.getState(),
+        scroll: { x: centerCur.x - e.offsetX, y: centerCur.y - e.offsetY },
+      });
+
+      console.log(this.getState().scroll);
+      // console.log(this.getState().scale);
     } else {
       this.setState({
         ...this.getState(),
