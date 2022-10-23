@@ -35,14 +35,11 @@ const CanvasFun = (props) => {
     // очистка
     ctx.fillStyle = "aliceblue";
     ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-
     // scroll
-    ctx.translate(props.scroll.x, props.scroll.y);
+    ctx.translate(-props.scroll.x, -props.scroll.y);
     // scale
     ctx.scale(props.scale, props.scale);
 
-    ctx.fillStyle = "#777";
-    ctx.fillRect(10, 50, 200, 400);
     draw({
       ctx,
       figures: props.figures,

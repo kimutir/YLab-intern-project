@@ -38,10 +38,8 @@ class DrawFun extends StateModule {
   // событие на колесо
   onMouseWheel(e) {
     if (e.shiftKey) {
-      console.log(e.offsetX);
-      const value = e.deltaY > 0 ? 0.01 : -0.01;
-      console.log(this.getState().scroll);
-      // console.log(this.getState().scale);
+      const value = e.deltaY > 0 ? 1.1 : 0.9;
+
       // находим старый относительный центр
       const cursorPrev = {
         x: e.offsetX + this.getState().scroll.x,
@@ -56,7 +54,7 @@ class DrawFun extends StateModule {
 
       this.setState({
         ...this.getState(),
-        scale: Math.max(0.2, (this.getState().scale += value)),
+        scale: Math.max(0.2, (this.getState().scale *= value)),
       });
 
       const centerCur = {
@@ -69,8 +67,7 @@ class DrawFun extends StateModule {
         scroll: { x: centerCur.x - e.offsetX, y: centerCur.y - e.offsetY },
       });
 
-      console.log(this.getState().scroll);
-      // console.log(this.getState().scale);
+
     } else {
       this.setState({
         ...this.getState(),
@@ -87,8 +84,8 @@ class DrawFun extends StateModule {
     this.setState({
       ...this.getState(),
       scroll: {
-        x: (this.getState().scroll.x += e.movementX),
-        y: (this.getState().scroll.y += e.movementY),
+        x: (this.getState().scroll.x -= e.movementX),
+        y: (this.getState().scroll.y -= e.movementY),
       },
     });
   }

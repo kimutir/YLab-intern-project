@@ -5,14 +5,12 @@ export default function draw({ ctx, figures, scroll, scale, cursor }) {
   }
 }
 
-function drawCircle({ ctx, params, scale, scroll }) {
+function drawCircle({ ctx, params }) {
   const [x, y, r] = params.coordinates;
-  // ctx.save();
   ctx.beginPath();
   ctx.arc(x, y, r, 0, 2 * Math.PI);
   ctx.closePath();
   ctx.stroke();
-  // ctx.restore();
 }
 
 function drawDots() {}
