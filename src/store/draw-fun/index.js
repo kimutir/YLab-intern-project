@@ -1,3 +1,4 @@
+import clicked from "@src/components/elements/ canvas-fun/draw-functions/clicked";
 import StateModule from "@src/store/module";
 
 /**
@@ -10,6 +11,7 @@ class DrawFun extends StateModule {
    */
   initState() {
     return {
+      deltaMouse: 0,
       isMouseDown: false,
       figures: {},
       total: 0,
@@ -80,61 +82,118 @@ class DrawFun extends StateModule {
 
   // перемещение курсором
   onMouseMove(e) {
-    this.setState({
-      ...this.getState(),
-      scroll: {
-        x: (this.getState().scroll.x -= e.movementX),
-        y: (this.getState().scroll.y -= e.movementY),
-      },
-    });
-  }
-
-  // нажатие на ЛКМ
-  setIsMouseDown(e) {
     const cursor = { x: e.offsetX, y: e.offsetY };
     const figures = this.getState().figures;
-    let lastSelected = 0;
-    const prevSelected = this.getState().selected;
-    console.log("prevSelected:", prevSelected);
+    const selected = this.getState().selected;
+    const scroll = this.getState().scroll;
 
     for (const key in figures) {
       const [x, y, r] = figures[key].coordinates;
       if (
-        cursor.x > x - r &&
-        cursor.x < x + r &&
-        cursor.y < y + r &&
-        cursor.y > y - r
+        cursor.x + scroll.x > x - r &&
+        cursor.x + scroll.x < x + r &&
+        cursor.y + scroll.y < y + r &&
+        cursor.y + scroll.y > y - r
+      ) {
+        if (key === selected && this.getState().isMouseDown) {
+          this.setState({
+            ...this.getState(),
+            figures: {
+              ...this.getState().figures,
+              [key]: {
+                ...this.getState().figures[key],
+                coordinates: [
+                  cursor.x + scroll.x - this.getState().deltaMouse.x,
+                  cursor.y + scroll.y - this.getState().deltaMouse.y,
+                  r,
+                ],
+              },
+            },
+          });
+        }
+      } else {
+        this.getState().isMouseDown &&
+          !selected &&
+          this.setState({
+            ...this.getState(),
+            scroll: {
+              x: (this.getState().scroll.x -= e.movementX),
+              y: (this.getState().scroll.y -= e.movementY),
+            },
+          });
+      }
+    }
+  }
+
+  // нажатие на ЛКМ
+  onMouseDown(e) {
+    const cursor = { x: e.offsetX, y: e.offsetY };
+    const figures = this.getState().figures;
+    let lastSelected = 0;
+    const prevSelected = this.getState().selected;
+    const scroll = this.getState().scroll;
+
+    for (const key in figures) {
+      const [x, y, r] = figures[key].coordinates;
+      if (
+        clicked({ figure: figures[key], cursor, scroll })
+        // cursor.x + scroll.x > x - r &&
+        // cursor.x + scroll.x < x + r &&
+        // cursor.y + scroll.y < y + r &&
+        // cursor.y + scroll.y > y - r
       ) {
         if (key > lastSelected) {
           lastSelected = key;
         }
+
+        this.setState({
+          ...this.getState(),
+          deltaMouse: { x: cursor.x - x, y: cursor.y - y },
+        });
+      } else {
       }
+    }
+
+    if (prevSelected) {
+      this.setState({
+        ...this.getState(),
+        selected: 0,
+        figures: {
+          ...this.getState().figures,
+          [prevSelected]: {
+            ...this.getState().figures[prevSelected],
+            date: performance.now(),
+          },
+        },
+      });
+    }
+
+    if (lastSelected) {
+      this.setState({
+        ...this.getState(),
+        selected: lastSelected,
+        figures: {
+          ...this.getState().figures,
+          [lastSelected]: {
+            ...this.getState().figures[lastSelected],
+            date: 0,
+          },
+        },
+      });
     }
 
     this.setState({
       ...this.getState(),
-      selected: lastSelected,
-      figures: lastSelected
-        ? {
-            ...this.getState().figures,
-            [lastSelected]: {
-              ...this.getState().figures[lastSelected],
-              date: 0,
-            },
-          }
-        : {
-            ...this.getState().figures,
-            [prevSelected]: {
-              ...this.getState().figures[prevSelected],
-              date: performance.now(),
-            },
-          },
+      isMouseDown: true,
     });
+  }
 
-    // this.setState({
-    //   ...this.getState(),
-    //   isMouseDown: !this.getState().isMouseDown,
-    // });
+  onMouseUp() {
+    this.setState({
+      ...this.getState(),
+      isMouseDown: false,
+      deltaMouse: 0,
+    });
   }
 
   // отслеживание позиции курсора
@@ -146,7 +205,7 @@ class DrawFun extends StateModule {
   }
 
   // падение
-  fall({ height }) {
+  onFall({ height }) {
     const figures = this.getState().figures;
     for (const figure in figures) {
       let [x, y, r] = figures[figure].coordinates;
@@ -167,6 +226,23 @@ class DrawFun extends StateModule {
         });
       }
     }
+  }
+
+  // изменение параметров
+  onSubmitChanges(coordinates) {
+    const selected = this.getState().selected;
+
+    this.setState({
+      ...this.getState(),
+      figures: {
+        ...this.getState().figures,
+        [selected]: {
+          ...this.getState().figures[selected],
+          coordinates,
+          date: performance.now(),
+        },
+      },
+    });
   }
 
   resetStore() {

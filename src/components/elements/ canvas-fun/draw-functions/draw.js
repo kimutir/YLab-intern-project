@@ -1,9 +1,9 @@
-import isVisible from "./isVisible";
+import visible from "./visible";
 
 export default function draw({ ctx, figures, scroll, scale, view, selected }) {
   for (const key in figures) {
     if (
-      isVisible({
+      visible({
         figure: figures[key],
         border: {
           x1: scroll.x / scale,

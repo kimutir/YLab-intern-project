@@ -17,18 +17,21 @@ const CanvasFun = (props) => {
     canvasRef.current.height = height;
 
     canvasRef.current.addEventListener("wheel", props.onMouseWheel);
-    canvasRef.current.addEventListener("mousedown", props.setIsMouseDown);
-    // canvasRef.current.addEventListener("mouseup", props.setIsMouseDown);
+    canvasRef.current.addEventListener("mousedown", props.onMouseDown);
+    canvasRef.current.addEventListener("mouseup", props.onMouseUp);
+    canvasRef.current.addEventListener("mousemove", props.onMouseMove);
   }, []);
 
-  useAnimate(() => props.fall(canvasRef.current.height), true);
+  useAnimate(() => props.onFall(canvasRef.current.height), true);
+
+  // console.log("render");
 
   React.useEffect(() => {
-    if (props.isMouseDown) {
-      canvasRef.current.addEventListener("mousemove", props.onMouseMove);
-    } else {
-      canvasRef.current.removeEventListener("mousemove", props.onMouseMove);
-    }
+    // if (props.isMouseDown) {
+    //   canvasRef.current.addEventListener("mousemove", props.onMouseMove);
+    // } else {
+    //   canvasRef.current.removeEventListener("mousemove", props.onMouseMove);
+    // }
   }, [props.isMouseDown]);
 
   React.useEffect(() => {
@@ -51,6 +54,8 @@ const CanvasFun = (props) => {
       selected: props.selected,
     });
     ctx.restore();
+
+    // requestAnimationFrame(() => props.fall(canvasRef.current.height));
   }, [props.figures, props.scroll, props.scale, props.selected]);
 
   return (

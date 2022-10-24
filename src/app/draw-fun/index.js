@@ -28,16 +28,21 @@ function DrawFun() {
     onMouseWheel: React.useCallback((e) => {
       store.get("drawFun").onMouseWheel(e);
     }, []),
-    setIsMouseDown: React.useCallback(
-      (e) => store.get("drawFun").setIsMouseDown(e),
+    onMouseDown: React.useCallback(
+      (e) => store.get("drawFun").onMouseDown(e),
       []
     ),
+    onMouseUp: React.useCallback(() => store.get("drawFun").onMouseUp(), []),
     onMouseMove: React.useCallback(
       (e) => store.get("drawFun").onMouseMove(e),
       []
     ),
-    fall: React.useCallback(
-      (height) => store.get("drawFun").fall({ height }),
+    onFall: React.useCallback(
+      (height) => store.get("drawFun").onFall({ height }),
+      []
+    ),
+    onSubmitChanges: React.useCallback(
+      (args) => store.get("drawFun").onSubmitChanges(args),
       []
     ),
   };
@@ -56,17 +61,22 @@ function DrawFun() {
       <HeadContainer />
       <ToolsContainer />
       <CanvasTools addCircle={callbacks.addCircle} />
-      <CanvasSetting />
+      <CanvasSetting
+        selected={select.selected}
+        figures={select.figures}
+        onSubmitChanges={callbacks.onSubmitChanges}
+      />
       <CanvasFun
         figures={select.figures}
         scroll={select.scroll}
         scale={select.scale}
         onMouseWheel={callbacks.onMouseWheel}
         onMouseMove={callbacks.onMouseMove}
-        setIsMouseDown={callbacks.setIsMouseDown}
+        onMouseDown={callbacks.onMouseDown}
+        onMouseUp={callbacks.onMouseUp}
         isMouseDown={select.isMouseDown}
         selected={select.selected}
-        fall={callbacks.fall}
+        onFall={callbacks.onFall}
       />
     </Layout>
   );

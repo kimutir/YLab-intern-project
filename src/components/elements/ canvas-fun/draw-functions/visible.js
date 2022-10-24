@@ -1,4 +1,4 @@
-export default function isVisible({ figure, border }) {
+export default function visible({ figure, border }) {
   if (figure.type === "circle") {
     const [x, y, r] = figure.coordinates;
     return (
