@@ -3,6 +3,7 @@ import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 import SettingCircle from "./setting-items/setting-circle";
+import SettingTriangle from "./setting-items/setting-triangle";
 
 const CanvasSetting = (props) => {
   const cn = bem("CanvasSetting");
@@ -11,10 +12,19 @@ const CanvasSetting = (props) => {
     const selected = props.figures[props.selected];
     if (selected?.type === "circle") {
       const [x, y, r] = selected.coordinates;
-      // console.log("selected:", selected.coordinates);
 
       return (
         <SettingCircle x={x} y={y} r={r} onSubmit={props.onSubmitChanges} />
+      );
+    }
+    if (selected?.type === "triangle") {
+      const [a, b, c] = selected.coordinates;
+
+      return (
+        <SettingTriangle
+          coordinates={[a, b, c]}
+          onSubmit={props.onSubmitChanges}
+        />
       );
     }
   }, [props.selected, props.figures]);

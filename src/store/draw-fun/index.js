@@ -18,7 +18,6 @@ class DrawFun extends StateModule {
       selected: 0,
       scroll: { x: 0, y: 0 },
       scale: 1,
-      cursor: {},
     };
   }
 
@@ -82,34 +81,22 @@ class DrawFun extends StateModule {
 
   // перемещение курсором
   onMouseMove(e) {
+    // console.log("e:", e);
     const cursor = { x: e.offsetX, y: e.offsetY };
     const figures = this.getState().figures;
     const selected = this.getState().selected;
     const scroll = this.getState().scroll;
+    const scale = this.getState().scale;
 
     for (const key in figures) {
-      const [x, y, r] = figures[key].coordinates;
-      if (
-        cursor.x + scroll.x > x - r &&
-        cursor.x + scroll.x < x + r &&
-        cursor.y + scroll.y < y + r &&
-        cursor.y + scroll.y > y - r
-      ) {
+      if (clicked({ figure: figures[key], cursor, scroll, scale })) {
         if (key === selected && this.getState().isMouseDown) {
-          this.setState({
-            ...this.getState(),
-            figures: {
-              ...this.getState().figures,
-              [key]: {
-                ...this.getState().figures[key],
-                coordinates: [
-                  cursor.x + scroll.x - this.getState().deltaMouse.x,
-                  cursor.y + scroll.y - this.getState().deltaMouse.y,
-                  r,
-                ],
-              },
-            },
-          });
+          if (figures[key].type === "circle") {
+            this.#moveCircle({ figures, key, scale, e });
+          }
+          if (figures[key].type === "triangle") {
+            this.#moveTriangle({ figures, key, scale, e });
+          }
         }
       } else {
         this.getState().isMouseDown &&
@@ -125,6 +112,41 @@ class DrawFun extends StateModule {
     }
   }
 
+  #moveCircle({ figures, key, scale, e }) {
+    let [x, y, r] = figures[key].coordinates;
+    this.setState({
+      ...this.getState(),
+      figures: {
+        ...this.getState().figures,
+        [key]: {
+          ...this.getState().figures[key],
+          coordinates: [
+            (x += (e.movementX / scale) * 1.43),
+            (y += (e.movementY / scale) * 1.43),
+            r,
+          ],
+        },
+      },
+    });
+  }
+  #moveTriangle({ figures, key, scale, e }) {
+    const coordinates = figures[key].coordinates;
+    coordinates.forEach((i) => {
+      i[0] += (e.movementX / scale) * 1.43;
+      i[1] += (e.movementY / scale) * 1.43;
+    });
+    this.setState({
+      ...this.getState(),
+      figures: {
+        ...this.getState().figures,
+        [key]: {
+          ...this.getState().figures[key],
+          coordinates: coordinates,
+        },
+      },
+    });
+  }
+
   // нажатие на ЛКМ
   onMouseDown(e) {
     const cursor = { x: e.offsetX, y: e.offsetY };
@@ -132,25 +154,14 @@ class DrawFun extends StateModule {
     let lastSelected = 0;
     const prevSelected = this.getState().selected;
     const scroll = this.getState().scroll;
+    const scale = this.getState().scale;
 
     for (const key in figures) {
       const [x, y, r] = figures[key].coordinates;
-      if (
-        clicked({ figure: figures[key], cursor, scroll })
-        // cursor.x + scroll.x > x - r &&
-        // cursor.x + scroll.x < x + r &&
-        // cursor.y + scroll.y < y + r &&
-        // cursor.y + scroll.y > y - r
-      ) {
+      if (clicked({ figure: figures[key], cursor, scroll, scale })) {
         if (key > lastSelected) {
           lastSelected = key;
         }
-
-        this.setState({
-          ...this.getState(),
-          deltaMouse: { x: cursor.x - x, y: cursor.y - y },
-        });
-      } else {
       }
     }
 
@@ -187,47 +198,75 @@ class DrawFun extends StateModule {
       isMouseDown: true,
     });
   }
-
   onMouseUp() {
     this.setState({
       ...this.getState(),
       isMouseDown: false,
       deltaMouse: 0,
-    });
-  }
-
-  // отслеживание позиции курсора
-  setCursor(cursor) {
-    this.setState({
-      ...this.getState(),
-      cursor,
+      // figures: {
+      //   ...this.getState().figures,
+      //   [prevSelected]: {
+      //     ...this.getState().figures[prevSelected],
+      //     date: performance.now(),
+      //   },
+      // },
     });
   }
 
   // падение
   onFall({ height }) {
     const figures = this.getState().figures;
-    for (const figure in figures) {
-      let [x, y, r] = figures[figure].coordinates;
-
-      // if (y + r < height) {
-      if (y + r < height && figures[figure].date) {
-        y +=
-          3 * Math.pow((performance.now() - figures[figure].date) / 10000, 2);
-        this.setState({
-          ...this.getState(),
-          figures: {
-            ...this.getState().figures,
-            [figure]: {
-              ...this.getState().figures[figure],
-              coordinates: [x, y, r],
-            },
-          },
-        });
+    for (const key in figures) {
+      if (figures[key].type === "circle") {
+        this.#fallCircle({ key, figures, height });
+      }
+      if (figures[key].type === "triangle") {
+        this.#fallTriangle({ key, figures, height });
       }
     }
   }
+  #fallCircle({ key, figures, height }) {
+    let [x, y, r] = figures[key].coordinates;
 
+    if (y + r < height && figures[key].date) {
+      y += 3 * Math.pow((performance.now() - figures[key].date) / 10000, 2);
+      this.setState({
+        ...this.getState(),
+        figures: {
+          ...this.getState().figures,
+          [key]: {
+            ...this.getState().figures[key],
+            coordinates: [x, y, r],
+          },
+        },
+      });
+    }
+  }
+
+  #fallTriangle({ key, figures, height }) {
+    const y = [];
+    const coordinates = figures[key].coordinates;
+    coordinates.forEach((i) => y.push(i[1]));
+    let yMax = Math.max(...y);
+
+    if (yMax < height && figures[key].date) {
+      coordinates.forEach((i) => {
+        i[1] +=
+          3 * Math.pow((performance.now() - figures[key].date) / 10000, 2);
+      });
+
+      this.setState({
+        ...this.getState(),
+        figures: {
+          ...this.getState().figures,
+          [key]: {
+            ...this.getState().figures[key],
+            coordinates: coordinates,
+          },
+        },
+      });
+    }
+  }
   // изменение параметров
   onSubmitChanges(coordinates) {
     const selected = this.getState().selected;
@@ -245,6 +284,7 @@ class DrawFun extends StateModule {
     });
   }
 
+  // сброс стора
   resetStore() {
     this.setState({
       ...this.initState(),

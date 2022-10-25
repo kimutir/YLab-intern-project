@@ -14,6 +14,7 @@ const SettingCircle = (props) => {
     setX(props.x);
     setY(props.y);
     setR(props.r);
+    console.log(props.y);
   }, [props]);
 
   return (

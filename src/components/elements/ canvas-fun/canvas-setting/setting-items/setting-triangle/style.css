@@ -1,0 +1,7 @@
+.SettingTriangle input {
+  width: 100px;
+}
+
+.SettingTriangle {
+  display: flex;
+}

@@ -24,23 +24,12 @@ const CanvasFun = (props) => {
 
   useAnimate(() => props.onFall(canvasRef.current.height), true);
 
-  // console.log("render");
-
-  React.useEffect(() => {
-    // if (props.isMouseDown) {
-    //   canvasRef.current.addEventListener("mousemove", props.onMouseMove);
-    // } else {
-    //   canvasRef.current.removeEventListener("mousemove", props.onMouseMove);
-    // }
-  }, [props.isMouseDown]);
-
   React.useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     ctx.save();
     ctx.fillStyle = "aliceblue";
     ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     ctx.translate(-props.scroll.x, -props.scroll.y);
-    ctx.scale(props.scale, props.scale);
 
     draw({
       ctx,
@@ -54,8 +43,6 @@ const CanvasFun = (props) => {
       selected: props.selected,
     });
     ctx.restore();
-
-    // requestAnimationFrame(() => props.fall(canvasRef.current.height));
   }, [props.figures, props.scroll, props.scale, props.selected]);
 
   return (

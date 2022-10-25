@@ -8,6 +8,7 @@ import CanvasFun from "@src/components/elements/ canvas-fun";
 import CanvasTools from "@src/components/elements/ canvas-fun/canvas-tools";
 import useSelector from "@src/hooks/use-selector";
 import CanvasSetting from "@src/components/elements/ canvas-fun/canvas-setting";
+import LayoutFlex from "@src/components/layouts/layout-flex";
 
 function DrawFun() {
   const store = useStore();
@@ -25,6 +26,19 @@ function DrawFun() {
       }),
         [];
     }),
+    addTriangle: React.useCallback(() => {
+      const xStart = Math.random() * 800;
+      const yStart = Math.random() * 500;
+      store.get("drawFun").addFigure({
+        type: "triangle",
+        coordinates: [
+          [xStart, yStart],
+          [xStart + Math.random() * 200, yStart + Math.random() * 300],
+          [xStart + Math.random() * 100, yStart + Math.random() * 350],
+        ],
+        date: performance.now(),
+      });
+    }, []),
     onMouseWheel: React.useCallback((e) => {
       store.get("drawFun").onMouseWheel(e);
     }, []),
@@ -60,12 +74,17 @@ function DrawFun() {
       <TopContainer />
       <HeadContainer />
       <ToolsContainer />
-      <CanvasTools addCircle={callbacks.addCircle} />
-      <CanvasSetting
-        selected={select.selected}
-        figures={select.figures}
-        onSubmitChanges={callbacks.onSubmitChanges}
-      />
+      <LayoutFlex>
+        <CanvasTools
+          addCircle={callbacks.addCircle}
+          addTriangle={callbacks.addTriangle}
+        />
+        <CanvasSetting
+          selected={select.selected}
+          figures={select.figures}
+          onSubmitChanges={callbacks.onSubmitChanges}
+        />
+      </LayoutFlex>
       <CanvasFun
         figures={select.figures}
         scroll={select.scroll}
