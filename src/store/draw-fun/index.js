@@ -1,4 +1,5 @@
 import clicked from "@src/components/elements/ canvas-fun/draw-functions/clicked";
+import { leaves } from "@src/components/elements/ canvas-fun/leaves";
 import StateModule from "@src/store/module";
 
 /**
@@ -22,19 +23,43 @@ class DrawFun extends StateModule {
   }
 
   // добавление фигуры
-  addFigure({ type, coordinates, date }) {
+  addFigure({ type, coordinates, date, animation }) {
     this.setState({
       ...this.getState(),
       total: this.getState().total + 1,
     });
+    if (type === "leave") {
+      const img = new Image();
+      img.src = leaves[`leave${Math.floor(Math.random() * 5 + 1)}`];
 
-    this.setState({
-      ...this.getState(),
-      figures: {
-        ...this.getState().figures,
-        [this.getState().total]: { type, coordinates, date, selected: false },
-      },
-    });
+      this.setState({
+        ...this.getState(),
+        figures: {
+          ...this.getState().figures,
+          [this.getState().total]: {
+            type,
+            coordinates,
+            date,
+            selected: false,
+            img,
+            animation,
+          },
+        },
+      });
+    } else {
+      this.setState({
+        ...this.getState(),
+        figures: {
+          ...this.getState().figures,
+          [this.getState().total]: {
+            type,
+            coordinates,
+            date,
+            selected: false,
+          },
+        },
+      });
+    }
   }
 
   // событие на колесо
@@ -223,6 +248,9 @@ class DrawFun extends StateModule {
       if (figures[key].type === "triangle") {
         this.#fallTriangle({ key, figures, height });
       }
+      if (figures[key].type === "leave") {
+        this.#fallLeave({ key, figures, height });
+      }
     }
   }
   #fallCircle({ key, figures, height }) {
@@ -241,6 +269,83 @@ class DrawFun extends StateModule {
         },
       });
     }
+  }
+  #fallLeave({ key, figures, height }) {
+    let [x, y, width] = figures[key].coordinates;
+    const startOffset = figures[key].animation.offset.start;
+    const duraction = figures[key].animation.offset.duraction;
+    const directionOffset = figures[key].animation.offset.direction;
+    const directionAngle = figures[key].animation.rotation.direction;
+    let angle = figures[key].animation.rotation.angle;
+    if (performance.now() - startOffset > duraction * 1000) {
+      this.#changeLeaveAnimation({ key });
+    }
+    if (y < height && figures[key].date) {
+      y +=
+        Math.random() * 0.5 +
+        4 * Math.pow((performance.now() - figures[key].date) / 10000, 2);
+      x +=
+        directionOffset === 1
+          ? Math.random() * 0.6
+          : -(Math.random() * 0.6) +
+            4 *
+              Math.pow((performance.now() - startOffset) / 10000, 6) *
+              directionOffset;
+
+      y -= 2 * Math.pow((performance.now() - startOffset) / 10000, 5);
+
+      angle +=
+        directionAngle === 1
+          ? Math.random() * 4 + 1
+          : -(Math.random() * 4 + 1) +
+            4 *
+              Math.pow((performance.now() - startOffset) / 10000, 2) *
+              directionAngle;
+      this.setState({
+        ...this.getState(),
+        figures: {
+          ...this.getState().figures,
+          [key]: {
+            ...this.getState().figures[key],
+            coordinates: [x, y, width],
+            animation: {
+              ...this.getState().figures[key].animation,
+              rotation: { angle, direction: directionAngle },
+            },
+          },
+        },
+      });
+    }
+  }
+
+  #changeLeaveAnimation({ key }) {
+    const directionOffset =
+      this.getState().figures[key].animation.offset.direction;
+    const directionAngle =
+      this.getState().figures[key].animation.rotation.direction;
+
+    this.setState({
+      ...this.getState(),
+      figures: {
+        ...this.getState().figures,
+        [key]: {
+          ...this.getState().figures[key],
+          animation: {
+            ...this.getState().figures[key].animation,
+            offset: {
+              ...this.getState().figures[key].animation.offset,
+              duraction: Math.random() * 5 + 3,
+              direction: directionOffset === 1 ? -1 : 1,
+              start: performance.now(),
+            },
+            rotation: {
+              ...this.getState().figures[key].animation.rotation,
+              direction: directionAngle === 1 ? -1 : 1,
+            },
+          },
+        },
+      },
+    });
   }
 
   #fallTriangle({ key, figures, height }) {

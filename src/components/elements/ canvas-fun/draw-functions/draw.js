@@ -2,6 +2,12 @@ import visible from "./visible";
 
 export default function draw({ ctx, figures, scroll, scale, view, selected }) {
   for (const key in figures) {
+    if (figures[key].type === "leave") {
+      drawLeave({
+        figure: figures[key],
+        ctx,
+      });
+    }
     if (
       visible({
         figure: figures[key],
@@ -51,4 +57,17 @@ function drawTriangle({ ctx, figure, selected, scale }) {
   ctx.lineTo(c[0] * scale, c[1] * scale);
   ctx.closePath();
   ctx.stroke();
+}
+
+function drawLeave({ ctx, figure }) {
+  const [x, y, width] = figure.coordinates;
+  const angle = figure.animation.rotation.angle;
+
+  ctx.save();
+  ctx.translate(x + width / 2, y + width / 2);
+  ctx.rotate((angle * Math.PI) / 180);
+  ctx.translate(-x - width / 2, -y - width / 2);
+
+  ctx.drawImage(figure.img, x, y, width, width);
+  ctx.restore();
 }

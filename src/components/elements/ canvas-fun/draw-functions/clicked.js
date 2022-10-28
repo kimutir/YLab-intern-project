@@ -36,13 +36,13 @@ function clickedTriangle({ coordinates, cursor, scroll, scale }) {
   });
 
   const a =
-    (x[0] - cursor.x + scroll.x) * (y[1] - y[0]) -
-    (x[1] - x[0]) * (y[0] - cursor.y + scroll.y);
+    (x[0] * scale - cursor.x - scroll.x) * (y[1] - y[0]) -
+    (x[1] - x[0]) * (y[0] * scale - cursor.y - scroll.y);
   const b =
-    (x[1] - cursor.x + scroll.x) * (y[2] - y[1]) -
-    (x[2] - x[1]) * (y[1] - cursor.y + scroll.y);
+    (x[1] * scale - cursor.x - scroll.x) * (y[2] - y[1]) -
+    (x[2] - x[1]) * (y[1] * scale - cursor.y - scroll.y);
   const c =
-    (x[2] - cursor.x + scroll.x) * (y[0] - y[2]) -
-    (x[0] - x[2]) * (y[2] - cursor.y + scroll.y);
+    (x[2] * scale - cursor.x - scroll.x) * (y[0] - y[2]) -
+    (x[0] - x[2]) * (y[2] * scale - cursor.y - scroll.y);
   return Math.sign(a) === Math.sign(b) && Math.sign(b) === Math.sign(c);
 }

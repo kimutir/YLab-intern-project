@@ -4,6 +4,7 @@ import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 import draw from "./draw-functions/draw";
 import useAnimate from "@src/hooks/use-animation";
+import leave1 from "@src/img/leaves/leave1.png";
 
 const CanvasFun = (props) => {
   const cn = bem("CanvasFun");
@@ -16,10 +17,16 @@ const CanvasFun = (props) => {
     canvasRef.current.width = width;
     canvasRef.current.height = height;
 
+    console.log("render from useEffect");
+
     canvasRef.current.addEventListener("wheel", props.onMouseWheel);
     canvasRef.current.addEventListener("mousedown", props.onMouseDown);
     canvasRef.current.addEventListener("mouseup", props.onMouseUp);
     canvasRef.current.addEventListener("mousemove", props.onMouseMove);
+    console.log("leave1:", leave1);
+    return () => {
+      // canvasRef.current.removeEventListener("mousemove", props.onMouseMove);
+    };
   }, []);
 
   useAnimate(() => props.onFall(canvasRef.current.height), true);

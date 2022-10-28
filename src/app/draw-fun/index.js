@@ -13,6 +13,15 @@ import LayoutFlex from "@src/components/layouts/layout-flex";
 function DrawFun() {
   const store = useStore();
 
+  const select = useSelector((state) => ({
+    figures: state.drawFun.figures,
+    scroll: state.drawFun.scroll,
+    scale: state.drawFun.scale,
+    isMouseDown: state.drawFun.isMouseDown,
+    selected: state.drawFun.selected,
+    leaves: state.drawFun.leaves,
+  }));
+
   const callbacks = {
     addCircle: React.useCallback(() => {
       store.get("drawFun").addFigure({
@@ -23,6 +32,26 @@ function DrawFun() {
           Math.random() * 100 + 20,
         ],
         date: performance.now(),
+      }),
+        [];
+    }),
+    addLeave: React.useCallback(() => {
+      store.get("drawFun").addFigure({
+        type: "leave",
+        coordinates: [Math.random() * 800, 30, Math.random() * 20 + 40],
+        date: performance.now(),
+        animation: {
+          offset: {
+            duraction: Math.random() * 7 + 5,
+            direction: [-1, 1][Math.floor(Math.random() * 2)],
+            start: performance.now(),
+          },
+          rotation: {
+            direction: [-1, 1][Math.floor(Math.random() * 2)],
+            start: performance.now(),
+            angle: 0,
+          },
+        },
       }),
         [];
     }),
@@ -61,14 +90,6 @@ function DrawFun() {
     ),
   };
 
-  const select = useSelector((state) => ({
-    figures: state.drawFun.figures,
-    scroll: state.drawFun.scroll,
-    scale: state.drawFun.scale,
-    isMouseDown: state.drawFun.isMouseDown,
-    selected: state.drawFun.selected,
-  }));
-
   return (
     <Layout>
       <TopContainer />
@@ -78,6 +99,7 @@ function DrawFun() {
         <CanvasTools
           addCircle={callbacks.addCircle}
           addTriangle={callbacks.addTriangle}
+          addLeave={callbacks.addLeave}
         />
         <CanvasSetting
           selected={select.selected}
