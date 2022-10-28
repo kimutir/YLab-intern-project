@@ -37,6 +37,8 @@ export default function draw({ ctx, figures, scroll, scale, view, selected }) {
       }
     }
   }
+
+  drawGradient({ ctx, view });
 }
 
 function drawCircle({ ctx, figure, selected, scale }) {
@@ -70,4 +72,21 @@ function drawLeave({ ctx, figure }) {
 
   ctx.drawImage(figure.img, x, y, width, width);
   ctx.restore();
+}
+
+function drawGradient({ ctx, view }) {
+  const gradient = ctx.createLinearGradient(
+    0,
+    view.height - 250,
+    0,
+    view.height
+  );
+  gradient.addColorStop(0, "rgba(255, 255, 255, 0.05)");
+  gradient.addColorStop(0.1, "rgba(255, 255, 255, 0.15)");
+  gradient.addColorStop(0.2, "rgba(255, 255, 255, 0.25)");
+  gradient.addColorStop(0.3, "rgba(255, 255, 255, 0.55)");
+  gradient.addColorStop(0.6, "rgba(255, 255, 255, 0.83)");
+  gradient.addColorStop(1, "rgb(255, 255, 255)");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, view.height - 250, view.width, 350);
 }

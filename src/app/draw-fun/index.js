@@ -19,7 +19,6 @@ function DrawFun() {
     scale: state.drawFun.scale,
     isMouseDown: state.drawFun.isMouseDown,
     selected: state.drawFun.selected,
-    leaves: state.drawFun.leaves,
   }));
 
   const callbacks = {

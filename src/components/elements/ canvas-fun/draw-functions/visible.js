@@ -5,6 +5,9 @@ export default function visible({ figure, border }) {
   if (figure.type === "triangle") {
     return visibleTriangle({ figure, border });
   }
+  if (figure.type === "leave") {
+    return visibleLeave({ figure, border });
+  }
 }
 
 function visibleCircle({ figure, border }) {
@@ -30,5 +33,14 @@ function visibleTriangle({ figure, border }) {
 
   return (
     xMin < border.x2 && xMax > border.x1 && yMin < border.y2 && yMax > border.y1
+  );
+}
+function visibleLeave({ figure, border }) {
+  const [x, y, width] = figure.coordinates;
+  return (
+    x < border.x2 &&
+    x + width > border.x1 &&
+    y < border.y2 &&
+    y + width > border.y1
   );
 }

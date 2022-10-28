@@ -17,13 +17,10 @@ const CanvasFun = (props) => {
     canvasRef.current.width = width;
     canvasRef.current.height = height;
 
-    console.log("render from useEffect");
-
     canvasRef.current.addEventListener("wheel", props.onMouseWheel);
     canvasRef.current.addEventListener("mousedown", props.onMouseDown);
     canvasRef.current.addEventListener("mouseup", props.onMouseUp);
     canvasRef.current.addEventListener("mousemove", props.onMouseMove);
-    console.log("leave1:", leave1);
     return () => {
       // canvasRef.current.removeEventListener("mousemove", props.onMouseMove);
     };
@@ -49,6 +46,7 @@ const CanvasFun = (props) => {
       },
       selected: props.selected,
     });
+
     ctx.restore();
   }, [props.figures, props.scroll, props.scale, props.selected]);
 

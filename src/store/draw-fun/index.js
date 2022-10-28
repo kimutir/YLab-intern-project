@@ -122,6 +122,9 @@ class DrawFun extends StateModule {
           if (figures[key].type === "triangle") {
             this.#moveTriangle({ figures, key, scale, e });
           }
+          if (figures[key].type === "leave") {
+            this.#moveLeave({ figures, key, scale, e });
+          }
         }
       } else {
         this.getState().isMouseDown &&
@@ -149,6 +152,23 @@ class DrawFun extends StateModule {
             (x += (e.movementX / scale) * 1.43),
             (y += (e.movementY / scale) * 1.43),
             r,
+          ],
+        },
+      },
+    });
+  }
+  #moveLeave({ figures, key, scale, e }) {
+    let [x, y, width] = figures[key].coordinates;
+    this.setState({
+      ...this.getState(),
+      figures: {
+        ...this.getState().figures,
+        [key]: {
+          ...this.getState().figures[key],
+          coordinates: [
+            (x += (e.movementX / scale) * 1.43),
+            (y += (e.movementY / scale) * 1.43),
+            width,
           ],
         },
       },
@@ -224,17 +244,19 @@ class DrawFun extends StateModule {
     });
   }
   onMouseUp() {
+    const selected = this.getState().selected;
+
     this.setState({
       ...this.getState(),
       isMouseDown: false,
       deltaMouse: 0,
-      // figures: {
-      //   ...this.getState().figures,
-      //   [prevSelected]: {
-      //     ...this.getState().figures[prevSelected],
-      //     date: performance.now(),
-      //   },
-      // },
+      figures: {
+        ...this.getState().figures,
+        [selected]: {
+          ...this.getState().figures[selected],
+          date: performance.now(),
+        },
+      },
     });
   }
 
@@ -296,8 +318,8 @@ class DrawFun extends StateModule {
 
       angle +=
         directionAngle === 1
-          ? Math.random() * 4 + 1
-          : -(Math.random() * 4 + 1) +
+          ? Math.random() * 3 + 1
+          : -(Math.random() * 3 + 1) +
             4 *
               Math.pow((performance.now() - startOffset) / 10000, 2) *
               directionAngle;

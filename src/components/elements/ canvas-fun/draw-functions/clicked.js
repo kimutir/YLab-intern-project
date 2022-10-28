@@ -16,6 +16,14 @@ export default function clicked({ figure, cursor, scroll, scale }) {
       scale,
     });
   }
+  if (figure.type === "leave") {
+    return clickedLeave({
+      coordinates: figure.coordinates,
+      cursor,
+      scroll,
+      scale,
+    });
+  }
 }
 
 function clickedCircle({ coordinates, cursor, scroll, scale }) {
@@ -45,4 +53,17 @@ function clickedTriangle({ coordinates, cursor, scroll, scale }) {
     (x[2] * scale - cursor.x - scroll.x) * (y[0] - y[2]) -
     (x[0] - x[2]) * (y[2] * scale - cursor.y - scroll.y);
   return Math.sign(a) === Math.sign(b) && Math.sign(b) === Math.sign(c);
+}
+
+function clickedLeave({ coordinates, cursor, scale, scroll }) {
+  const [x, y, width] = coordinates;
+
+  if (
+    cursor.x + scroll.x > x * scale &&
+    cursor.x + scroll.x < x * scale + width &&
+    cursor.y + scroll.y > y * scale &&
+    cursor.y + scroll.y < y * scale + width
+  ) {
+    return true;
+  }
 }
