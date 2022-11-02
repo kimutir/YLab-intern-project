@@ -34,14 +34,14 @@ function DrawFun() {
       }),
         [];
     }),
-    addLeave: React.useCallback(() => {
+    addLeaf: React.useCallback(() => {
       store.get("drawFun").addFigure({
-        type: "leave",
-        coordinates: [Math.random() * 800, 30, Math.random() * 20 + 40],
+        type: "leaf",
+        coordinates: [Math.random() * 800, -60, Math.random() * 20 + 40],
         date: performance.now(),
         animation: {
           offset: {
-            duraction: Math.random() * 7 + 5,
+            duraction: Math.random() * 5 + 4,
             direction: [-1, 1][Math.floor(Math.random() * 2)],
             start: performance.now(),
           },
@@ -98,7 +98,7 @@ function DrawFun() {
         <CanvasTools
           addCircle={callbacks.addCircle}
           addTriangle={callbacks.addTriangle}
-          addLeave={callbacks.addLeave}
+          addLeaf={callbacks.addLeaf}
         />
         <CanvasSetting
           selected={select.selected}

@@ -5,7 +5,7 @@ export default function visible({ figure, border }) {
   if (figure.type === "triangle") {
     return visibleTriangle({ figure, border });
   }
-  if (figure.type === "leave") {
+  if (figure.type === "leaf") {
     return visibleLeave({ figure, border });
   }
 }

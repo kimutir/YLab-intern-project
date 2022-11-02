@@ -10,7 +10,7 @@ const CanvasTools = (props) => {
     <div className={cn()}>
       <button onClick={props.addCircle}>Circle</button>
       <button onClick={props.addTriangle}>Triangle</button>
-      <button onClick={props.addLeave}>Leave</button>
+      <button onClick={props.addLeaf}>Leaf</button>
     </div>
   );
 };

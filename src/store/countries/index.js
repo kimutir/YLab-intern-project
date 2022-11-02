@@ -65,7 +65,6 @@ class CountriesState extends StateModule {
     const json = await this.services.api.request({
       url: `/api/v1/countries${qs.stringify(apiParams)}`,
     });
-    // console.log("json:", json.result.items);
 
     // Установка полученных данных и сброс признака загрузки
     this.setState(

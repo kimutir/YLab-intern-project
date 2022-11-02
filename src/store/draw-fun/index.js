@@ -12,7 +12,6 @@ class DrawFun extends StateModule {
    */
   initState() {
     return {
-      deltaMouse: 0,
       isMouseDown: false,
       figures: {},
       total: 0,
@@ -28,24 +27,26 @@ class DrawFun extends StateModule {
       ...this.getState(),
       total: this.getState().total + 1,
     });
-    if (type === "leave") {
+    if (type === "leaf") {
       const img = new Image();
-      img.src = leaves[`leave${Math.floor(Math.random() * 5 + 1)}`];
+      img.src = leaves[`leaf${Math.floor(Math.random() * 5 + 1)}`];
 
-      this.setState({
-        ...this.getState(),
-        figures: {
-          ...this.getState().figures,
-          [this.getState().total]: {
-            type,
-            coordinates,
-            date,
-            selected: false,
-            img,
-            animation,
+      img.onload = () => {
+        this.setState({
+          ...this.getState(),
+          figures: {
+            ...this.getState().figures,
+            [this.getState().total]: {
+              type,
+              coordinates,
+              date,
+              selected: false,
+              img,
+              animation,
+            },
           },
-        },
-      });
+        });
+      };
     } else {
       this.setState({
         ...this.getState(),
@@ -106,7 +107,6 @@ class DrawFun extends StateModule {
 
   // перемещение курсором
   onMouseMove(e) {
-    // console.log("e:", e);
     const cursor = { x: e.offsetX, y: e.offsetY };
     const figures = this.getState().figures;
     const selected = this.getState().selected;
@@ -122,8 +122,8 @@ class DrawFun extends StateModule {
           if (figures[key].type === "triangle") {
             this.#moveTriangle({ figures, key, scale, e });
           }
-          if (figures[key].type === "leave") {
-            this.#moveLeave({ figures, key, scale, e });
+          if (figures[key].type === "leaf") {
+            this.#moveLeaf({ figures, key, scale, e });
           }
         }
       } else {
@@ -157,7 +157,7 @@ class DrawFun extends StateModule {
       },
     });
   }
-  #moveLeave({ figures, key, scale, e }) {
+  #moveLeaf({ figures, key, scale, e }) {
     let [x, y, width] = figures[key].coordinates;
     this.setState({
       ...this.getState(),
@@ -246,18 +246,23 @@ class DrawFun extends StateModule {
   onMouseUp() {
     const selected = this.getState().selected;
 
-    this.setState({
-      ...this.getState(),
-      isMouseDown: false,
-      deltaMouse: 0,
-      figures: {
-        ...this.getState().figures,
-        [selected]: {
-          ...this.getState().figures[selected],
-          date: performance.now(),
+    if (selected) {
+      this.setState({
+        ...this.getState(),
+        isMouseDown: false,
+        figures: {
+          ...this.getState().figures,
+          [selected]: {
+            ...this.getState().figures[selected],
+            date: performance.now(),
+          },
         },
-      },
-    });
+      });
+    }
+
+    if (!selected) {
+      this.setState({ ...this.getState(), isMouseDown: false });
+    }
   }
 
   // падение
@@ -270,8 +275,8 @@ class DrawFun extends StateModule {
       if (figures[key].type === "triangle") {
         this.#fallTriangle({ key, figures, height });
       }
-      if (figures[key].type === "leave") {
-        this.#fallLeave({ key, figures, height });
+      if (figures[key].type === "leaf") {
+        this.#fallLeaf({ key, figures, height });
       }
     }
   }
@@ -292,20 +297,36 @@ class DrawFun extends StateModule {
       });
     }
   }
-  #fallLeave({ key, figures, height }) {
+  #fallLeaf({ key, figures, height }) {
+    function test(time, duraction) {
+      if ((performance.now() - time) / 1000 <= duraction / 2) {
+        return Math.pow((performance.now() - time) / 4000, 2);
+      }
+      return Math.pow(1 / (performance.now() - time), 2);
+    }
+
     let [x, y, width] = figures[key].coordinates;
+    // console.log("x:", x);
     const startOffset = figures[key].animation.offset.start;
+    // console.log("startOffset:", startOffset);
     const duraction = figures[key].animation.offset.duraction;
     const directionOffset = figures[key].animation.offset.direction;
     const directionAngle = figures[key].animation.rotation.direction;
     let angle = figures[key].animation.rotation.angle;
     if (performance.now() - startOffset > duraction * 1000) {
-      this.#changeLeaveAnimation({ key });
+      this.#changeLeafAnimation({ key });
     }
     if (y < height && figures[key].date) {
       y +=
         Math.random() * 0.5 +
         4 * Math.pow((performance.now() - figures[key].date) / 10000, 2);
+
+      // x +=
+      //   // directionOffset === 1
+      //   //   ? Math.random() * x
+      //   //   : -(Math.random() * x) +
+      //   Math.random() * 2 * directionOffset;
+      // // 0.5 * directionOffset;
       x +=
         directionOffset === 1
           ? Math.random() * 0.6
@@ -314,15 +335,21 @@ class DrawFun extends StateModule {
               Math.pow((performance.now() - startOffset) / 10000, 6) *
               directionOffset;
 
-      y -= 2 * Math.pow((performance.now() - startOffset) / 10000, 5);
+      // y -= 2 * Math.pow((performance.now() - startOffset) / 10000, 5);
 
       angle +=
         directionAngle === 1
-          ? Math.random() * 3 + 1
-          : -(Math.random() * 3 + 1) +
-            4 *
-              Math.pow((performance.now() - startOffset) / 10000, 2) *
-              directionAngle;
+          ? Math.random() * 2 + 1
+          : -(Math.random() * 2 + 1) +
+            4 * test(startOffset, duraction) * directionAngle;
+      // angle +=
+      //   directionAngle === 1
+      //     ? Math.random() * 2 + 1
+      //     : -(Math.random() * 2 + 1) +
+      //       4 *
+      //         Math.pow((performance.now() - startOffset) / 10000, 2) *
+      //         directionAngle;
+
       this.setState({
         ...this.getState(),
         figures: {
@@ -340,7 +367,7 @@ class DrawFun extends StateModule {
     }
   }
 
-  #changeLeaveAnimation({ key }) {
+  #changeLeafAnimation({ key }) {
     const directionOffset =
       this.getState().figures[key].animation.offset.direction;
     const directionAngle =

@@ -7,10 +7,6 @@ import useSelector from "@src/hooks/use-selector";
 function ChatItem(props) {
   const cn = bem("ChatItem");
 
-  React.useEffect(() => {
-    // console.log(props.item.author);
-  }, []);
-
   const options = {
     weekday: "long",
     hour: "numeric",

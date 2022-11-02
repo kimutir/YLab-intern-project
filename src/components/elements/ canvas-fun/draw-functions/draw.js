@@ -1,13 +1,11 @@
 import visible from "./visible";
 
 export default function draw({ ctx, figures, scroll, scale, view, selected }) {
+  // рисуем - очищаем поле
+  drawField({ ctx, scroll, view });
+
+  // рисуем примитивы
   for (const key in figures) {
-    if (figures[key].type === "leave") {
-      drawLeave({
-        figure: figures[key],
-        ctx,
-      });
-    }
     if (
       visible({
         figure: figures[key],
@@ -19,6 +17,13 @@ export default function draw({ ctx, figures, scroll, scale, view, selected }) {
         },
       })
     ) {
+      if (figures[key].type === "leaf") {
+        drawLeaf({
+          figure: figures[key],
+          ctx,
+          scale,
+        });
+      }
       if (figures[key].type === "circle") {
         drawCircle({
           figure: figures[key],
@@ -37,8 +42,6 @@ export default function draw({ ctx, figures, scroll, scale, view, selected }) {
       }
     }
   }
-
-  drawGradient({ ctx, view });
 }
 
 function drawCircle({ ctx, figure, selected, scale }) {
@@ -61,32 +64,25 @@ function drawTriangle({ ctx, figure, selected, scale }) {
   ctx.stroke();
 }
 
-function drawLeave({ ctx, figure }) {
+function drawLeaf({ ctx, figure, scale }) {
+  console.log("leaf");
   const [x, y, width] = figure.coordinates;
   const angle = figure.animation.rotation.angle;
-
+  if (y > 210) {
+    ctx.globalAlpha = 210 / y;
+  }
   ctx.save();
-  ctx.translate(x + width / 2, y + width / 2);
-  ctx.rotate((angle * Math.PI) / 180);
-  ctx.translate(-x - width / 2, -y - width / 2);
 
-  ctx.drawImage(figure.img, x, y, width, width);
+  ctx.translate(x * scale + width / 2, y * scale + width / 2);
+  ctx.rotate((angle * Math.PI) / 180);
+  ctx.translate(-x * scale - width / 2, -y * scale - width / 2);
+
+  ctx.drawImage(figure.img, x * scale, y * scale, width, width);
   ctx.restore();
 }
 
-function drawGradient({ ctx, view }) {
-  const gradient = ctx.createLinearGradient(
-    0,
-    view.height - 250,
-    0,
-    view.height
-  );
-  gradient.addColorStop(0, "rgba(255, 255, 255, 0.05)");
-  gradient.addColorStop(0.1, "rgba(255, 255, 255, 0.15)");
-  gradient.addColorStop(0.2, "rgba(255, 255, 255, 0.25)");
-  gradient.addColorStop(0.3, "rgba(255, 255, 255, 0.55)");
-  gradient.addColorStop(0.6, "rgba(255, 255, 255, 0.83)");
-  gradient.addColorStop(1, "rgb(255, 255, 255)");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, view.height - 250, view.width, 350);
+function drawField({ ctx, scroll, view }) {
+  ctx.fillStyle = "aliceblue";
+  ctx.fillRect(0, 0, view.width, view.height);
+  ctx.translate(-scroll.x, -scroll.y);
 }

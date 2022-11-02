@@ -4,7 +4,6 @@ import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 import draw from "./draw-functions/draw";
 import useAnimate from "@src/hooks/use-animation";
-import leave1 from "@src/img/leaves/leave1.png";
 
 const CanvasFun = (props) => {
   const cn = bem("CanvasFun");
@@ -17,12 +16,15 @@ const CanvasFun = (props) => {
     canvasRef.current.width = width;
     canvasRef.current.height = height;
 
-    canvasRef.current.addEventListener("wheel", props.onMouseWheel);
-    canvasRef.current.addEventListener("mousedown", props.onMouseDown);
+    const canvas = canvasRef.current;
+
+    canvas.addEventListener("wheel", props.onMouseWheel);
+    canvas.addEventListener("mousedown", props.onMouseDown);
     canvasRef.current.addEventListener("mouseup", props.onMouseUp);
     canvasRef.current.addEventListener("mousemove", props.onMouseMove);
     return () => {
-      // canvasRef.current.removeEventListener("mousemove", props.onMouseMove);
+      canvas.removeEventListener("wheel", props.onMouseWheel);
+      canvas.removeEventListener("mousedown", props.onMouseDown);
     };
   }, []);
 
@@ -31,10 +33,6 @@ const CanvasFun = (props) => {
   React.useEffect(() => {
     const ctx = canvasRef.current.getContext("2d");
     ctx.save();
-    ctx.fillStyle = "aliceblue";
-    ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-    ctx.translate(-props.scroll.x, -props.scroll.y);
-
     draw({
       ctx,
       figures: props.figures,
@@ -46,7 +44,6 @@ const CanvasFun = (props) => {
       },
       selected: props.selected,
     });
-
     ctx.restore();
   }, [props.figures, props.scroll, props.scale, props.selected]);
 

@@ -16,7 +16,7 @@ export default function clicked({ figure, cursor, scroll, scale }) {
       scale,
     });
   }
-  if (figure.type === "leave") {
+  if (figure.type === "leaf") {
     return clickedLeave({
       coordinates: figure.coordinates,
       cursor,
