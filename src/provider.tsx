@@ -1,16 +1,24 @@
-import React from 'react';
+import React from "react";
 import propTypes from "prop-types";
 
 /**
  * Контекст для Services
  * @type {React.Context<{}>}
  */
-export const ServicesContext = React.createContext({});
+
+interface IServicesContext {}
+
+interface ServicesProviderProps {
+  services: any;
+  children: any;
+}
+
+export const ServicesContext = React.createContext({} as IServicesContext);
 
 /**
  * Провайдер Services.
  */
-function ServicesProvider({services, children}) {
+function ServicesProvider({ services, children }: ServicesProviderProps) {
   return (
     <ServicesContext.Provider value={services}>
       {children}
@@ -22,8 +30,8 @@ ServicesProvider.propTypes = {
   services: propTypes.object.isRequired,
   children: propTypes.oneOfType([
     propTypes.arrayOf(propTypes.node),
-    propTypes.node
+    propTypes.node,
   ]).isRequired,
-}
+};
 
 export default React.memo(ServicesProvider);

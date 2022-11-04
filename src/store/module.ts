@@ -1,9 +1,17 @@
+import { IStore } from "@src/interfaces/interface-store";
+
 class StateModule {
   /**
    * @param store {Store}
    * @param config {Object}
    */
-  constructor(store, config) {
+  store: IStore;
+  config: {
+    name: string;
+  };
+  services: any;
+
+  constructor(store: IStore, config: { name: string }) {
     this.store = store;
     this.config = config;
     this.services = store.services;
@@ -25,7 +33,7 @@ class StateModule {
     return this.store.getState()[this.config.name];
   }
 
-  setState(newState, description = "setState") {
+  setState(newState, description: string = "setState") {
     this.store.setState(
       {
         ...this.store.getState(),

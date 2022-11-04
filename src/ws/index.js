@@ -32,7 +32,7 @@ class WSService {
 
     this.socket.onclose = (res) => {
       if (!res.wasClean) {
-        this.connect(token, success, onclose);
+        this.connect(token, callback, onclose);
       } else {
         onclose();
       }

@@ -1,13 +1,19 @@
-import * as modules from "./exports.js";
+import * as modules from "@src/store/exports";
 
 class Store {
+  services: object;
+  config: any;
+  state: any;
+  listeners: any[];
+  modules: any;
   /**
    * @param services {Services}
    * @param config {Object}
    */
-  constructor(services, config = {}) {
+  constructor(services: object, config: any) {
     // Менеджер сервисов
     this.services = services;
+
     this.config = {
       log: false,
       ...config,
@@ -17,29 +23,30 @@ class Store {
     // Слушатели изменений state
     this.listeners = [];
 
+    this.state.prop = 1;
     // Модули
     this.modules = {};
     for (const name of Object.keys(modules)) {
       // Экземпляр модуля. Передаём ему ссылку на store и навзание модуля.
       this.modules[name] = new modules[name](this, {
         name,
-        ...(this.config.modules[name] || {}),
+        ...(this.config.modules ? this.config.modules[name] : {}),
       });
       // По названию модля устанавливается свойство с анчальным состоянием от модуля
       this.state[name] = this.modules[name].initState();
     }
   }
 
-  newState(name, newName) {
+  newState(name: string, newName: string): void {
     this.modules[newName] = new modules[name](this, {
       name: newName,
-      ...(this.config.modules[name] || {}),
+      ...(this.config.modules ? this.config.modules[name] : {}),
     });
     this.state[newName] = this.modules[newName].initState();
     console.log("modules before", this.modules);
   }
 
-  removeState(name) {
+  removeState(name: string): void {
     const keys = Object.keys(this.modules);
 
     if (keys.includes(name)) {
@@ -53,7 +60,7 @@ class Store {
    * Доступ к модулю состояния
    * @param name {String} Название модуля
    */
-  get(name) {
+  get(name: string): object {
     return this.modules[name];
   }
 
@@ -61,7 +68,7 @@ class Store {
    * Выбор state
    * @return {Object}
    */
-  getState() {
+  getState(): any {
     return this.state;
   }
 
@@ -70,7 +77,7 @@ class Store {
    * @param newState {Object}
    * @param [description] {String} Описание действия для логирования
    */
-  setState(newState, description = "setState") {
+  setState(newState: object, description: string = "setState"): void {
     if (this.config.log) {
       console.group(
         `%c${"store.setState"} %c${description}`,
@@ -93,7 +100,7 @@ class Store {
    * @param callback {Function}
    * @return {Function} Функция для отписки
    */
-  subscribe(callback) {
+  subscribe(callback: () => void) {
     this.listeners.push(callback);
     // Возвращаем функцию для удаления слушателя
     return () => {

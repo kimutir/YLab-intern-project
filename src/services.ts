@@ -2,9 +2,19 @@ import Store from "./store";
 import APIService from "./api";
 import createStoreRedux from "./store-redux";
 import WSService from "./ws";
+import { IConfig } from "@src/interfaces/interface-config";
+import { IApi } from "@src/interfaces/interface-api";
+import { IStore } from "@src/interfaces/interface-store";
+import { IChatSocket } from "@src/interfaces/interface-chatSocket";
 
 class Services {
-  constructor(config) {
+  config: IConfig;
+  private _store: IStore;
+  private _api: IApi;
+  private _storeRedux: any;
+  private _chatSocket: IChatSocket;
+
+  constructor(config: IConfig) {
     this.config = config;
   }
 
@@ -12,7 +22,7 @@ class Services {
    * Сервис Store
    * @returns {Store}
    */
-  get store() {
+  get store(): IStore {
     if (!this._store) {
       this._store = new Store(this, this.config.store);
     }
@@ -23,7 +33,7 @@ class Services {
    * Сервис АПИ
    * @returns {APIService}
    */
-  get api() {
+  get api(): IApi {
     if (!this._api) {
       this._api = new APIService(this, this.config.api);
     }
@@ -40,7 +50,10 @@ class Services {
     return this._storeRedux;
   }
 
-  get chatSocket() {
+  /**
+   * ChatSocket store
+   */
+  get chatSocket(): IChatSocket {
     if (!this._chatSocket) {
       this._chatSocket = new WSService(this, this.config.chatSocket);
     }

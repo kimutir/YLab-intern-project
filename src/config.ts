@@ -1,7 +1,10 @@
 /**
  * Настройки сервисов
  */
-const config = {
+
+import { IConfig } from "@src/interfaces/interface-config";
+
+const config: IConfig = {
   store: {
     log: false,
 

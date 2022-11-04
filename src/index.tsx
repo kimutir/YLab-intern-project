@@ -11,14 +11,19 @@ import { Provider } from "react-redux";
 const services = new Services(config);
 
 // Корень React приложения
-const root = createRoot(document.getElementById("root"));
 
-root.render(
-  <Provider store={services.storeRedux}>
-    <ServicesProvider services={services}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ServicesProvider>
-  </Provider>
-);
+const rootDOM = document.getElementById("root");
+
+if (rootDOM) {
+  const root = createRoot(rootDOM);
+
+  root.render(
+    <Provider store={services.storeRedux}>
+      <ServicesProvider services={services}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ServicesProvider>
+    </Provider>
+  );
+}
