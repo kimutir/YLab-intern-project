@@ -6,7 +6,6 @@ import useTranslate from "@src/hooks/use-translate";
 import LayoutModal from "@src/components/layouts/layout-modal";
 import "./style.css";
 import { cn as bem } from "@bem-react/classname";
-import { compose } from "redux";
 
 function ModalAmount(props) {
   const store = useStore();
@@ -47,7 +46,7 @@ function ModalAmount(props) {
     <LayoutModal
       title={props.title}
       labelClose={t("basket.close")}
-      onClose={props.close}
+      onClose={() => props.close("add-amount")}
     >
       <div className={cn("wrapper")}>
         <div className={cn("top")}>

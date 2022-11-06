@@ -1,4 +1,4 @@
-import { IConfig } from "./interface-config";
+import IConfig from "./interface-config";
 
 export interface IApi {
   config: { baseUrl: string };

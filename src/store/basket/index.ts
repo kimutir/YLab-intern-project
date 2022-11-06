@@ -1,4 +1,5 @@
 import StateModule from "@src/store/module";
+import { IBasket } from "./type";
 
 /**
  * Состояние корзины
@@ -8,7 +9,7 @@ class BasketState extends StateModule {
    * Начальное состояние
    * @return {Object}
    */
-  initState() {
+  initState(): IBasket {
     return {
       selected: undefined,
       items: [],
@@ -21,7 +22,7 @@ class BasketState extends StateModule {
    * Добавление товара в корзину
    * @param _id Код товара
    */
-  async addToBasket(_id, amount = 1) {
+  async addToBasket(_id: string, amount = 1) {
     let sum = 0;
     // Ищем товар в корзие, чтобы увеличить его количество. Заодно получаем новый массив items
     let exists = false;

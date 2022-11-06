@@ -2,7 +2,7 @@ import Store from "./store";
 import APIService from "./api";
 import createStoreRedux from "./store-redux";
 import WSService from "./ws";
-import { IConfig } from "@src/interfaces/interface-config";
+import IConfig from "@src/interfaces/interface-config";
 import { IApi } from "@src/interfaces/interface-api";
 import { IStore } from "@src/interfaces/interface-store";
 import { IChatSocket } from "@src/interfaces/interface-chatSocket";
@@ -16,6 +16,7 @@ class Services {
 
   constructor(config: IConfig) {
     this.config = config;
+    console.log(this.config);
   }
 
   /**
@@ -43,7 +44,7 @@ class Services {
   /**
    * Redux store
    */
-  get storeRedux() {
+  get storeRedux(): any {
     if (!this._storeRedux) {
       this._storeRedux = createStoreRedux(this, this.config.storeRedux);
     }

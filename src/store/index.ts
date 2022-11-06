@@ -1,8 +1,10 @@
+import { IConfigStore } from "@src/interfaces/interface-config";
+import Services from "@src/services";
 import * as modules from "@src/store/exports";
 
 class Store {
-  services: object;
-  config: any;
+  services: Services;
+  config: IConfigStore;
   state: any;
   listeners: any[];
   modules: any;
@@ -10,13 +12,12 @@ class Store {
    * @param services {Services}
    * @param config {Object}
    */
-  constructor(services: object, config: any) {
+  constructor(services: Services, config: IConfigStore) {
     // Менеджер сервисов
     this.services = services;
-
     this.config = {
-      log: false,
       ...config,
+      log: false,
     };
     // Состояние приложения (данные)
     this.state = {};
@@ -43,7 +44,6 @@ class Store {
       ...(this.config.modules ? this.config.modules[name] : {}),
     });
     this.state[newName] = this.modules[newName].initState();
-    console.log("modules before", this.modules);
   }
 
   removeState(name: string): void {
@@ -52,8 +52,6 @@ class Store {
     if (keys.includes(name)) {
       delete this.modules[name];
     }
-
-    console.log("modules after", this.modules);
   }
 
   /**
@@ -100,7 +98,7 @@ class Store {
    * @param callback {Function}
    * @return {Function} Функция для отписки
    */
-  subscribe(callback: () => void) {
+  subscribe(callback: () => void): () => void {
     this.listeners.push(callback);
     // Возвращаем функцию для удаления слушателя
     return () => {

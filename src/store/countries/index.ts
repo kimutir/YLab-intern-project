@@ -1,6 +1,7 @@
 import StateModule from "@src/store/module";
 import qs from "@src/utils/search-params";
 import diff from "@src/utils/diff";
+import ICountries from "./type";
 
 /**
  * Состояние товара
@@ -10,7 +11,7 @@ class CountriesState extends StateModule {
    * Начальное состояние
    * @return {Object}
    */
-  initState() {
+  initState(): ICountries {
     return {
       items: [],
       selected: "",
@@ -18,7 +19,7 @@ class CountriesState extends StateModule {
     };
   }
 
-  selectCountry(id) {
+  selectCountry(id: string) {
     this.setState({
       ...this.getState(),
       selected: id,

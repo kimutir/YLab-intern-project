@@ -1,6 +1,8 @@
 import StateModule from "@src/store/module";
 import qs from "@src/utils/search-params";
 import diff from "@src/utils/diff";
+import ICatalog, { IParams, IValidParams } from "./type";
+import { number } from "prop-types";
 
 /**
  * Состояние каталога
@@ -10,7 +12,7 @@ class CatalogState extends StateModule {
    * Начальное состояние
    * @return {Object}
    */
-  initState() {
+  initState(): ICatalog {
     return {
       items: [],
       selectedItems: [],
@@ -33,15 +35,15 @@ class CatalogState extends StateModule {
    * @param params
    * @return {Promise<void>}
    */
-  async initParams(params = {}) {
+  async initParams(params: IParams | {} = {}): Promise<void> {
     // Параметры из URl. Их нужно валидирвать, приводить типы и брать толкьо нужные
     const urlParams = qs.parse(window.location.search);
-    let validParams = {};
+    let validParams: IValidParams = {};
     if (urlParams.page) validParams.page = Number(urlParams.page) || 1;
     if (urlParams.limit) validParams.limit = Number(urlParams.limit) || 10;
-    if (urlParams.sort) validParams.sort = urlParams.sort;
-    if (urlParams.query) validParams.query = urlParams.query;
-    if (urlParams.category) validParams.category = urlParams.category;
+    if (urlParams.sort) validParams.sort = urlParams.sort as string;
+    if (urlParams.query) validParams.query = urlParams.query as string;
+    if (urlParams.category) validParams.category = urlParams.category as string;
 
     // Итоговые параметры из начальных, из URL и из переданных явно
     const newParams = { ...this.initState().params, ...validParams, ...params };
@@ -54,7 +56,7 @@ class CatalogState extends StateModule {
    * @param params
    * @return {Promise<void>}
    */
-  async resetParams(params = {}) {
+  async resetParams(params: IParams | {} = {}) {
     // Итоговые параметры из начальных, из URL и из переданных явно
     const newParams = { ...this.initState().params, ...params };
     // Установк параметров и подгрузка данных
@@ -67,8 +69,12 @@ class CatalogState extends StateModule {
    * @param historyReplace {Boolean} Заменить адрес (true) или сделаит новую запис в истории браузера (false)
    * @returns {Promise<void>}
    */
-  async setParams(params = {}, resetItems = false, historyReplace = false) {
-    const newParams = { ...this.getState().params, ...params };
+  async setParams(
+    params: IParams | {} = {},
+    resetItems: boolean = false,
+    historyReplace: boolean = false
+  ): Promise<void> {
+    const newParams: IParams = { ...this.getState().params, ...params };
 
     // Установка новых параметров и признака загрузки
     this.setState(
@@ -121,14 +127,14 @@ class CatalogState extends StateModule {
     }
   }
 
-  chooseItem(id) {
+  chooseItem(id: string) {
     this.setState({
       ...this.getState(),
       selectedItems: [...this.getState().selectedItems, id],
     });
   }
 
-  newParams(params = {}) {
+  newParams(params: IParams) {
     // Установка новых параметров и признака загрузки
     this.setState(
       {

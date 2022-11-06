@@ -24,6 +24,8 @@ class ModalsState extends StateModule {
    * Закрытие модального окна
    */
   close(name) {
+    console.log("close modal");
+    console.log(this);
     this.setState({
       modals: this.getState().modals.filter((modal) => modal.name !== name),
     });

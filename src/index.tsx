@@ -9,10 +9,11 @@ import { Provider } from "react-redux";
 
 // Менеджер сервисов
 const services = new Services(config);
+console.log("config:", config);
 
 // Корень React приложения
 
-const rootDOM = document.getElementById("root");
+const rootDOM: HTMLElement | null = document.getElementById("root");
 
 if (rootDOM) {
   const root = createRoot(rootDOM);

@@ -53,8 +53,9 @@ function CatalogList() {
     onOpenAddAmount: useCallback(
       () =>
         store.get("modals").open("add-amount", {
-          title: "Введите количество",
-          close: store.get("modals").close,
+          title: "Введите количествоjjj",
+          // close: store.get("modals").close,
+          close: (name) => store.get("modals").close(name),
           addToBasket: (id, amount) =>
             store.get("basket").addToBasket(id, amount),
         }),

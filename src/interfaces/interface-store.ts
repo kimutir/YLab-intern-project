@@ -1,5 +1,3 @@
-import { IConfig } from "./interface-config";
-
 type Listener = () => void;
 
 export interface IStore {
