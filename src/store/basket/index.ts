@@ -71,7 +71,7 @@ class BasketState extends StateModule {
    * Добавление товара в корзину
    * @param _id Код товара
    */
-  removeFromBasket(_id) {
+  #removeFromBasket(_id) {
     let sum = 0;
     const items = this.getState().items.filter((item) => {
       // Удаляемый товар

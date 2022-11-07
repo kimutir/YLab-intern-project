@@ -21,3 +21,7 @@ export default interface IConfig {
   chatSocket: IConfigWS;
   storeRedux?: {};
 }
+
+type Listener = () => void;
+
+export type IListeners = Listener[];

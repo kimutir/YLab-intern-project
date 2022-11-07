@@ -1,13 +1,15 @@
-import { IConfigStore } from "@src/interfaces/interface-config";
+import { IConfigStore, IListeners } from "@src/types/interface-config";
 import Services from "@src/services";
 import * as modules from "@src/store/exports";
+import StateModule from "./module";
+import { IModules, IState } from "./type";
 
 class Store {
   services: Services;
   config: IConfigStore;
-  state: any;
-  listeners: any[];
-  modules: any;
+  state: IState;
+  listeners: IListeners;
+  modules: IModules;
   /**
    * @param services {Services}
    * @param config {Object}
@@ -15,18 +17,23 @@ class Store {
   constructor(services: Services, config: IConfigStore) {
     // Менеджер сервисов
     this.services = services;
+    // config работает правильно???
     this.config = {
       ...config,
-      log: false,
+      // log: false,
     };
     // Состояние приложения (данные)
     this.state = {};
+
     // Слушатели изменений state
     this.listeners = [];
 
     this.state.prop = 1;
+
     // Модули
+
     this.modules = {};
+    // this.modules.basket.
     for (const name of Object.keys(modules)) {
       // Экземпляр модуля. Передаём ему ссылку на store и навзание модуля.
       this.modules[name] = new modules[name](this, {
@@ -48,7 +55,6 @@ class Store {
 
   removeState(name: string): void {
     const keys = Object.keys(this.modules);
-
     if (keys.includes(name)) {
       delete this.modules[name];
     }
@@ -66,7 +72,7 @@ class Store {
    * Выбор state
    * @return {Object}
    */
-  getState(): any {
+  getState(): IState {
     return this.state;
   }
 
@@ -75,7 +81,7 @@ class Store {
    * @param newState {Object}
    * @param [description] {String} Описание действия для логирования
    */
-  setState(newState: object, description: string = "setState"): void {
+  setState(newState: IState, description: string = "setState"): void {
     if (this.config.log) {
       console.group(
         `%c${"store.setState"} %c${description}`,

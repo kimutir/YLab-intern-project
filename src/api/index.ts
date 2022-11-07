@@ -1,10 +1,9 @@
-interface IConfig {}
+import { IConfigApi } from "@src/types/interface-config";
+import Services from "@src/services";
 
 class APIService {
   services: any;
-  config: {
-    baseUrl: string;
-  };
+  config: IConfigApi;
   defaultHeaders: {
     [key: string]: string;
   };
@@ -12,9 +11,9 @@ class APIService {
    * @param services {Services} Менеджер сервисов
    * @param config {Object}
    */
-  constructor(services: unknown, config: any = {}) {
+  constructor(services: Services, config: any) {
     // console.log("config from APIService:", config);
-    console.log("services from APIService:", services);
+    // console.log("services from APIService:", services);
     this.services = services;
     this.config = {
       baseUrl: "",

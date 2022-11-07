@@ -14,7 +14,7 @@ interface ServicesProviderProps {
   children: React.ReactNode;
 }
 
-export const ServicesContext = React.createContext({} as IServicesContext);
+export const ServicesContext = React.createContext({});
 
 /**
  * Провайдер Services.

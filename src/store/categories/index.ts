@@ -1,6 +1,6 @@
 import StateModule from "@src/store/module";
 import qs from "@src/utils/search-params";
-import ICategories from "./ICategories";
+import ICategories from "./type";
 
 /**
  * Состояние товара

@@ -1,6 +1,7 @@
 import clicked from "@src/components/elements/ canvas-fun/draw-functions/clicked";
 import { leaves } from "@src/components/elements/ canvas-fun/leaves";
 import StateModule from "@src/store/module";
+import IDraw from "./type";
 
 /**
  * Состояние корзины
@@ -10,7 +11,7 @@ class DrawFun extends StateModule {
    * Начальное состояние
    * @return {Object}
    */
-  initState() {
+  initState(): IDraw {
     return {
       isMouseDown: false,
       figures: {},
@@ -204,8 +205,8 @@ class DrawFun extends StateModule {
     for (const key in figures) {
       const [x, y, r] = figures[key].coordinates;
       if (clicked({ figure: figures[key], cursor, scroll, scale })) {
-        if (key > lastSelected) {
-          lastSelected = key;
+        if (Number(key) > lastSelected) {
+          lastSelected = Number(key);
         }
       }
     }
@@ -398,8 +399,8 @@ class DrawFun extends StateModule {
   }
 
   #fallTriangle({ key, figures, height }) {
-    const y = [];
-    const coordinates = figures[key].coordinates;
+    const y: number[] = [];
+    const coordinates: any[] = figures[key].coordinates;
     coordinates.forEach((i) => y.push(i[1]));
     let yMax = Math.max(...y);
 

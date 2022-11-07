@@ -9,7 +9,6 @@ import { Provider } from "react-redux";
 
 // Менеджер сервисов
 const services = new Services(config);
-console.log("config:", config);
 
 // Корень React приложения
 

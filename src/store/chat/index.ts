@@ -1,4 +1,5 @@
 import StateModule from "@src/store/module";
+import IChat from "./type";
 
 /**
  * Состояние товара
@@ -8,7 +9,7 @@ class ChatState extends StateModule {
    * Начальное состояние
    * @return {Object}
    */
-  initState() {
+  initState(): IChat {
     return {
       isLast: false,
       scroll: false,
@@ -19,7 +20,7 @@ class ChatState extends StateModule {
     };
   }
 
-  connect(token) {
+  connect(token: string) {
     this.services.chatSocket.connect(
       token,
       (data) => {
@@ -99,7 +100,7 @@ class ChatState extends StateModule {
 
   #updateMessages(oldArr, recievedArr) {
     if (!oldArr.length) return recievedArr;
-    const newArr = [];
+    const newArr: any[] = [];
     const oldKeys = oldArr.map((i) => i._key);
     recievedArr.forEach((i) => {
       if (oldKeys.includes(i._key)) {
@@ -119,7 +120,7 @@ class ChatState extends StateModule {
     return newArr;
   }
 
-  load(method = "last", payload = {}) {
+  load(method = "last", payload: { _key?: number } = {}) {
     const socket = this.services.chatSocket.socket;
 
     // сохраняем ключи для сверки статуса
@@ -137,16 +138,6 @@ class ChatState extends StateModule {
       })
     );
   }
-
-  // deleteAll() {
-  //   const socket = this.services.chatSocket.socket;
-  //   socket.send(
-  //     JSON.stringify({
-  //       method: "clear",
-  //       payload: {},
-  //     })
-  //   );
-  // }
 
   close() {
     this.services.chatSocket.disconnect();

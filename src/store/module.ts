@@ -1,23 +1,26 @@
-import { IStore } from "@src/interfaces/interface-store";
+import Services from "@src/services";
+import Store from ".";
 
 class StateModule {
   /**
    * @param store {Store}
    * @param config {Object}
    */
-  store: IStore;
+  // store: IStore;
+  store: Store;
   config: {
     name: string;
+    tokenHeader: string;
   };
-  services: any;
+  services: Services;
 
-  constructor(store: IStore, config: { name: string }) {
+  constructor(store: Store, config: { name: string; tokenHeader: string }) {
     this.store = store;
     this.config = config;
     this.services = store.services;
   }
 
-  defaultConfig() {
+  defaultConfig(): {} {
     return {};
   }
 
@@ -25,15 +28,16 @@ class StateModule {
    * Начальное состояние
    * @return {Object}
    */
-  initState() {
+  initState(): {} {
     return {};
   }
 
   getState() {
+    this.store.getState();
     return this.store.getState()[this.config.name];
   }
 
-  setState(newState, description: string = "setState") {
+  setState(newState: any, description: string = "setState") {
     this.store.setState(
       {
         ...this.store.getState(),
