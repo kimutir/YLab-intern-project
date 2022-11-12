@@ -13,7 +13,7 @@ export interface IValidParams {
   category?: string;
 }
 
-export default interface ICatalog {
+export interface ICatalog {
   items: [];
   selectedItems: [];
   count: number;

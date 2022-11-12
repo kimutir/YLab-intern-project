@@ -24,8 +24,11 @@ function Item(props) {
     onItemDescription: useCallback((e) => {
       e.stopPropagation();
       // тупое решение
-      props.closeModal();
-      props.closeModal();
+
+      if (props.inModal) {
+        props.closeModal("catalog");
+        props.closeModal("basket");
+      }
     }, []),
   };
 

@@ -19,6 +19,8 @@ function Scroll(props) {
     }
 
     props.onPaginate(Number(page));
+
+    return () => props.onReset && props.onReset();
   }, []);
 
   // options for observer

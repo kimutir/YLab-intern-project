@@ -2,7 +2,6 @@ import React, { useCallback } from "react";
 import {
   useStore as useStoreRedux,
   useSelector as useSelectorRedux,
-  shallowEqual,
 } from "react-redux";
 import useStore from "@src/hooks/use-store";
 import useSelector from "@src/hooks/use-selector";
@@ -15,7 +14,6 @@ import Layout from "@src/components/layouts/layout";
 import TopContainer from "@src/containers/top";
 import HeadContainer from "@src/containers/head";
 import ToolsContainer from "@src/containers/tools";
-import actionsArticle from "@src/store-redux/article/actions";
 
 function Article() {
   const store = useStore();
@@ -25,23 +23,31 @@ function Article() {
   const storeRedux = useStoreRedux();
 
   useInit(async () => {
-    // await store.get("article").load(params.id);
-    storeRedux.dispatch(actionsArticle.load(params.id));
+    if (params.id) await store.get("article").load(params.id);
+    // storeRedux.dispatch(actionsArticle.load(params.id));
   }, [params.id]);
 
-  const select = useSelectorRedux(
-    (state) => ({
-      article: state.article.data,
-      waiting: state.article.waiting,
-    }),
-    shallowEqual
-  );
+  // const select = useSelectorRedux(
+  //   (state) => ({
+  //     article: state.article.data,
+  //     waiting: state.article.waiting,
+  //   }),
+  //   shallowEqual
+  // );
+
+  const select = useSelector((state) => ({
+    article: state.article.data,
+    waiting: state.article.waiting,
+  }));
 
   const { t } = useTranslate();
 
   const callbacks = {
     // Добавление в корзину
-    addToBasket: useCallback((_id) => store.get("basket").addToBasket(_id), []),
+    addToBasket: useCallback(
+      (_id: string) => store.get("basket").addToBasket(_id),
+      []
+    ),
   };
 
   return (
@@ -50,11 +56,7 @@ function Article() {
       <HeadContainer title={select.article.title || ""} />
       <ToolsContainer />
       <Spinner active={select.waiting}>
-        <ArticleCard
-          article={select.article}
-          onAdd={callbacks.addToBasket}
-          t={t}
-        />
+        <ArticleCard article={select.article} onAdd={callbacks.addToBasket} />
       </Spinner>
     </Layout>
   );

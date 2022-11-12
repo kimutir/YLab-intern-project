@@ -1,6 +1,7 @@
 import React from "react";
 import propTypes from "prop-types";
 import Services from "./services";
+import { types } from "@babel/core";
 
 /**
  * Контекст для Services
@@ -14,7 +15,7 @@ interface ServicesProviderProps {
   children: React.ReactNode;
 }
 
-export const ServicesContext = React.createContext({});
+export const ServicesContext = React.createContext({} as Services);
 
 /**
  * Провайдер Services.

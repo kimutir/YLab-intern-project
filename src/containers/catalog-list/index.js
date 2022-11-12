@@ -5,7 +5,6 @@ import useTranslate from "@src/hooks/use-translate";
 import Pagination from "@src/components/navigation/pagination";
 import Item from "@src/components/catalog/item";
 import { useLocation } from "react-router-dom";
-import ModalAmount from "@src/components/modals/modal-amount";
 import ScrollList from "@src/components/scroll/scroll-list";
 import Scroll from "../scroll";
 
@@ -39,6 +38,7 @@ function CatalogList() {
       (page, reset) => store.get("catalog").setParams({ page }, reset),
       []
     ),
+    onReset: useCallback(() => store.get("catalog").resetCatalog(), []),
     onAdditionalLoad: useCallback(
       (skip, limit, reset) =>
         store.get("catalog").additionalLoad({ skip, limit }, reset),
@@ -92,6 +92,7 @@ function CatalogList() {
       <Scroll
         onAdditionalLoad={callbacks.onAdditionalLoad}
         onPaginate={callbacks.onPaginate}
+        onReset={callbacks.onReset}
         object={select.catalog}
         target={lastItemRef}
         root={listRef}

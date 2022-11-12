@@ -1,4 +1,4 @@
-import IConfig from "./interface-config";
+import IConfig from "./type-config";
 
 export interface IApi {
   config: { baseUrl: string };

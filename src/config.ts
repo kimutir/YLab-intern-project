@@ -2,7 +2,7 @@
  * Настройки сервисов
  */
 
-import IConfig from "@src/types/interface-config";
+import IConfig from "@src/types/type-config";
 
 const config: IConfig = {
   store: {

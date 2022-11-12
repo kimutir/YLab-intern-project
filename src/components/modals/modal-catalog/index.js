@@ -35,7 +35,9 @@ function ModalCatalog(props) {
   const { t } = useTranslate();
 
   React.useEffect(() => {
-    return () => props.removeCatalog();
+    return () => {
+      props.removeCatalog();
+    };
   }, []);
 
   const select = useSelector((state) => ({
@@ -48,16 +50,20 @@ function ModalCatalog(props) {
 
   const onAddAll = React.useCallback(async () => {
     for (const item of selectedItems) {
-      // await store.get("basket").addToBasket(item);
       await props.addToBasket(item);
     }
     props.closeModal("catalog");
   }, [selectedItems]);
+  const onReset = React.useCallback(
+    () => store.get("catalog").resetCatalog(),
+    []
+  );
 
   const renders = {
     item: useCallback(
       (item) => (
         <Item
+          inModal={true}
           closeModal={props.closeModal}
           selectedItems={selectedItems}
           onSelectItem={onSelectItem}

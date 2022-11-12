@@ -1,4 +1,5 @@
 import StateModule from "../../store/module";
+import IArticle, { IArticleData } from "./type";
 
 /**
  * Состояние товара
@@ -8,12 +9,9 @@ class ArticleState extends StateModule {
    * Начальное состояние
    * @return {Object}
    */
-  initState(): {
-    data: {};
-    waiting: boolean;
-  } {
+  initState(): IArticle {
     return {
-      data: {},
+      data: {} as IArticleData,
       waiting: false,
     };
   }
@@ -38,7 +36,7 @@ class ArticleState extends StateModule {
       // Товар загружен успешно
       this.setState(
         {
-          data: json.result,
+          data: json.result as IArticleData,
           waiting: false,
         },
         "Товар по id загружен"

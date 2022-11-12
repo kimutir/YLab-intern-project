@@ -1,5 +1,7 @@
 import Services from "@src/services";
 import Store from ".";
+import { IModules, IState } from "./type";
+import * as modules from "./exports";
 
 class StateModule {
   /**
@@ -33,9 +35,11 @@ class StateModule {
   }
 
   getState() {
-    this.store.getState();
     return this.store.getState()[this.config.name];
   }
+  // getState<T>():T {
+  //   return this.store.getState()[this.config.name]
+  // }
 
   setState(newState: any, description: string = "setState") {
     this.store.setState(

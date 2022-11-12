@@ -1,8 +1,7 @@
 import StateModule from "@src/store/module";
 import qs from "@src/utils/search-params";
 import diff from "@src/utils/diff";
-import ICatalog, { IParams, IValidParams } from "./type";
-import { number } from "prop-types";
+import { ICatalog, IParams, IValidParams } from "./type";
 
 /**
  * Состояние каталога
@@ -80,7 +79,6 @@ class CatalogState extends StateModule {
     this.setState(
       {
         ...this.getState(),
-        // params: resetItems ? { ...newParams, page: 1 } : newParams,
         params: newParams,
         items: resetItems ? [] : this.getState().items,
         waiting: true,
@@ -134,7 +132,7 @@ class CatalogState extends StateModule {
     });
   }
 
-  newParams(params: IParams) {
+  newParams(params: { limit: number }) {
     // Установка новых параметров и признака загрузки
     this.setState(
       {
@@ -146,6 +144,12 @@ class CatalogState extends StateModule {
       },
       "Смена параметров каталога"
     );
+  }
+
+  resetCatalog() {
+    this.setState({
+      ...this.initState(),
+    });
   }
 
   async additionalLoad(

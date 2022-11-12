@@ -27,9 +27,7 @@ function ModalAmount(props) {
   const select = useSelector((state) => ({
     selected: state.basket.selected,
   }));
-  React.useEffect(() => {
-    console.log("from amount-item", props.title);
-  }, []);
+
   const callbacks = {
     // Добавление в корзину
     addToBasket: useCallback(() => {

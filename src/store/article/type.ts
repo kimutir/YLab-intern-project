@@ -1,24 +1,17 @@
-export interface IBasket {
-  selected: undefined | string;
-  items: IBasketItem[];
-  sum: number;
-  amount: number;
+export default interface IArticle {
+  data: IArticleData;
+  waiting: boolean;
 }
 
-// export interface IBasket {
-//   initState: () => IBasketInitState;
-//   addToBasket: (_id: string, amount: number) => Promise<void>;
-//   addSelected: (id: string) => void;
-// }
-
 export interface MaidIn {
+  title: string;
+  code: string;
   _id: string;
-  _type: string;
 }
 
 export interface Category {
+  title: string;
   _id: string;
-  _type: string;
 }
 
 export interface Proto {}
@@ -43,6 +36,4 @@ export interface Result {
   isFavorite: boolean;
 }
 
-export interface IBasketItem {
-  result: Result;
-}
+export interface IArticleData extends Result {}

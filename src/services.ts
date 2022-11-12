@@ -2,10 +2,8 @@ import Store from "./store";
 import APIService from "./api";
 import createStoreRedux from "./store-redux";
 import WSService from "./ws";
-import IConfig from "@src/types/interface-config";
-import { IApi } from "@src/types/interface-api";
-import { IStore } from "@src/types/interface-store";
-import { IChatSocket } from "@src/types/interface-chatSocket";
+import IConfig from "@src/types/type-config";
+import { IChatSocket } from "@src/types/type-chatSocket";
 
 class Services {
   private config: IConfig;

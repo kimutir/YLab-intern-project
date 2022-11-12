@@ -26,6 +26,7 @@ class BasketState extends StateModule {
     let sum = 0;
     // Ищем товар в корзие, чтобы увеличить его количество. Заодно получаем новый массив items
     let exists = false;
+
     const items = this.getState().items.map((item) => {
       let result = item;
       // Искомый товар для увеличения его количества
@@ -46,9 +47,7 @@ class BasketState extends StateModule {
       });
 
       const item = json.result;
-      console.log("item:", item);
       items.push({ ...item, amount: amount });
-      console.log("items:", items);
 
       // Досчитываем сумму
       sum += item.price * amount;
@@ -71,7 +70,7 @@ class BasketState extends StateModule {
    * Добавление товара в корзину
    * @param _id Код товара
    */
-  #removeFromBasket(_id) {
+  removeFromBasket(_id: string) {
     let sum = 0;
     const items = this.getState().items.filter((item) => {
       // Удаляемый товар

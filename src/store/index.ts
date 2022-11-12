@@ -1,8 +1,8 @@
-import { IConfigStore, IListeners } from "@src/types/interface-config";
+import { IConfigStore, IListeners } from "@src/types/type-config";
 import Services from "@src/services";
 import * as modules from "@src/store/exports";
-import StateModule from "./module";
 import { IModules, IState } from "./type";
+import { TestScheme } from "@src/hooks/type";
 
 class Store {
   services: Services;
@@ -18,29 +18,24 @@ class Store {
     // Менеджер сервисов
     this.services = services;
     // config работает правильно???
-    this.config = {
-      ...config,
-      // log: false,
-    };
+    this.config = config;
     // Состояние приложения (данные)
-    this.state = {};
+    this.state = {} as IState;
 
     // Слушатели изменений state
     this.listeners = [];
 
-    this.state.prop = 1;
-
+    // this.state.prop = 1;
     // Модули
 
-    this.modules = {};
-    // this.modules.basket.
+    this.modules = {} as IModules;
     for (const name of Object.keys(modules)) {
       // Экземпляр модуля. Передаём ему ссылку на store и навзание модуля.
       this.modules[name] = new modules[name](this, {
         name,
         ...(this.config.modules ? this.config.modules[name] : {}),
       });
-      // По названию модля устанавливается свойство с анчальным состоянием от модуля
+      // По названию модля устанавливается свойство с начальным состоянием от модуля
       this.state[name] = this.modules[name].initState();
     }
   }
@@ -64,16 +59,16 @@ class Store {
    * Доступ к модулю состояния
    * @param name {String} Название модуля
    */
-  get(name: string): object {
-    return this.modules[name];
+  get<T extends keyof TestScheme<IModules>>(name: T) {
+    return this.modules[name] as TestScheme<IModules>[T];
   }
 
   /**
    * Выбор state
    * @return {Object}
    */
-  getState(): IState {
-    return this.state;
+  getState() {
+    return this.state as TestScheme<IState>;
   }
 
   /**
@@ -81,7 +76,7 @@ class Store {
    * @param newState {Object}
    * @param [description] {String} Описание действия для логирования
    */
-  setState(newState: IState, description: string = "setState"): void {
+  setState(newState: any, description: string = "setState"): void {
     if (this.config.log) {
       console.group(
         `%c${"store.setState"} %c${description}`,

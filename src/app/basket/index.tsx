@@ -7,7 +7,6 @@ import BasketTotal from "@src/components/catalog/basket-total";
 import LayoutModal from "@src/components/layouts/layout-modal";
 import ItemBasket from "@src/components/catalog/item-basket";
 import List from "@src/components/elements/list";
-import actionsModals from "@src/store-redux/modals/actions";
 
 function Basket() {
   const store = useStore();
@@ -28,13 +27,15 @@ function Basket() {
       // storeRedux.dispatch(actionsModals.close());
     }, []),
     onOpenModalCatalog: useCallback(() => {
+      store.newState("catalog", "catalog1");
       store.get("modals").open("catalog", {
         closeModal: (name) => store.get("modals").close(name),
         addToBasket: (_id, amount) =>
           store.get("basket").addToBasket(_id, amount),
         onPaginate: (page, reset) =>
           store.get("catalog1").setParams({ page }, reset),
-        setNewParams: (limit) => store.get("catalog1").newParams({ limit }),
+        setNewParams: (limit: number) =>
+          store.get("catalog1").newParams({ limit }),
         onOpenAddAmount: () =>
           store.get("modals").open("add-amount", {
             title: "Введите количество",
@@ -47,7 +48,6 @@ function Basket() {
         onAddSelected: (id) => store.get("basket").addSelected(id),
         removeCatalog: () => store.removeState("catalog1"),
       });
-      store.newState("catalog", "catalog1");
     }, []),
     // Удаление из корзины
     removeFromBasket: useCallback(
