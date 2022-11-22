@@ -12,10 +12,18 @@ import useStore from "@src/hooks/use-store";
 import useSelector from "@src/hooks/use-selector";
 import Spinner from "@src/components/elements/spinner";
 
+type LocationType = {
+  hash: string;
+  key: string;
+  pathname: string;
+  search: string;
+  state: { back: string };
+};
+
 function Login() {
   const { t } = useTranslate();
   const store = useStore();
-  const location = useLocation();
+  const location = useLocation() as LocationType;
   const navigate = useNavigate();
 
   const select = useSelector((state) => ({
@@ -23,24 +31,25 @@ function Login() {
     errors: state.session.errors,
   }));
 
+  // login and password
   const [data, setData] = useState({
     login: "",
     password: "",
   });
-  React.useEffect(() => {
-    console.log("data:", data);
-  }, [data]);
+
   const callbacks = {
-    onChange: useCallback((value, name) => {
+    // typing login and password
+    onChange: useCallback((value: string, name: string) => {
       setData((prevData) => ({ ...prevData, [name]: value }));
     }, []),
 
+    // sending login and password
     onSubmit: useCallback(
-      (e) => {
+      (e: React.SyntheticEvent) => {
         e.preventDefault();
         store.get("session").signIn(data, () => {
-          // Возврат на страницу, с которой пришли
-          const back =
+          // back to the page we came from
+          const back: string =
             location.state?.back && location.state?.back !== location.pathname
               ? location.state?.back
               : "/";

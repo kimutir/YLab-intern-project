@@ -10,6 +10,8 @@ import ChatState from "./chat";
 import IChat from "./chat/type";
 import CountriesState from "./countries";
 import ICountries from "./countries/type";
+import DrawFunState from "./draw-fun";
+import IDraw from "./draw-fun/type";
 import LocaleState from "./locale";
 import ILocale from "./locale/type";
 import ModalsState from "./modals";
@@ -20,7 +22,7 @@ import SessionState from "./session";
 import ISession from "./session/type";
 
 export interface IState {
-  basket?: IBasket;
+  basket: IBasket;
   catalog: ICatalog;
   categories: ICategories;
   countries: ICountries;
@@ -31,6 +33,7 @@ export interface IState {
   session: ISession;
   profile: IProfile;
   article: IArticle;
+  drawFun:IDraw
 }
 
 export interface IModules {
@@ -45,6 +48,7 @@ export interface IModules {
   session: SessionState;
   profile: ProfileState;
   article: ArticleState;
+  drawFun: DrawFunState
 }
 
 /**

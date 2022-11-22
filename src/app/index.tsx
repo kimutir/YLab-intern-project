@@ -15,17 +15,15 @@ import ModalAmount from "@src/components/modals/modal-amount";
 import Chat from "@src/app/chat";
 import DrawFun from "./draw-fun";
 
-/**
- * Приложение
- * @return {React.ReactElement} Виртуальные элементы React
- */
 function App() {
   const store = useStore();
 
+  // проверка сессии
   useInit(async () => {
     await store.get("session").remind();
   });
 
+  // доступ к модальным окнам
   const modals = useSelector((state) => state.modals.modals);
   // const modal = useSelectorRedux((state) => state.modals.name);
 

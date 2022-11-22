@@ -1,5 +1,4 @@
 import React from "react";
-import propTypes from "prop-types";
 import Layout from "@src/components/layouts/layout";
 import useSelector from "@src/hooks/use-selector";
 import useStore from "@src/hooks/use-store";
@@ -8,13 +7,19 @@ import HeadContainer from "@src/containers/head";
 import ToolsContainer from "@src/containers/tools";
 import ChatItem from "@src/components/chat/chat-item";
 import ChatForm from "@src/components/chat/chat-form";
-import ScrollList from "@src/components/scroll/scroll-list";
+import ScrollList, { ScrollRefsType } from "@src/components/scroll/scroll-list";
 
 function Chat() {
   const store = useStore();
-  const lastItemRef = React.useRef();
-  const firstItemRef = React.useRef();
-  const listRef = React.useRef();
+  const lastItemRef = React.useRef<HTMLDivElement>(null);
+  const firstItemRef = React.useRef<HTMLDivElement>(null);
+  const listRef = React.useRef<HTMLDivElement>(null);
+
+  const refs = React.useRef<ScrollRefsType>({
+    lastItemRef,
+    firstItemRef,
+    listRef,
+  });
 
   const [initial, setInitial] = React.useState(false);
 
@@ -27,20 +32,22 @@ function Chat() {
   }));
 
   const callbacks = {
-    connect: React.useCallback((token) => store.get("chat").connect(token), []),
+    connect: React.useCallback(
+      (token: string) => store.get("chat").connect(token),
+      []
+    ),
     close: React.useCallback(() => store.get("chat").close(), []),
     resetScroll: React.useCallback(() => store.get("chat").resetScroll(), []),
-    resetTest: React.useCallback(() => store.get("chat").resetTest(), []),
-    deleteAll: React.useCallback(() => store.get("chat").deleteAll(), []),
     loadInit: React.useCallback(() => store.get("chat").load(), []),
-    test: React.useCallback(() => {
-      lastItemRef.current.scrollIntoView(false);
-    }, [lastItemRef, listRef]),
-    loadFromId: React.useCallback((method, fromId) => {
+    scrollBottom: React.useCallback(() => {
+      lastItemRef.current?.scrollIntoView(false);
+    }, [lastItemRef]),
+    loadFromId: React.useCallback((method: string, fromId: string) => {
       store.get("chat").load(method, { fromId });
     }, []),
     loadFromDate: React.useCallback(
-      (method, fromDate) => store.get("chat").load(method, { fromDate }),
+      (method: string, fromDate: string) =>
+        store.get("chat").load(method, { fromDate }),
       []
     ),
   };
@@ -54,11 +61,13 @@ function Chat() {
     setInitial(true);
     return () => callbacks.close();
   }, []);
-  // изначальная прокрутка вниз
+
+  // первоначальная прокрутка вниз
   React.useEffect(() => {
-    initial && lastItemRef.current && callbacks.test();
+    initial && lastItemRef.current && callbacks.scrollBottom();
     initial && lastItemRef.current && setInitial(false);
   }, [initial, select.items]);
+
   // первоначальная загрузка или дозагрузка
   React.useEffect(() => {
     if (select.connected) {
@@ -71,62 +80,36 @@ function Chat() {
         callbacks.loadInit();
       }
     } else {
-      callbacks.connect(localStorage.getItem("token"));
+      callbacks.connect(localStorage.getItem("token")!);
     }
   }, [select.connected]);
 
   // прокрутка вниз
   React.useEffect(() => {
-    select.scroll && callbacks.test();
+    select.scroll && callbacks.scrollBottom();
     select.scroll && callbacks.resetScroll();
   }, [select.scroll]);
 
   const optionBottom = {
     root: listRef.current,
     rootMargin: "0px 0px 20px 0px",
-    threshold: 0.1,
   };
   const optionTop = {
     root: listRef.current,
     rootMargin: "0px 0px 0px 0px",
-    threshold: 0.1,
   };
 
+  // observer на прокрутку вниз, если пришло новое сообщение
   const callbackBottom = React.useCallback(
     (entries, observer) => {
       if (entries[0].isIntersecting && select.unreadMessage) {
-        callbacks.test();
+        callbacks.scrollBottom();
         callbacks.resetScroll();
         observer.unobserve(lastItemRef.current);
       }
     },
     [listRef, lastItemRef, select.unreadMessage]
   );
-
-  const callbackTop = React.useCallback(
-    (entries, observer) => {
-      if (entries[0].isIntersecting) {
-        entries[0].target.nextSibling.scrollIntoView(true);
-        listRef.current.style.overflowY = "hidden";
-        callbacks.loadFromId("old", select.items[0]._id);
-        observer.unobserve(firstItemRef.current);
-      }
-    },
-    [select.items[0]]
-  );
-
-  React.useEffect(() => {
-    const observerTop = new IntersectionObserver(callbackTop, optionTop);
-
-    if (firstItemRef.current) {
-      listRef.current.style.overflowY = "auto";
-      observerTop?.unobserve(firstItemRef.current);
-    }
-
-    if (!select.isLast && firstItemRef.current) {
-      observerTop?.observe(firstItemRef.current);
-    }
-  }, [select.last, select.items[0]]);
 
   React.useEffect(() => {
     const observerBottom = new IntersectionObserver(
@@ -139,20 +122,41 @@ function Chat() {
     lastItemRef.current && observerBottom?.observe(lastItemRef.current);
   }, [select.unreadMessage]);
 
-  // React.useEffect(() => {
-  //   console.log("from chat items", select.items);
-  // }, [select.items]);
+  // observer на загрузку сообщений при прокрутке вверх
+  const callbackTop = React.useCallback(
+    (entries, observer) => {
+      if (entries[0].isIntersecting) {
+        entries[0].target.nextSibling.scrollIntoView(true);
+        if (listRef.current) listRef.current.style.overflowY = "hidden";
+        callbacks.loadFromId("old", select.items[0]._id);
+        observer.unobserve(firstItemRef.current);
+      }
+    },
+    [select.items[0]]
+  );
+
+  React.useEffect(() => {
+    const observerTop = new IntersectionObserver(callbackTop, optionTop);
+
+    if (firstItemRef.current) {
+      if (listRef.current) listRef.current.style.overflowY = "auto";
+      observerTop?.unobserve(firstItemRef.current);
+    }
+
+    if (!select.isLast && firstItemRef.current) {
+      observerTop?.observe(firstItemRef.current);
+    }
+  }, [select.isLast, select.items[0]]);
 
   return (
     <Layout>
       <TopContainer />
       <HeadContainer title="Чат" />
       <ToolsContainer />
-      <button onClick={callbacks.deleteAll}>click</button>
       <ScrollList
         items={select.items}
         renderItem={renders.message}
-        ref={{ lastItemRef, listRef, firstItemRef }}
+        ref={refs}
       />
       <ChatForm />
     </Layout>

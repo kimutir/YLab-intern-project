@@ -5,14 +5,17 @@ import useTranslate from "@src/hooks/use-translate";
 import Pagination from "@src/components/navigation/pagination";
 import Item from "@src/components/catalog/item";
 import { useLocation } from "react-router-dom";
-import ScrollList from "@src/components/scroll/scroll-list";
+import ScrollList, { ScrollRefsType } from "@src/components/scroll/scroll-list";
 import Scroll from "../scroll";
+import { IArticleData } from "@src/store/article/type";
 
 function CatalogList() {
   const store = useStore();
 
-  const listRef = React.useRef();
-  const lastItemRef = React.useRef();
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const lastItemRef = React.useRef<HTMLDivElement>(null);
+
+  const refs = React.useRef<ScrollRefsType>({ listRef, lastItemRef });
 
   const location = useLocation();
 
@@ -30,23 +33,25 @@ function CatalogList() {
   const callbacks = {
     // Добавление в корзину
     addToBasket: useCallback(
-      (_id, amount) => store.get("basket").addToBasket(_id, amount),
+      (_id: string, amount: number) =>
+        store.get("basket").addToBasket(_id, amount),
       []
     ),
     // Пагианция
     onPaginate: useCallback(
-      (page, reset) => store.get("catalog").setParams({ page }, reset),
+      (page: number, reset: boolean) =>
+        store.get("catalog").setParams({ page }, reset),
       []
     ),
     onReset: useCallback(() => store.get("catalog").resetCatalog(), []),
     onAdditionalLoad: useCallback(
-      (skip, limit, reset) =>
+      (skip: number, limit: number, reset: boolean) =>
         store.get("catalog").additionalLoad({ skip, limit }, reset),
       []
     ),
     // Параметры после первоначальной загрузки
     setNewParams: useCallback(
-      (limit) => store.get("catalog").newParams({ limit }),
+      (limit: number) => store.get("catalog").newParams({ limit }),
       []
     ),
     // Открытие модалки "Количество товара"
@@ -55,20 +60,23 @@ function CatalogList() {
         store.get("modals").open("add-amount", {
           title: "Введите количествоjjj",
           // close: store.get("modals").close,
-          close: (name) => store.get("modals").close(name),
-          addToBasket: (id, amount) =>
+          close: (name: string) => store.get("modals").close(name),
+          addToBasket: (id: string, amount: number) =>
             store.get("basket").addToBasket(id, amount),
         }),
       []
     ),
     // Добавление в корзину
-    onAddSelected: useCallback((id) => store.get("basket").addSelected(id), []),
+    onAddSelected: useCallback(
+      (id: string) => store.get("basket").addSelected(id),
+      []
+    ),
   };
 
   const renders = {
     item: useCallback(
-      (item) => (
-        <Item
+      (item: IArticleData) => (
+        <Item<IArticleData>
           item={item}
           onOpenAddAmount={callbacks.onOpenAddAmount}
           onAdd={callbacks.onAddSelected}
@@ -99,11 +107,7 @@ function CatalogList() {
         params={location.search}
         setNewParams={callbacks.setNewParams}
       >
-        <ScrollList
-          ref={{ lastItemRef, listRef }}
-          items={select.items}
-          renderItem={renders.item}
-        />
+        <ScrollList ref={refs} items={select.items} renderItem={renders.item} />
       </Scroll>
     </>
   );

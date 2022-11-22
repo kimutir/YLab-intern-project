@@ -1,16 +1,13 @@
 import { IState } from "@src/store/type";
 import { useEffect, useMemo, useState } from "react";
 import shallowequal from "shallowequal";
-import { TestScheme } from "./type";
 import useStore from "./use-store";
 
 /**
  * Хук для доступа к объекту хранилища
  * @return {Store|{}}
  */
-export default function useSelector<T>(
-  selector: (state: TestScheme<IState>) => T
-): T {
+export default function useSelector<T>(selector: (state: IState) => T): T {
   const store = useStore();
 
   const [state, setState] = useState(() => selector(store.getState()));

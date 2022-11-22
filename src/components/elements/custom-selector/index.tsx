@@ -4,37 +4,48 @@ import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 import SelectorItem from "./selector-item";
 
-function CustomSelector(props) {
+type CustomSelectorProps = {
+  default: string;
+  // добавить value
+  value: any;
+  onSearch: (query: string, page?: number, reset?: boolean) => Promise<void>;
+  onSelect: (id: string) => void;
+  selected: string;
+};
+
+function CustomSelector(props: CustomSelectorProps) {
   const cn = bem("CustomSelector");
 
   const [search, setSearch] = React.useState("");
   const [visible, setVisible] = React.useState(false);
 
-  const listRef = React.useRef();
-  const bodyRef = React.useRef();
-  const selectorRef = React.useRef();
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const bodyRef = React.useRef<HTMLDivElement>(null);
+  const selectorRef = React.useRef<HTMLDivElement>(null);
 
-  // показываем - убираем всплывашку
+  // Показываем - убираем всплывашку
   const show = React.useCallback(
-    (value) => {
+    (value?: boolean) => {
       value === undefined && setVisible((prev) => !prev);
       value === true && setVisible(true);
       value === false && setVisible(false);
       !visible && setSearch("");
       visible && props.onSearch("");
-      // document.getElementById(props.selected).scrollIntoView(top);
     },
     [visible]
   );
 
-  const onClose = (e) => {
-    if (!visible && !selectorRef.current?.contains(e.target)) {
-      setVisible(false);
-    }
-  };
-
   React.useEffect(() => {
+    const onClose = (e: MouseEvent) => {
+      if (!visible && !selectorRef.current?.contains(e.target as Node)) {
+        setVisible(false);
+      }
+    };
     document.addEventListener("click", onClose);
+
+    return () => {
+      document.removeEventListener("click", onClose);
+    };
   }, []);
 
   const onKeyShow = React.useCallback((e) => {
@@ -48,13 +59,13 @@ function CustomSelector(props) {
   // поиск
   const onChange = React.useCallback((e) => {
     setSearch(e.target.value);
-    listRef.current.scrollTo(0, 0);
+    listRef.current?.scrollTo(0, 0);
     props.onSearch(e.target.value);
   }, []);
 
   // выбор
   const onSelect = React.useCallback(
-    (id) => {
+    (id: string) => {
       setVisible(false);
       props.onSearch("");
       props.onSelect(id);
@@ -76,15 +87,18 @@ function CustomSelector(props) {
   React.useEffect(() => {
     let x = -1;
     if (visible) {
-      const items = [
-        bodyRef.current.childNodes[0],
-        ...bodyRef.current.childNodes[1].childNodes,
+      const items: HTMLElement[] = [
+        bodyRef.current?.childNodes[0] as HTMLElement,
+        ...(Array.from(
+          bodyRef.current?.childNodes[1].childNodes!
+        ) as HTMLElement[]),
       ];
 
-      selectorRef.current.addEventListener(
+      const test = [1.2, 3, 4];
+
+      selectorRef.current?.addEventListener(
         "keydown",
         (e) => {
-          // e.preventDefault();
           if (e.code === "ArrowDown" && x < items.length - 1) x += 1;
           if (e.code === "ArrowUp" && x > 0) x -= 1;
           if (x >= 0 && x < items.length) items[x].focus();
@@ -99,7 +113,7 @@ function CustomSelector(props) {
   return (
     <div
       className={cn()}
-      tabIndex="0"
+      tabIndex={0}
       onKeyDown={(e) => onKeyShow(e)}
       ref={selectorRef}
     >
@@ -110,7 +124,7 @@ function CustomSelector(props) {
           onClick={() => {
             show();
           }}
-          tabIndex="-1"
+          tabIndex={-1}
         />
       </div>
 
@@ -118,14 +132,14 @@ function CustomSelector(props) {
         // <div className={cn("wrapper")}>
         <div className={cn("body")} ref={bodyRef}>
           <input
-            tabIndex="0"
+            tabIndex={0}
             type="text"
             className={cn("search")}
             placeholder="Поиск"
             value={search}
             onChange={(e) => onChange(e)}
           />
-          <div tabIndex="0" ref={listRef} className={cn("list")}>
+          <div tabIndex={0} ref={listRef} className={cn("list")}>
             {props.value.map((i, index) => (
               <SelectorItem
                 tab={index + 1}
@@ -142,9 +156,5 @@ function CustomSelector(props) {
     </div>
   );
 }
-
-CustomSelector.propTypes = {};
-
-CustomSelector.defaultProps = {};
 
 export default React.memo(CustomSelector);

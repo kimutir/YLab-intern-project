@@ -1,5 +1,4 @@
-import React, { useCallback } from "react";
-import propTypes from "prop-types";
+import React from "react";
 import { cn as bem } from "@bem-react/classname";
 import { v4 as uuidv4 } from "uuid";
 import "./style.css";
@@ -17,7 +16,7 @@ function ChatForm() {
 
   const callbacks = {
     send: React.useCallback(
-      (text, _key) => {
+      (text: string, _key: string) => {
         if (!text) return;
         store.get("chat").load("post", { text, _key });
         setText("");
@@ -25,14 +24,14 @@ function ChatForm() {
       [text]
     ),
     postMessage: React.useCallback(
-      (key, text, id) => {
+      (key: string, text: string, id: string) => {
         store.get("chat").postMessage(key, text, id);
       },
       [text]
     ),
   };
 
-  const onHandleSubmit = (key, text, id) => {
+  const onHandleSubmit = (key: string, text: string, id: string) => {
     if (!text) return;
     callbacks.postMessage(key, text, id);
     callbacks.send(text, key);
@@ -44,7 +43,6 @@ function ChatForm() {
       onSubmit={(e) => {
         e.preventDefault();
         onHandleSubmit(uuidv4(), text, select.id);
-        // callbacks.send(text, uuidv4());
       }}
     >
       <input
@@ -57,9 +55,5 @@ function ChatForm() {
     </form>
   );
 }
-
-ChatForm.propTypes = {};
-
-ChatForm.defaultProps = {};
 
 export default React.memo(ChatForm);

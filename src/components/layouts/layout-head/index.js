@@ -1,24 +1,24 @@
-import React from 'react';
+import React from "react";
 import propTypes from "prop-types";
-import './style.less';
-import {cn as bem} from "@bem-react/classname";
+import "./style.less";
+import { cn as bem } from "@bem-react/classname";
 
-function LayoutHead({title, children}){
-  const cn = bem('LayoutHead');
+function LayoutHead({ title, children }) {
+  const cn = bem("LayoutHead");
   return (
     <div className={cn()}>
-      <h1 className={cn('title')}>{title}</h1>
-      <div className={cn('side')}>{children}</div>
+      <h1 className={cn("title")}>{title}</h1>
+      <div className={cn("side")}>{children}</div>
     </div>
-  )
+  );
 }
 
-LayoutHead.propTypes = {
-  title: propTypes.string,
-  children: propTypes.node,
-}
+// LayoutHead.propTypes = {
+//   title: propTypes.string,
+//   children: propTypes.node,
+// }
 
-LayoutHead.defaultProps = {
-}
+// LayoutHead.defaultProps = {
+// }
 
 export default React.memo(LayoutHead);

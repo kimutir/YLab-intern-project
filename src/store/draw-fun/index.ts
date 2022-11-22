@@ -6,7 +6,7 @@ import IDraw from "./type";
 /**
  * Состояние корзины
  */
-class DrawFun extends StateModule {
+class DrawFunState extends StateModule {
   /**
    * Начальное состояние
    * @return {Object}
@@ -23,7 +23,17 @@ class DrawFun extends StateModule {
   }
 
   // добавление фигуры
-  addFigure({ type, coordinates, date, animation }) {
+  addFigure({
+    type,
+    coordinates,
+    date,
+    animation,
+  }: {
+    type: string;
+    coordinates: number[] | number[][];
+    date: number;
+    animation?: any;
+  }) {
     this.setState({
       ...this.getState(),
       total: this.getState().total + 1,
@@ -423,7 +433,7 @@ class DrawFun extends StateModule {
     }
   }
   // изменение параметров
-  onSubmitChanges(coordinates) {
+  onSubmitChanges(coordinates: number[] | number[][]) {
     const selected = this.getState().selected;
 
     this.setState({
@@ -447,4 +457,4 @@ class DrawFun extends StateModule {
   }
 }
 
-export default DrawFun;
+export default DrawFunState;

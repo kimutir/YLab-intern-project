@@ -2,7 +2,13 @@ import React from "react";
 import numberFormat from "@src/utils/number-format";
 import "./styles.css";
 
-function BasketTotal(props) {
+interface BasketTotalProps {
+  t: (text: string) => string;
+  sum: number;
+  onOpenModalCatalog: () => void;
+}
+
+function BasketTotal(props: BasketTotalProps) {
   return (
     <div className="BasketTotal">
       <button onClick={props.onOpenModalCatalog}>Открыть каталог</button>

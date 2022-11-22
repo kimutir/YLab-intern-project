@@ -65,7 +65,6 @@ function drawTriangle({ ctx, figure, selected, scale }) {
 }
 
 function drawLeaf({ ctx, figure, scale }) {
-  console.log("leaf");
   const [x, y, width] = figure.coordinates;
   const angle = figure.animation.rotation.angle;
   if (y > 210) {

@@ -12,8 +12,7 @@ import LayoutFlex from "@src/components/layouts/layout-flex";
 import actionsModals from "@src/store-redux/modals/actions";
 
 function ToolsContainer() {
-  //const store = useStore();
-  const storeRedux = useStoreRedux();
+  // const storeRedux = useStoreRedux();
   const store = useStore();
 
   const select = useSelector((state) => ({

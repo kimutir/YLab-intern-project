@@ -12,6 +12,7 @@
     "allowJs": true,
     "moduleResolution": "node",
     "baseUrl": "./",
+    "lib": [ "ES5","ES2015.Iterable", "dom" ],
     "paths": {
       "@src/*": ["src/*"]
     },

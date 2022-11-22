@@ -3,15 +3,18 @@ import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 import useSelector from "@src/hooks/use-selector";
+import { Message } from "@src/store/chat/type";
 
-function ChatItem(props) {
+interface ChatItemProps {
+  item: Message & { status: boolean };
+  link?: string;
+  labelCurr?: string;
+  labelAdd?: string;
+}
+
+function ChatItem(props: ChatItemProps) {
   const cn = bem("ChatItem");
 
-  const options = {
-    weekday: "long",
-    hour: "numeric",
-    minute: "numeric",
-  };
   const date = new Date(props.item.dateCreate);
 
   const select = useSelector((state) => ({
@@ -27,7 +30,12 @@ function ChatItem(props) {
       <div className={cn("top")}>
         <p className={cn("userName")}> {props.item.author.profile.name}</p>
         <p className={cn("date")}>
-          {date && date.toLocaleDateString("ru", options)}
+          {date &&
+            date.toLocaleDateString("ru", {
+              weekday: "long",
+              hour: "numeric",
+              minute: "numeric",
+            })}
         </p>
       </div>
       <div
@@ -56,20 +64,5 @@ function ChatItem(props) {
     </div>
   );
 }
-
-ChatItem.propTypes = {
-  item: propTypes.object.isRequired,
-  onAdd: propTypes.func,
-  link: propTypes.string,
-  labelCurr: propTypes.string,
-  labelAdd: propTypes.string,
-};
-
-ChatItem.defaultProps = {
-  onSelectItem: () => {},
-  onAdd: () => {},
-  labelCurr: "₽",
-  labelAdd: "Добавить",
-};
 
 export default React.memo(ChatItem);

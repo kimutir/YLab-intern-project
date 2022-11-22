@@ -29,10 +29,10 @@ function Basket() {
     onOpenModalCatalog: useCallback(() => {
       store.newState("catalog", "catalog1");
       store.get("modals").open("catalog", {
-        closeModal: (name) => store.get("modals").close(name),
-        addToBasket: (_id, amount) =>
+        closeModal: (name:string) => store.get("modals").close(name),
+        addToBasket: (_id:string, amount:number) =>
           store.get("basket").addToBasket(_id, amount),
-        onPaginate: (page, reset) =>
+        onPaginate: (page:number, reset:boolean) =>
           store.get("catalog1").setParams({ page }, reset),
         setNewParams: (limit: number) =>
           store.get("catalog1").newParams({ limit }),
@@ -40,18 +40,18 @@ function Basket() {
           store.get("modals").open("add-amount", {
             title: "Введите количество",
             close: store.get("modals").close,
-            addToBasket: (id, amount) =>
+            addToBasket: (id:string, amount:number) =>
               store.get("basket").addToBasket(id, amount),
           }),
-        onAdditionalLoad: (skip, limit, reset) =>
+        onAdditionalLoad: (skip:number, limit:number, reset:boolean) =>
           store.get("catalog1").additionalLoad({ skip, limit }, reset),
-        onAddSelected: (id) => store.get("basket").addSelected(id),
+        onAddSelected: (id:number) => store.get("basket").addSelected(id),
         removeCatalog: () => store.removeState("catalog1"),
       });
     }, []),
     // Удаление из корзины
     removeFromBasket: useCallback(
-      (_id) => store.get("basket").removeFromBasket(_id),
+      (_id:string) => store.get("basket").removeFromBasket(_id),
       []
     ),
   };

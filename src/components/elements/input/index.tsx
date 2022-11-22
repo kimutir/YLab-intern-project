@@ -4,30 +4,46 @@ import { cn as bem } from "@bem-react/classname";
 import debounce from "lodash.debounce";
 import "./style.css";
 
-function Input(props) {
+type InputProps = {
+  onChange: (
+    value: string,
+    page: number,
+    reset: boolean
+  ) => Promise<void> | void;
+  onReset?: () => Promise<void>;
+  limit?: number;
+  page?: number;
+  theme?: string;
+  value: string;
+  placeholder?: string;
+  name?: string;
+  type?: string;
+};
+
+function Input(props: InputProps) {
   const cn = bem("Input");
 
   // Внутренний стейт по умолчанию с переданным value
-  const [value, change] = useState(props.value);
+  const [value, setValue] = useState(props.value);
 
   // Задержка для вызова props.onChange
   const changeThrottle = useCallback(
-    debounce((value) => props.onChange(value, 1, true), 600),
+    debounce((value: string) => props.onChange(value, 1, true), 600),
     [props.onChange, props.name]
   );
 
   // Обработчик изменений в поле
   const onChange = useCallback(
-    (event) => {
-      change(event.target.value);
+    (event: { target: { value: React.SetStateAction<string> } }) => {
+      setValue(event.target.value);
       changeThrottle(event.target.value);
     },
-    [change, changeThrottle]
+    [setValue, changeThrottle]
   );
 
   // Обновление стейта, если передан новый value
   useEffect(() => {
-    change(props.value);
+    setValue(props.value);
   }, [props.value]);
 
   return (
@@ -41,20 +57,5 @@ function Input(props) {
     />
   );
 }
-
-Input.propTypes = {
-  value: propTypes.string,
-  type: propTypes.string,
-  name: propTypes.string,
-  placeholder: propTypes.string,
-  onChange: propTypes.func,
-  theme: propTypes.string,
-};
-
-Input.defaultProps = {
-  onChange: () => {},
-  type: "text",
-  theme: "",
-};
 
 export default React.memo(Input);

@@ -2,7 +2,6 @@ import { IConfigStore, IListeners } from "@src/types/type-config";
 import Services from "@src/services";
 import * as modules from "@src/store/exports";
 import { IModules, IState } from "./type";
-import { TestScheme } from "@src/hooks/type";
 
 class Store {
   services: Services;
@@ -10,14 +9,11 @@ class Store {
   state: IState;
   listeners: IListeners;
   modules: IModules;
-  /**
-   * @param services {Services}
-   * @param config {Object}
-   */
+
   constructor(services: Services, config: IConfigStore) {
     // Менеджер сервисов
     this.services = services;
-    // config работает правильно???
+
     this.config = config;
     // Состояние приложения (данные)
     this.state = {} as IState;
@@ -59,16 +55,15 @@ class Store {
    * Доступ к модулю состояния
    * @param name {String} Название модуля
    */
-  get<T extends keyof TestScheme<IModules>>(name: T) {
-    return this.modules[name] as TestScheme<IModules>[T];
+  get<T extends keyof IModules>(name: T) {
+    return this.modules[name] as IModules[T];
   }
 
   /**
    * Выбор state
-   * @return {Object}
    */
   getState() {
-    return this.state as TestScheme<IState>;
+    return this.state as IState;
   }
 
   /**

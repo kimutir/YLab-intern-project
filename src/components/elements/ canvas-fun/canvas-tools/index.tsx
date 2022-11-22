@@ -3,7 +3,13 @@ import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 
-const CanvasTools = (props) => {
+type CanvasToolsProps = {
+  addCircle: () => void;
+  addTriangle: () => void;
+  addLeaf: () => void;
+};
+
+const CanvasTools = (props: CanvasToolsProps) => {
   const cn = bem("CanvasTools");
 
   return (
@@ -14,9 +20,5 @@ const CanvasTools = (props) => {
     </div>
   );
 };
-
-CanvasTools.propTypes = {};
-
-CanvasTools.defaultProps = {};
 
 export default React.memo(CanvasTools);

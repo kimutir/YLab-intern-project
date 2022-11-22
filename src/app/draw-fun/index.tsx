@@ -31,9 +31,8 @@ function DrawFun() {
           Math.random() * 100 + 20,
         ],
         date: performance.now(),
-      }),
-        [];
-    }),
+      });
+    }, []),
     addLeaf: React.useCallback(() => {
       store.get("drawFun").addFigure({
         type: "leaf",
@@ -53,7 +52,7 @@ function DrawFun() {
         },
       }),
         [];
-    }),
+    }, []),
     addTriangle: React.useCallback(() => {
       const xStart = Math.random() * 800;
       const yStart = Math.random() * 500;
@@ -67,24 +66,25 @@ function DrawFun() {
         date: performance.now(),
       });
     }, []),
-    onMouseWheel: React.useCallback((e) => {
+    onMouseWheel: React.useCallback((e: MouseEvent) => {
       store.get("drawFun").onMouseWheel(e);
     }, []),
     onMouseDown: React.useCallback(
-      (e) => store.get("drawFun").onMouseDown(e),
+      (e: MouseEvent) => store.get("drawFun").onMouseDown(e),
       []
     ),
     onMouseUp: React.useCallback(() => store.get("drawFun").onMouseUp(), []),
     onMouseMove: React.useCallback(
-      (e) => store.get("drawFun").onMouseMove(e),
+      (e: MouseEvent) => store.get("drawFun").onMouseMove(e),
       []
     ),
     onFall: React.useCallback(
-      (height) => store.get("drawFun").onFall({ height }),
+      (height: number) => store.get("drawFun").onFall({ height }),
       []
     ),
     onSubmitChanges: React.useCallback(
-      (args) => store.get("drawFun").onSubmitChanges(args),
+      (coordinates: number[] | number[][]) =>
+        store.get("drawFun").onSubmitChanges(coordinates),
       []
     ),
   };

@@ -1,5 +1,5 @@
 import StateModule from "@src/store/module";
-import IChat from "./type";
+import IChat, { MessageResponse } from "./type";
 
 /**
  * Состояние товара
@@ -93,7 +93,6 @@ class ChatState extends StateModule {
         }
         break;
       default:
-        console.log("Some Error");
         break;
     }
   }
@@ -120,7 +119,15 @@ class ChatState extends StateModule {
     return newArr;
   }
 
-  load(method = "last", payload: { _key?: number } = {}) {
+  load(
+    method = "last",
+    payload: {
+      _key?: string;
+      fromId?: string;
+      fromDate?: string;
+      text?: string;
+    } = {}
+  ) {
     const socket = this.services.chatSocket.socket;
 
     // сохраняем ключи для сверки статуса
@@ -143,7 +150,7 @@ class ChatState extends StateModule {
     this.services.chatSocket.disconnect();
   }
 
-  postMessage(key, text, id) {
+  postMessage(key: string, text: string, id: string) {
     this.setState({
       ...this.getState(),
       unreadMessage: true,

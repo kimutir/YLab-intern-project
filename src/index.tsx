@@ -6,13 +6,11 @@ import Services from "./services";
 import ServicesProvider from "./provider";
 import config from "./config";
 import { Provider } from "react-redux";
-import counter from "./utils/counter";
 
 // Менеджер сервисов
 const services = new Services(config);
 
 // Корень React приложения
-
 const rootDOM: HTMLElement | null = document.getElementById("root");
 
 if (rootDOM) {

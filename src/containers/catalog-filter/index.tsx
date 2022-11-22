@@ -9,15 +9,19 @@ import listToTree from "@src/utils/list-to-tree";
 import treeToList from "@src/utils/tree-to-list";
 import CustomSelector from "@src/components/elements/custom-selector";
 
-function CatalogFilter(props) {
+type CatalogFilterProps = {
+  catalog: string;
+};
+
+function CatalogFilter(props: CatalogFilterProps) {
   const store = useStore();
 
   const select = useSelector((state) => ({
-    sort: state[props.catalog].params.sort,
-    query: state[props.catalog].params.query,
-    page: state[props.catalog].params.page,
-    limit: state[props.catalog].params.limit,
-    category: state[props.catalog].params.category,
+    sort: state[props.catalog].params.sort as string,
+    query: state[props.catalog].params.query as string,
+    page: state[props.catalog].params.page as number,
+    limit: state[props.catalog].params.limit as number,
+    category: state[props.catalog].params.category as string,
     categories: state.categories.items,
     countries: state.countries.items,
     selectedCountry: state.countries.selected,
@@ -28,32 +32,41 @@ function CatalogFilter(props) {
   const callbacks = {
     // Сортировка
     onSort: useCallback(
-      (sort, page, reset) =>
-        store.get(props.catalog).setParams({ sort, page }, reset),
+      (sort: string, page: number, reset: boolean) =>
+        store.get(props.catalog as "catalog").setParams({ sort, page }, reset),
       []
     ),
     // Поиск
     onSearch: useCallback(
-      (query, page, reset) =>
-        store.get(props.catalog).setParams({ query, page }, reset),
+      (query: string, page: number, reset: boolean) =>
+        store.get(props.catalog as "catalog").setParams({ query, page }, reset),
       []
     ),
     onSearchCountries: useCallback(
-      (query) => store.get("countries").setParams({ query }),
+      (query: string) => store.get("countries").setParams({ query }),
       []
     ),
-    onSelect: useCallback((id) => store.get("countries").selectCountry(id), []),
+    // Выбор
+    onSelect: useCallback(
+      (id: string) => store.get("countries").selectCountry(id),
+      []
+    ),
     // Сброс
-    onReset: useCallback(() => store.get(props.catalog).resetParams(), []),
+    onReset: useCallback(
+      () => store.get(props.catalog as "catalog").resetParams(),
+      []
+    ),
     // Фильтр по категории
     onCategory: useCallback(
-      (category, page, reset) =>
-        store.get(props.catalog).setParams({ category, page }, reset),
+      (category: string, page: number, reset: boolean) =>
+        store
+          .get(props.catalog as "catalog")
+          .setParams({ category, page }, reset),
       []
     ),
   };
 
-  // Опции для полей
+  // Опции для селекторов
   const options = {
     sort: useMemo(
       () => [

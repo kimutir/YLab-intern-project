@@ -1,9 +1,23 @@
 import React, { useCallback } from "react";
-import propTypes from "prop-types";
 import numberFormat from "@src/utils/number-format";
 import { cn as bem } from "@bem-react/classname";
 import { Link } from "react-router-dom";
 import "./styles.css";
+import { IArticleData } from "@src/store/article/type";
+
+interface AmountItem {
+  amount: number;
+}
+
+interface ItemBasketProps {
+  item: IArticleData & AmountItem;
+  link: string;
+  onRemove: (id: string) => void;
+  onLink: () => void;
+  labelDelete: string;
+  labelUnit: string;
+  labelCurr?: string;
+}
 
 function ItemBasket({
   item,
@@ -13,11 +27,11 @@ function ItemBasket({
   labelDelete,
   labelUnit,
   labelCurr,
-}) {
+}: ItemBasketProps) {
   const cn = bem("ItemBasket");
 
   const callbacks = {
-    onRemove: useCallback((e) => onRemove(item._id), [onRemove, item]),
+    onRemove: useCallback(() => onRemove(item._id), [onRemove, item]),
   };
 
   return (
@@ -45,22 +59,5 @@ function ItemBasket({
     </div>
   );
 }
-
-ItemBasket.propTypes = {
-  item: propTypes.object.isRequired,
-  onRemove: propTypes.func,
-  link: propTypes.string,
-  onLink: propTypes.func,
-  labelCurr: propTypes.string,
-  labelDelete: propTypes.string,
-  labelUnit: propTypes.string,
-};
-
-ItemBasket.defaultProps = {
-  onLink: () => {},
-  labelCurr: "₽",
-  labelUnit: "шт",
-  labelDelete: "Удалить",
-};
 
 export default React.memo(ItemBasket);

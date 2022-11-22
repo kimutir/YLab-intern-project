@@ -1,11 +1,15 @@
 import React from "react";
-import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import numberFormat from "@src/utils/number-format";
 import "./style.css";
+import { IArticleData } from "@src/store/article/type";
 
-function ArticleCard({ article, onAdd }) {
-  // CSS классы по БЭМ
+interface ArticleCardProps {
+  article: IArticleData;
+  onAdd: (id: string) => void;
+}
+
+function ArticleCard({ article, onAdd }: ArticleCardProps) {
   const cn = bem("ArticleCard");
 
   return (
@@ -33,15 +37,5 @@ function ArticleCard({ article, onAdd }) {
     </div>
   );
 }
-
-ArticleCard.propTypes = {
-  article: propTypes.object.isRequired,
-  onAdd: propTypes.func,
-};
-
-ArticleCard.defaultProps = {
-  article: {},
-  onAdd: () => {},
-};
 
 export default React.memo(ArticleCard);

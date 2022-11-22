@@ -4,7 +4,6 @@ import useTranslate from "@src/hooks/use-translate";
 import LayoutFlex from "@src/components/layouts/layout-flex";
 import useSelector from "@src/hooks/use-selector";
 import useStore from "@src/hooks/use-store";
-import CatalogState from "@src/store/catalog";
 
 function TopContainer() {
   const { t } = useTranslate();

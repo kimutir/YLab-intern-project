@@ -22,6 +22,7 @@ function Article() {
 
   const storeRedux = useStoreRedux();
 
+  // загрузка товаров
   useInit(async () => {
     if (params.id) await store.get("article").load(params.id);
     // storeRedux.dispatch(actionsArticle.load(params.id));

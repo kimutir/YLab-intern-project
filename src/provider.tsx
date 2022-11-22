@@ -1,7 +1,5 @@
 import React from "react";
-import propTypes from "prop-types";
 import Services from "./services";
-import { types } from "@babel/core";
 
 /**
  * Контекст для Services

@@ -11,6 +11,7 @@ import ToolsContainer from "@src/containers/tools";
 function Main() {
   const store = useStore();
 
+  // loading countries and categories
   useInit(
     async () => {
       await Promise.all([

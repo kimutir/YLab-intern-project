@@ -1,5 +1,3 @@
-import Store from "@src/store";
-import { TestScheme } from "./type";
 import useServices from "./use-services";
 
 /**

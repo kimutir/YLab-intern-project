@@ -3,26 +3,42 @@ import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 
-function SelectorItem(props) {
+type SelectorItemProps = {
+  tab?: number;
+  key?: string;
+  item: {
+    _id: string;
+    title: string;
+    code: string;
+    icon?: string;
+  };
+  selected?: boolean;
+  onSelect: (id: string) => void;
+  head?: boolean;
+};
+
+function SelectorItem(props: SelectorItemProps) {
   const cn = bem("SelectorItem");
-  const itemRef = React.useRef();
-  const iconRef = React.useRef();
-  const titleRef = React.useRef();
+  const itemRef = React.useRef<HTMLDivElement>(null);
+  const iconRef = React.useRef<HTMLDivElement>(null);
+  const titleRef = React.useRef<HTMLDivElement>(null);
 
   const [isLong, setIsLong] = React.useState(false);
 
   React.useEffect(() => {
-    itemRef.current.addEventListener("keydown", (e) => {
+    itemRef.current?.addEventListener("keydown", (e) => {
       e.preventDefault();
       if (e.code === "Enter") {
         props.onSelect(props.item._id);
       }
     });
-    if (itemRef.current.scrollWidth > 230) {
-      titleRef.current.textContent =
-        titleRef.current.textContent.slice(0, 20) + " ...";
+    if (itemRef.current?.scrollWidth && itemRef.current?.scrollWidth > 230) {
+      if (titleRef.current?.textContent) {
+        titleRef.current.textContent =
+          titleRef.current?.textContent.slice(0, 20) + " ...";
 
-      setIsLong(true);
+        setIsLong(true);
+      }
     }
   });
 

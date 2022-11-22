@@ -62,8 +62,6 @@ class BasketState extends StateModule {
       },
       "Добавление в корзину"
     );
-
-    console.log(this.getState());
   }
 
   /**
