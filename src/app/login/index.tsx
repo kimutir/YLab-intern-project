@@ -31,24 +31,23 @@ function Login() {
     errors: state.session.errors,
   }));
 
-  // login and password
   const [data, setData] = useState({
     login: "",
     password: "",
   });
 
   const callbacks = {
-    // typing login and password
+    // Ввод логина и пароля
     onChange: useCallback((value: string, name: string) => {
       setData((prevData) => ({ ...prevData, [name]: value }));
     }, []),
 
-    // sending login and password
+    // Отправка логина и пароля
     onSubmit: useCallback(
       (e: React.SyntheticEvent) => {
         e.preventDefault();
         store.get("session").signIn(data, () => {
-          // back to the page we came from
+          // Возврат на предыдущую страницу
           const back: string =
             location.state?.back && location.state?.back !== location.pathname
               ? location.state?.back
@@ -63,7 +62,7 @@ function Login() {
   return (
     <Layout>
       <TopContainer />
-      <HeadContainer />
+      <HeadContainer title={t("auth.title")} />
       <ToolsContainer />
 
       <LayoutFlex>

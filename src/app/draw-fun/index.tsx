@@ -9,9 +9,11 @@ import CanvasTools from "@src/components/elements/ canvas-fun/canvas-tools";
 import useSelector from "@src/hooks/use-selector";
 import CanvasSetting from "@src/components/elements/ canvas-fun/canvas-setting";
 import LayoutFlex from "@src/components/layouts/layout-flex";
+import useTranslate from "@src/hooks/use-translate";
 
 function DrawFun() {
   const store = useStore();
+  const { t } = useTranslate();
 
   const select = useSelector((state) => ({
     figures: state.drawFun.figures,
@@ -92,7 +94,7 @@ function DrawFun() {
   return (
     <Layout>
       <TopContainer />
-      <HeadContainer />
+      <HeadContainer title={t("canvas")} />
       <ToolsContainer />
       <LayoutFlex>
         <CanvasTools

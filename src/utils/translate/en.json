@@ -1,6 +1,12 @@
 {
   "title": "Shop",
+  "chat": "Chat",
+  "canvas": "Canvas",
+  "canvas.circle": "Circle",
+  "canvas.triangle": "Triangle",
+  "canvas.leaves": "Leaves",
   "menu.main": "Main",
+  "profile": "Profile",
   "basket.title": "Cart",
   "basket.open": "Open",
   "basket.close": "Close",

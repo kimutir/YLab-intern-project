@@ -7,6 +7,7 @@ import BasketTotal from "@src/components/catalog/basket-total";
 import LayoutModal from "@src/components/layouts/layout-modal";
 import ItemBasket from "@src/components/catalog/item-basket";
 import List from "@src/components/elements/list";
+import { IBasketItem } from "@src/store/basket/type";
 
 function Basket() {
   const store = useStore();
@@ -21,44 +22,46 @@ function Basket() {
   const { t } = useTranslate();
 
   const callbacks = {
-    // Закрытие любой модалки
+    // Закрытие модалки
     closeModal: useCallback(() => {
       store.get("modals").close("basket");
-      // storeRedux.dispatch(actionsModals.close());
     }, []),
+    // Открытие каталога внутри корзины
     onOpenModalCatalog: useCallback(() => {
       store.newState("catalog", "catalog1");
       store.get("modals").open("catalog", {
-        closeModal: (name:string) => store.get("modals").close(name),
-        addToBasket: (_id:string, amount:number) =>
+        closeModal: (name: string) => store.get("modals").close(name),
+        addToBasket: (_id: string, amount: number) =>
           store.get("basket").addToBasket(_id, amount),
-        onPaginate: (page:number, reset:boolean) =>
+        onPaginate: (page: number, reset: boolean) =>
           store.get("catalog1").setParams({ page }, reset),
         setNewParams: (limit: number) =>
           store.get("catalog1").newParams({ limit }),
+
+        // Открытие модалки "Количество товара"
         onOpenAddAmount: () =>
           store.get("modals").open("add-amount", {
             title: "Введите количество",
-            close: store.get("modals").close,
-            addToBasket: (id:string, amount:number) =>
+            close: () => store.get("modals").close("add-amount"),
+            addToBasket: (id: string, amount: number) =>
               store.get("basket").addToBasket(id, amount),
           }),
-        onAdditionalLoad: (skip:number, limit:number, reset:boolean) =>
+        onAdditionalLoad: (skip: number, limit: number, reset: boolean) =>
           store.get("catalog1").additionalLoad({ skip, limit }, reset),
-        onAddSelected: (id:number) => store.get("basket").addSelected(id),
+        onAddSelected: (id: string) => store.get("basket").addSelected(id),
         removeCatalog: () => store.removeState("catalog1"),
       });
     }, []),
     // Удаление из корзины
     removeFromBasket: useCallback(
-      (_id:string) => store.get("basket").removeFromBasket(_id),
+      (_id: string) => store.get("basket").removeFromBasket(_id),
       []
     ),
   };
 
   const renders = {
     itemBasket: useCallback(
-      (item) => (
+      (item: IBasketItem) => (
         <ItemBasket
           item={item}
           link={`/articles/${item._id}`}

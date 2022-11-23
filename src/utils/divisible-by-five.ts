@@ -1,4 +1,4 @@
-export default function divisibleByFive(num) {
+export default function divisibleByFive(num: number) {
   const numString = num.toString();
   const lastDigit = Number(numString[numString.length - 1]);
 

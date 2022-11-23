@@ -4,22 +4,35 @@ import useStore from "@src/hooks/use-store";
 import useTranslate from "@src/hooks/use-translate";
 import Pagination from "@src/components/navigation/pagination";
 import Item from "@src/components/catalog/item";
-import ModalAmount from "@src/components/modals/modal-amount";
-import ScrollList from "@src/components/scroll/scroll-list";
+import ScrollList, { ScrollRefsType } from "@src/components/scroll/scroll-list";
 import LayoutModal from "@src/components/layouts/layout-modal";
 import Scroll from "@src/containers/scroll";
 import CatalogFilter from "@src/containers/catalog-filter";
+import { IArticleData } from "@src/store/article/type";
 
-function ModalCatalog(props) {
+interface ModalCatalogProps {
+  closeModal: (name: string) => void;
+  addToBasket: (id: string) => void;
+  removeCatalog: () => void;
+  onPaginate: (page: number, reset: boolean) => void;
+  onAdditionalLoad: (skip: number, limit: number, reset: boolean) => void;
+  onOpenAddAmount: () => void;
+  setNewParams: (limit: number) => void;
+  onAddSelected: (id: string) => void;
+}
+
+function ModalCatalog(props: ModalCatalogProps) {
   const store = useStore();
 
-  const listRef = React.useRef();
-  const lastItemRef = React.useRef();
+  const listRef = React.useRef<HTMLDivElement>(null);
+  const lastItemRef = React.useRef<HTMLDivElement>(null);
 
-  const [selectedItems, setSelectedItems] = React.useState([]);
+  const refs = React.useRef<ScrollRefsType>({ listRef, lastItemRef });
+
+  const [selectedItems, setSelectedItems] = React.useState<string[]>([]);
 
   const onSelectItem = React.useCallback(
-    (id) => {
+    (id: string) => {
       const index = selectedItems.indexOf(id);
       if (index !== -1) {
         const newItems = [...selectedItems];
@@ -49,8 +62,8 @@ function ModalCatalog(props) {
   }));
 
   const onAddAll = React.useCallback(async () => {
-    for (const item of selectedItems) {
-      await props.addToBasket(item);
+    for (const id of selectedItems) {
+      await props.addToBasket(id);
     }
     props.closeModal("catalog");
   }, [selectedItems]);
@@ -61,8 +74,8 @@ function ModalCatalog(props) {
 
   const renders = {
     item: useCallback(
-      (item) => (
-        <Item
+      (item: IArticleData) => (
+        <Item<IArticleData>
           inModal={true}
           closeModal={props.closeModal}
           selectedItems={selectedItems}
@@ -80,7 +93,7 @@ function ModalCatalog(props) {
 
   return (
     <LayoutModal
-      title="Введите количество товара"
+      title="Выберите товар"
       labelClose={t("basket.close")}
       onClose={() => props.closeModal("catalog")}
     >
@@ -101,11 +114,7 @@ function ModalCatalog(props) {
         root={listRef}
         params=""
       >
-        <ScrollList
-          ref={{ lastItemRef, listRef }}
-          items={select.items}
-          renderItem={renders.item}
-        />
+        <ScrollList ref={refs} items={select.items} renderItem={renders.item} />
       </Scroll>
     </LayoutModal>
   );

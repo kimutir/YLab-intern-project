@@ -1,27 +1,39 @@
 import React, { useEffect, useRef } from "react";
-import PropTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.less";
 
-function LayoutModal(props) {
+const defaultLayoutModalProps = {
+  title: "Модалка",
+};
+
+interface LayoutModalProps {
+  title?: string;
+  labelClose: string;
+  onClose: () => void;
+  children: React.ReactNode;
+}
+function LayoutModal(props: LayoutModalProps) {
   const cn = bem("LayoutModal");
 
-  const frame = useRef();
+  const frame = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let top = 10;
-    if (window.innerWidth > frame.current.clientHeight) {
-      top = Math.max(
-        top,
-        (window.innerHeight - frame.current.clientHeight) / 2 - top
-      );
+
+    if (frame.current) {
+      if (window.innerWidth > frame.current.clientHeight) {
+        top = Math.max(
+          top,
+          (window.innerHeight - frame.current.clientHeight) / 2 - top
+        );
+      }
+      frame.current.style.marginTop = `${top}px`;
+      document.body.style.overflow = "hidden";
     }
-    frame.current.style.marginTop = `${top}px`;
-    document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "auto";
     };
-  });
+  }, [frame.current]);
 
   return (
     <div className={cn()}>
@@ -38,17 +50,6 @@ function LayoutModal(props) {
   );
 }
 
-LayoutModal.propTypes = {
-  title: PropTypes.string,
-  onClose: PropTypes.func,
-  children: PropTypes.node,
-  labelClose: PropTypes.string,
-};
-
-LayoutModal.defaultProps = {
-  title: "Модалка",
-  labelClose: "Закрыть",
-  onClose: () => {},
-};
+LayoutModal.defaultProps = defaultLayoutModalProps;
 
 export default React.memo(LayoutModal);

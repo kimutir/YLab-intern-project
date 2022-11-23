@@ -1,6 +1,11 @@
 import qs from "qs";
 
-const OPTIONS = {
+interface IOPTIOINS {
+  stringify: qs.IStringifyOptions;
+  parse: qs.IParseOptions;
+}
+
+const OPTIONS: IOPTIOINS = {
   stringify: {
     addQueryPrefix: true,
     arrayFormat: "comma",
@@ -13,11 +18,11 @@ const OPTIONS = {
 };
 
 export default {
-  parse: (query) => {
+  parse: (query: string) => {
     return qs.parse(query, OPTIONS.parse) || {};
   },
 
-  stringify: (params) => {
+  stringify: (params: any) => {
     return qs.stringify(params, OPTIONS.stringify);
   },
 };

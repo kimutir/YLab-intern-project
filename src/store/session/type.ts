@@ -1,13 +1,15 @@
 export default interface ISession {
   user: UserData;
   token: string | null;
-  errors: null | {
-    other?: string[];
-    login?: string[];
-    password?: string[];
-  };
+  errors: SessionErrors;
   exists: boolean;
   waiting: boolean;
+}
+
+export interface SessionErrors {
+  other?: string;
+  login?: string;
+  password?: string;
 }
 
 export interface Role {
@@ -58,6 +60,28 @@ export interface Result {
   user: UserData;
 }
 
-export interface IUserResponse {
+export interface IUserResponse extends ISessionErrorResponse {
   result: Result;
+}
+
+export interface Issue {
+  path: any[];
+  rule: string;
+  accept: boolean;
+  message: string;
+}
+
+export interface Data {
+  issues: Issue[];
+}
+
+export interface ISessionError {
+  id: string;
+  code: string;
+  message: string;
+  data: Data;
+}
+
+export interface ISessionErrorResponse {
+  error: ISessionError;
 }

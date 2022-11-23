@@ -10,7 +10,7 @@ class Services {
   private _store: Store;
   private _api: APIService;
   private _storeRedux: any;
-  private _chatSocket: IChatSocket;
+  private _chatSocket: WSService;
 
   constructor(config: IConfig) {
     this.config = config;
@@ -29,7 +29,6 @@ class Services {
 
   /**
    * Сервис АПИ
-   * @returns {APIService}
    */
   get api(): APIService {
     if (!this._api) {
@@ -49,9 +48,9 @@ class Services {
   }
 
   /**
-   * ChatSocket store
+   * ChatSocket сервис
    */
-  get chatSocket(): IChatSocket {
+  get chatSocket(): WSService {
     if (!this._chatSocket) {
       this._chatSocket = new WSService(this, this.config.chatSocket);
     }

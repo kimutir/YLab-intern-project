@@ -23,7 +23,7 @@ export interface Category {
 
 export interface Proto {}
 
-export interface Result {
+export interface IBasketItem {
   _id: string;
   _key: string;
   name: string;
@@ -43,6 +43,6 @@ export interface Result {
   isFavorite: boolean;
 }
 
-export interface IBasketItem {
-  result: Result;
+export interface IBasketItemResponse {
+  result: IBasketItem;
 }

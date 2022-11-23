@@ -54,8 +54,9 @@ function App() {
       {modals.map((modal) => {
         if (modal.name === "basket") return <Basket />;
         if (modal.name === "catalog") return <ModalCatalog {...modal.props} />;
-        if (modal.name === "add-amount")
+        if (modal.name === "add-amount") {
           return <ModalAmount {...modal.props} />;
+        }
       })}
     </>
   );

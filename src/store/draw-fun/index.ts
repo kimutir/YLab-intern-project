@@ -317,9 +317,7 @@ class DrawFunState extends StateModule {
     }
 
     let [x, y, width] = figures[key].coordinates;
-    // console.log("x:", x);
     const startOffset = figures[key].animation.offset.start;
-    // console.log("startOffset:", startOffset);
     const duraction = figures[key].animation.offset.duraction;
     const directionOffset = figures[key].animation.offset.direction;
     const directionAngle = figures[key].animation.rotation.direction;

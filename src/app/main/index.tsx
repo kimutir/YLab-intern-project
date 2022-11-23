@@ -7,11 +7,13 @@ import Layout from "@src/components/layouts/layout";
 import TopContainer from "@src/containers/top";
 import HeadContainer from "@src/containers/head";
 import ToolsContainer from "@src/containers/tools";
+import useTranslate from "@src/hooks/use-translate";
 
 function Main() {
   const store = useStore();
+  const { t } = useTranslate();
 
-  // loading countries and categories
+  // Загрузка стран и категорий
   useInit(
     async () => {
       await Promise.all([
@@ -27,7 +29,7 @@ function Main() {
   return (
     <Layout>
       <TopContainer />
-      <HeadContainer />
+      <HeadContainer title={t("menu.main")} />
       <ToolsContainer />
       <CatalogFilter catalog="catalog" />
       <CatalogList />

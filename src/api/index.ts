@@ -2,7 +2,7 @@ import { IConfigApi } from "@src/types/type-config";
 import Services from "@src/services";
 
 class APIService {
-  services: any;
+  services: Services;
   config: IConfigApi;
   defaultHeaders: {
     [key: string]: string;
@@ -12,8 +12,6 @@ class APIService {
    * @param config {Object}
    */
   constructor(services: Services, config: IConfigApi) {
-    // console.log("config from APIService:", config);
-    // console.log("services from APIService:", services);
     this.services = services;
     this.config = config;
     this.defaultHeaders = {

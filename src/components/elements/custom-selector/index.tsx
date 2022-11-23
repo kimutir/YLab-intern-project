@@ -77,7 +77,6 @@ function CustomSelector(props: CustomSelectorProps) {
   const renderSelectedItem = React.useCallback(() => {
     const selected = props.value.find((i) => i._id === props.selected);
 
-    // console.log("el", document.getElementById(`${props.selected}`));
     if (selected) return <SelectorItem item={selected} head={true} />;
 
     return props.default;

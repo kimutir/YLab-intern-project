@@ -9,7 +9,6 @@ type HeadContainerProps = {
 
 function HeadContainer(props: HeadContainerProps) {
   const { t } = useTranslate();
-
   return (
     <LayoutHead title={t(props.title ? props.title : "Магазин")}>
       <LocaleSelect />

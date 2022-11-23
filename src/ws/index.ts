@@ -1,16 +1,20 @@
+import Services from "@src/services";
+import { IConfigWS } from "@src/types/type-config";
+
 class WSService {
-  /**
-   * @param services {Services} Менеджер сервисов
-   * @param config {Object}
-   */
-  constructor(services, config = {}) {
+  services: Services;
+  config: IConfigWS;
+  socket: WebSocket;
+
+  constructor(services: Services, config: IConfigWS) {
     this.services = services;
     this.config = config;
   }
 
-  connect(token, callback, onclose) {
+  connect(token: string, callback, onclose: () => void) {
     this.socket = new WebSocket(this.config.url);
 
+    // Проверка входа пользователя
     this.socket.onopen = () => {
       this.socket.send(
         JSON.stringify({
@@ -22,18 +26,18 @@ class WSService {
       );
     };
 
+    // Обработка входящих
     this.socket.onmessage = (res) => {
-      // const data = JSON.parse(res.data);
       callback(res);
-      // if (data?.method === "auth") {
-      //   callback(data);
-      // }
     };
 
+    // Закрытие соединения
     this.socket.onclose = (res) => {
       if (!res.wasClean) {
+        // Переподключение
         this.connect(token, callback, onclose);
       } else {
+        // Ручное отключение
         onclose();
       }
     };

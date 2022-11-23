@@ -1,10 +1,15 @@
 import React, { useCallback } from "react";
-import propTypes from "prop-types";
 import "./style.css";
 
-function Select(props) {
+interface SelectProps {
+  value: string;
+  onChange: (sort: string, page: number, reset: boolean) => void;
+  options: { value: string; title: string }[];
+}
+
+function Select(props: SelectProps) {
   const onSelect = useCallback(
-    (e) => {
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
       props.onChange(e.target.value, 1, true);
     },
     [props.onChange]
@@ -20,15 +25,5 @@ function Select(props) {
     </select>
   );
 }
-
-Select.propTypes = {
-  options: propTypes.arrayOf(propTypes.object).isRequired,
-  value: propTypes.any,
-  onChange: propTypes.func,
-};
-
-Select.defaultProps = {
-  onChange: () => {},
-};
 
 export default React.memo(Select);

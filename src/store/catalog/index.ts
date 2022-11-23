@@ -53,7 +53,7 @@ class CatalogState extends StateModule {
   /**
    * Сброс параметров к начальным
    */
-  async resetParams(params: IParams | {} = {}):Promise<void> {
+  async resetParams(params: IParams | {} = {}): Promise<void> {
     // Итоговые параметры из начальных, из URL и из переданных явно
     const newParams = { ...this.initState().params, ...params };
     // Установк параметров и подгрузка данных

@@ -8,8 +8,10 @@ import ToolsContainer from "@src/containers/tools";
 import ChatItem from "@src/components/chat/chat-item";
 import ChatForm from "@src/components/chat/chat-form";
 import ScrollList, { ScrollRefsType } from "@src/components/scroll/scroll-list";
+import useTranslate from "@src/hooks/use-translate";
 
 function Chat() {
+  const { t } = useTranslate();
   const store = useStore();
   const lastItemRef = React.useRef<HTMLDivElement>(null);
   const firstItemRef = React.useRef<HTMLDivElement>(null);
@@ -56,19 +58,19 @@ function Chat() {
     message: React.useCallback((item) => <ChatItem item={item} />, []),
   };
 
-  // установка соединения с чатом
+  // Установка соединения с чатом
   React.useEffect(() => {
     setInitial(true);
     return () => callbacks.close();
   }, []);
 
-  // первоначальная прокрутка вниз
+  // Первоначальная прокрутка вниз
   React.useEffect(() => {
     initial && lastItemRef.current && callbacks.scrollBottom();
     initial && lastItemRef.current && setInitial(false);
   }, [initial, select.items]);
 
-  // первоначальная загрузка или дозагрузка
+  // Первоначальная загрузка или дозагрузка
   React.useEffect(() => {
     if (select.connected) {
       if (select.items.length) {
@@ -84,7 +86,7 @@ function Chat() {
     }
   }, [select.connected]);
 
-  // прокрутка вниз
+  // Прокрутка вниз
   React.useEffect(() => {
     select.scroll && callbacks.scrollBottom();
     select.scroll && callbacks.resetScroll();
@@ -99,7 +101,7 @@ function Chat() {
     rootMargin: "0px 0px 0px 0px",
   };
 
-  // observer на прокрутку вниз, если пришло новое сообщение
+  // Observer на прокрутку вниз, если пришло новое сообщение
   const callbackBottom = React.useCallback(
     (entries, observer) => {
       if (entries[0].isIntersecting && select.unreadMessage) {
@@ -122,7 +124,7 @@ function Chat() {
     lastItemRef.current && observerBottom?.observe(lastItemRef.current);
   }, [select.unreadMessage]);
 
-  // observer на загрузку сообщений при прокрутке вверх
+  // Observer на загрузку сообщений при прокрутке вверх
   const callbackTop = React.useCallback(
     (entries, observer) => {
       if (entries[0].isIntersecting) {
@@ -151,7 +153,7 @@ function Chat() {
   return (
     <Layout>
       <TopContainer />
-      <HeadContainer title="Чат" />
+      <HeadContainer title={t("chat")} />
       <ToolsContainer />
       <ScrollList
         items={select.items}
@@ -162,9 +164,5 @@ function Chat() {
     </Layout>
   );
 }
-
-Chat.propTypes = {};
-
-Chat.defaultProps = {};
 
 export default React.memo(Chat);

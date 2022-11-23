@@ -8,9 +8,11 @@ import TopContainer from "@src/containers/top";
 import HeadContainer from "@src/containers/head";
 import ToolsContainer from "@src/containers/tools";
 import ProfileCard from "@src/components/profile/profile-card";
+import useTranslate from "@src/hooks/use-translate";
 
 function Profile() {
   const store = useStore();
+  const { t } = useTranslate();
 
   const select = useSelector((state) => ({
     profile: state.profile.data,
@@ -26,7 +28,7 @@ function Profile() {
   return (
     <Layout>
       <TopContainer />
-      <HeadContainer />
+      <HeadContainer title={t("profile")} />
       <ToolsContainer />
       <Spinner active={select.waiting}>
         <ProfileCard data={select.profile} />

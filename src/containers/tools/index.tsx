@@ -35,8 +35,8 @@ function ToolsContainer() {
     menu: useMemo(
       () => [
         { key: 1, title: t("menu.main"), link: "/" },
-        { key: 2, title: "Чат", link: "/chat" },
-        { key: 3, title: "Канвас Ф", link: "/drawfun" },
+        { key: 2, title: t("chat"), link: "/chat" },
+        { key: 3, title: t("canvas"), link: "/drawfun" },
       ],
       [t]
     ),

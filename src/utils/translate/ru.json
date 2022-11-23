@@ -1,5 +1,11 @@
 {
   "title": "Магазин",
+  "chat": "Чат",
+  "canvas": "Канвас",
+  "canvas.circle": "Круг",
+  "canvas.triangle": "Треугольник",
+  "canvas.leaves": "Листья",
+  "profile": "Профиль",
   "menu.main": "Главная",
   "basket.title": "Корзина",
   "basket.open": "Перейти",

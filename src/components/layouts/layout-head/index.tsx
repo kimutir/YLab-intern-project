@@ -1,9 +1,13 @@
 import React from "react";
-import propTypes from "prop-types";
 import "./style.less";
 import { cn as bem } from "@bem-react/classname";
 
-function LayoutHead({ title, children }) {
+interface LayoutFlexProps {
+  title: string;
+  children: React.ReactNode;
+}
+
+function LayoutHead({ title, children }: LayoutFlexProps) {
   const cn = bem("LayoutHead");
   return (
     <div className={cn()}>
@@ -12,13 +16,5 @@ function LayoutHead({ title, children }) {
     </div>
   );
 }
-
-// LayoutHead.propTypes = {
-//   title: propTypes.string,
-//   children: propTypes.node,
-// }
-
-// LayoutHead.defaultProps = {
-// }
 
 export default React.memo(LayoutHead);

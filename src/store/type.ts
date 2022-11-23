@@ -24,6 +24,7 @@ import ISession from "./session/type";
 export interface IState {
   basket: IBasket;
   catalog: ICatalog;
+  catalog1: ICatalog;
   categories: ICategories;
   countries: ICountries;
   locale: ILocale;
@@ -33,7 +34,7 @@ export interface IState {
   session: ISession;
   profile: IProfile;
   article: IArticle;
-  drawFun:IDraw
+  drawFun: IDraw;
 }
 
 export interface IModules {
@@ -48,7 +49,7 @@ export interface IModules {
   session: SessionState;
   profile: ProfileState;
   article: ArticleState;
-  drawFun: DrawFunState
+  drawFun: DrawFunState;
 }
 
 /**

@@ -3,19 +3,31 @@ import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 
-function Pagination(props) {
+const defaultPaginationProps = {
+  indent: 1,
+};
+
+interface PaginationProps {
+  page: number;
+  limit: number;
+  count: number;
+  onChange: (page: number, reset: boolean) => void;
+  indent?: number;
+}
+
+function Pagination(props: PaginationProps) {
   const cn = bem("Pagination");
   // Количество страниц
   const length = Math.ceil(props.count / Math.max(props.limit, 1));
 
   // Номера слева и справа относительно активного номера, которые остаются видимыми
-  let left = Math.max(props.page - props.indent, 1);
-  let right = Math.min(left + props.indent * 2, length);
+  let left = Math.max(props.page - props.indent!, 1);
+  let right = Math.min(left + props.indent! * 2, length);
   // Корректировка когда страница в конце
-  left = Math.max(right - props.indent * 2, 1);
+  left = Math.max(right - props.indent! * 2, 1);
 
   // Массив номеров, чтобы удобней рендерить
-  let items = [];
+  let items: Array<number | null> = [];
   // Первая страница всегда нужна
   if (left > 1) items.push(1);
   // Пропуск
@@ -28,9 +40,10 @@ function Pagination(props) {
   if (right < length) items.push(length);
 
   // Возвращает функцию с замыканием на номер страницы
-  const clickHandler = (page) => {
+  const clickHandler = (page: number) => {
     return () => {
-      props.onChange(page, (page - 1) * props.limit, props.limit, true);
+      // props.onChange(page, (page - 1) * props.limit, props.limit, true);
+      props.onChange(page, true);
     };
   };
 
@@ -55,20 +68,6 @@ function Pagination(props) {
   );
 }
 
-Pagination.propTypes = {
-  page: propTypes.number.isRequired,
-  limit: propTypes.number,
-  count: propTypes.number,
-  onChange: propTypes.func,
-  indent: propTypes.number,
-};
-
-Pagination.defaultProps = {
-  page: 1,
-  limit: 10,
-  count: 1000,
-  indent: 1,
-  onChange: () => {},
-};
+Pagination.defaultProps = defaultPaginationProps;
 
 export default React.memo(Pagination);

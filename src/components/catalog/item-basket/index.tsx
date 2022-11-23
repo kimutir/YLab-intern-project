@@ -4,13 +4,14 @@ import { cn as bem } from "@bem-react/classname";
 import { Link } from "react-router-dom";
 import "./styles.css";
 import { IArticleData } from "@src/store/article/type";
+import { IBasketItem } from "@src/store/basket/type";
 
 interface AmountItem {
-  amount: number;
+  amount?: number;
 }
 
 interface ItemBasketProps {
-  item: IArticleData & AmountItem;
+  item: AmountItem & (IArticleData | IBasketItem);
   link: string;
   onRemove: (id: string) => void;
   onLink: () => void;

@@ -1,6 +1,11 @@
 import StateModule from "@src/store/module";
 import simplifyErrors from "@src/utils/simplify-errors";
-import ISession, { UserData } from "./type";
+import ISession, {
+  ISessionErrorResponse,
+  IUserResponse,
+  SessionErrors,
+  UserData,
+} from "./type";
 
 /**
  * Сессия
@@ -14,7 +19,7 @@ class SessionState extends StateModule {
     return {
       user: {} as UserData,
       token: null,
-      errors: null,
+      errors: {} as SessionErrors,
       exists: false,
       waiting: true,
     };
@@ -22,9 +27,6 @@ class SessionState extends StateModule {
 
   /**
    * Авторизация (вход)
-   * @param data
-   * @param onSuccess
-   * @returns {Promise<void>}
    */
   async signIn(
     data: { login: string; password: string },
@@ -32,7 +34,7 @@ class SessionState extends StateModule {
   ): Promise<void> {
     this.setState(this.initState(), "Авторизация (начало)");
     try {
-      const json = await this.services.api.request({
+      const json: IUserResponse = await this.services.api.request({
         method: "POST",
         url: "/api/v1/users/sign",
         body: JSON.stringify(data),
@@ -47,7 +49,6 @@ class SessionState extends StateModule {
           "Ошибка авторизации"
         );
       } else {
-        console.log(json.result.user);
         this.setState(
           {
             ...this.getState(),

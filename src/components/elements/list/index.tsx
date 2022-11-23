@@ -1,9 +1,14 @@
 import React from "react";
-import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
+import { IBasketItem } from "@src/store/basket/type";
 
-const List = (props) => {
+interface ListProps {
+  items: IBasketItem[];
+  renderItem: (item: IBasketItem) => React.ReactNode;
+}
+
+const List = (props: ListProps) => {
   const cn = bem("List");
 
   return (
@@ -17,19 +22,6 @@ const List = (props) => {
       })}
     </div>
   );
-};
-
-List.propTypes = {
-  items: propTypes.arrayOf(propTypes.object).isRequired,
-  renderItem: propTypes.func,
-  onScroll: propTypes.func,
-};
-
-List.defaultProps = {
-  items: [],
-  renderItem: (item) => {
-    return item.toString();
-  },
 };
 
 export default React.memo(List);

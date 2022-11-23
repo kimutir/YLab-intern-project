@@ -1,5 +1,5 @@
 import StateModule from "@src/store/module";
-import IProfile from "./type";
+import IProfile, { IProfileData, IProfileResponse } from "./type";
 
 /**
  * Состояние профиля
@@ -11,7 +11,7 @@ class ProfileState extends StateModule {
    */
   initState(): IProfile {
     return {
-      data: {},
+      data: {} as IProfileData,
       waiting: false,
     };
   }
@@ -24,16 +24,16 @@ class ProfileState extends StateModule {
     this.setState(
       {
         waiting: true,
-        data: {},
+        data: {} as IProfileData,
       },
       "Ожидание загрузки профиля"
     );
 
     try {
-      const json = await this.services.api.request({
+      const json: IProfileResponse = await this.services.api.request({
         url: "/api/v1/users/self",
       });
-      // Товар загружен успешно
+      // Данные загружены успешно
       this.setState(
         {
           data: json.result,
@@ -45,7 +45,7 @@ class ProfileState extends StateModule {
       // Ошибка при загрузке
       this.setState(
         {
-          data: {},
+          data: {} as IProfileData,
           waiting: false,
         },
         "Ошибка загрузки профиля"
