@@ -89,7 +89,13 @@ function DrawFun() {
         store.get("drawFun").onSubmitChanges(coordinates),
       []
     ),
+    reset: React.useCallback(() => store.get("drawFun").reset(), []),
   };
+
+  // Очистка каваса при выходе
+  React.useEffect(() => {
+    return () => callbacks.reset();
+  }, []);
 
   return (
     <Layout>

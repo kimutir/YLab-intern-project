@@ -448,7 +448,7 @@ class DrawFunState extends StateModule {
   }
 
   // сброс стора
-  resetStore() {
+  reset() {
     this.setState({
       ...this.initState(),
     });

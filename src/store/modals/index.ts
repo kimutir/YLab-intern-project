@@ -13,7 +13,6 @@ class ModalsState extends StateModule {
 
   /**
    * Открытие модального окна по названию
-   * @param name {String} Название модалки
    */
   open(name: string, props = {}): void {
     this.setState({

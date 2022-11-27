@@ -5,6 +5,12 @@ import numberFormat from "@src/utils/number-format";
 import "./style.css";
 import { IArticleData } from "@src/store/article/type";
 
+interface Item {
+  _id: string;
+  title: string;
+  price: number;
+}
+
 interface ItemProps<T> {
   item: T;
   onOpenAddAmount: () => void;
@@ -18,13 +24,13 @@ interface ItemProps<T> {
   labelCurr?: string;
 }
 
-function Item<T extends IArticleData>(props: ItemProps<T>) {
+function Item<T extends Item>(props: ItemProps<T>) {
   const cn = bem("Item");
 
   const callbacks = {
     // Добавление товара в корзину
     onAdd: useCallback(
-      (e) => props.onAdd(props.item._id),
+      (e: React.MouseEvent) => props.onAdd(props.item._id),
       [props.onAdd, props.item]
     ),
     onSelectItem: useCallback(() => {
@@ -32,7 +38,7 @@ function Item<T extends IArticleData>(props: ItemProps<T>) {
         props.onSelectItem(props.item._id);
       }
     }, [props.onSelectItem, props.item]),
-    onOpenAddAmount: useCallback((e) => {
+    onOpenAddAmount: useCallback((e: React.MouseEvent) => {
       e.stopPropagation();
       props.onAdd(props.item._id);
       props.onOpenAddAmount();

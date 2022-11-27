@@ -1,4 +1,6 @@
-export default function clicked({ figure, cursor, scroll, scale }) {
+import { IClicked, IPrimitiveClicked } from "../type";
+
+export default function clicked({ figure, cursor, scroll, scale }: IClicked) {
   if (figure.type === "circle") {
     return clickedCircle({
       coordinates: figure.coordinates,
@@ -26,22 +28,36 @@ export default function clicked({ figure, cursor, scroll, scale }) {
   }
 }
 
-function clickedCircle({ coordinates, cursor, scroll, scale }) {
+function clickedCircle({
+  coordinates,
+  cursor,
+  scroll,
+  scale,
+}: IPrimitiveClicked): boolean {
   const [x, y, r] = coordinates;
   const distance = Math.sqrt(
     Math.pow(cursor.x + scroll.x - x * scale, 2) +
       Math.pow(cursor.y + scroll.y - y * scale, 2)
   );
   if (distance <= r * scale) return true;
+  return false;
 }
 
-function clickedTriangle({ coordinates, cursor, scroll, scale }) {
-  const x = [];
-  const y = [];
-  coordinates.forEach((i) => {
-    x.push(i[0]);
-    y.push(i[1]);
-  });
+function clickedTriangle({
+  coordinates,
+  cursor,
+  scroll,
+  scale,
+}: IPrimitiveClicked): boolean {
+  const x: number[] = [];
+  const y: number[] = [];
+
+  if (coordinates.length) {
+    coordinates.forEach((i) => {
+      x.push(i[0]);
+      y.push(i[1]);
+    });
+  }
 
   const a =
     (x[0] * scale - cursor.x - scroll.x) * (y[1] - y[0]) -
@@ -55,7 +71,12 @@ function clickedTriangle({ coordinates, cursor, scroll, scale }) {
   return Math.sign(a) === Math.sign(b) && Math.sign(b) === Math.sign(c);
 }
 
-function clickedLeave({ coordinates, cursor, scale, scroll }) {
+function clickedLeave({
+  coordinates,
+  cursor,
+  scale,
+  scroll,
+}: IPrimitiveClicked): boolean {
   const [x, y, width] = coordinates;
 
   if (
@@ -66,4 +87,6 @@ function clickedLeave({ coordinates, cursor, scale, scroll }) {
   ) {
     return true;
   }
+
+  return false;
 }

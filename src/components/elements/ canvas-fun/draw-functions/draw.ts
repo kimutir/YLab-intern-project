@@ -1,6 +1,14 @@
+import { IDraw, IPrimitive, IField } from "../type";
 import visible from "./visible";
 
-export default function draw({ ctx, figures, scroll, scale, view, selected }) {
+export default function draw({
+  ctx,
+  figures,
+  scroll,
+  scale,
+  view,
+  selected,
+}: IDraw) {
   // рисуем - очищаем поле
   drawField({ ctx, scroll, view });
 
@@ -28,7 +36,7 @@ export default function draw({ ctx, figures, scroll, scale, view, selected }) {
         drawCircle({
           figure: figures[key],
           ctx,
-          selected: key === selected,
+          selected: Number(key) === selected,
           scale,
         });
       }
@@ -36,7 +44,7 @@ export default function draw({ ctx, figures, scroll, scale, view, selected }) {
         drawTriangle({
           figure: figures[key],
           ctx,
-          selected: key === selected,
+          selected: Number(key) === selected,
           scale,
         });
       }
@@ -44,7 +52,7 @@ export default function draw({ ctx, figures, scroll, scale, view, selected }) {
   }
 }
 
-function drawCircle({ ctx, figure, selected, scale }) {
+function drawCircle({ ctx, figure, selected, scale }: IPrimitive) {
   const [x, y, r] = figure.coordinates;
   ctx.strokeStyle = selected ? "red" : "black";
   ctx.beginPath();
@@ -53,7 +61,7 @@ function drawCircle({ ctx, figure, selected, scale }) {
   ctx.stroke();
 }
 
-function drawTriangle({ ctx, figure, selected, scale }) {
+function drawTriangle({ ctx, figure, selected, scale }: IPrimitive) {
   const [a, b, c] = figure.coordinates;
   ctx.strokeStyle = selected ? "red" : "black";
   ctx.beginPath();
@@ -64,7 +72,7 @@ function drawTriangle({ ctx, figure, selected, scale }) {
   ctx.stroke();
 }
 
-function drawLeaf({ ctx, figure, scale }) {
+function drawLeaf({ ctx, figure, scale }: IPrimitive) {
   const [x, y, width] = figure.coordinates;
   const angle = figure.animation.rotation.angle;
   if (y > 210) {
@@ -80,7 +88,7 @@ function drawLeaf({ ctx, figure, scale }) {
   ctx.restore();
 }
 
-function drawField({ ctx, scroll, view }) {
+function drawField({ ctx, scroll, view }: IField) {
   ctx.fillStyle = "aliceblue";
   ctx.fillRect(0, 0, view.width, view.height);
   ctx.translate(-scroll.x, -scroll.y);

@@ -1,4 +1,6 @@
-export default function visible({ figure, border }) {
+import { IVisible } from "../type";
+
+export default function visible({ figure, border }: IVisible) {
   if (figure.type === "circle") {
     return visibleCircle({ figure, border });
   }
@@ -10,8 +12,8 @@ export default function visible({ figure, border }) {
   }
 }
 
-function visibleCircle({ figure, border }) {
-  const [x, y, r] = figure.coordinates;
+function visibleCircle({ figure, border }: IVisible) {
+  const [x, y, r] = figure.coordinates as number[];
   return (
     x - r < border.x2 &&
     x + r > border.x1 &&
@@ -19,9 +21,9 @@ function visibleCircle({ figure, border }) {
     y + r > border.y1
   );
 }
-function visibleTriangle({ figure, border }) {
-  const x = [];
-  const y = [];
+function visibleTriangle({ figure, border }: IVisible) {
+  const x: number[] = [];
+  const y: number[] = [];
   figure.coordinates.forEach((i) => {
     x.push(i[0]);
     y.push(i[1]);
@@ -35,8 +37,8 @@ function visibleTriangle({ figure, border }) {
     xMin < border.x2 && xMax > border.x1 && yMin < border.y2 && yMax > border.y1
   );
 }
-function visibleLeave({ figure, border }) {
-  const [x, y, width] = figure.coordinates;
+function visibleLeave({ figure, border }: IVisible) {
+  const [x, y, width] = figure.coordinates as number[];
   return (
     x < border.x2 &&
     x + width > border.x1 &&

@@ -102,12 +102,12 @@ function Chat() {
   };
 
   // Observer на прокрутку вниз, если пришло новое сообщение
-  const callbackBottom = React.useCallback(
+  const callbackBottom: IntersectionObserverCallback = React.useCallback(
     (entries, observer) => {
       if (entries[0].isIntersecting && select.unreadMessage) {
         callbacks.scrollBottom();
         callbacks.resetScroll();
-        observer.unobserve(lastItemRef.current);
+        if (lastItemRef.current) observer.unobserve(lastItemRef.current);
       }
     },
     [listRef, lastItemRef, select.unreadMessage]
@@ -125,13 +125,14 @@ function Chat() {
   }, [select.unreadMessage]);
 
   // Observer на загрузку сообщений при прокрутке вверх
-  const callbackTop = React.useCallback(
+  const callbackTop: IntersectionObserverCallback = React.useCallback(
     (entries, observer) => {
       if (entries[0].isIntersecting) {
-        entries[0].target.nextSibling.scrollIntoView(true);
+        const next = entries[0].target.nextSibling as HTMLElement;
+        next.scrollIntoView(true);
         if (listRef.current) listRef.current.style.overflowY = "hidden";
         callbacks.loadFromId("old", select.items[0]._id);
-        observer.unobserve(firstItemRef.current);
+        if (firstItemRef.current) observer.unobserve(firstItemRef.current);
       }
     },
     [select.items[0]]

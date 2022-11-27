@@ -6,7 +6,7 @@ function Scroll(props) {
   const [isInitialLoaded, setIsInitialLoaded] = React.useState(false);
   const location = useLocation();
 
-  // loading 1st page
+  // Загрузка первой страницы
   React.useEffect(() => {
     const query = location.search;
     const pageURL = query?.match(/page=(\d*)&/);
@@ -23,15 +23,15 @@ function Scroll(props) {
     return () => props.onReset && props.onReset();
   }, []);
 
-  // options for observer
+  // Опции для observer
   const options = {
     root: props.root.current,
     rootMargin: "0px 0px 0px 0px",
     threshold: 0.1,
   };
 
-  // callback when intersected
-  const callback = React.useCallback(
+  // callback для observer
+  const callback: IntersectionObserverCallback = React.useCallback(
     (entries, observer) => {
       if (
         entries[0].isIntersecting &&
@@ -74,7 +74,7 @@ function Scroll(props) {
     ]
   );
 
-  // subscribe target
+  // Подписка на target
   React.useEffect(() => {
     const observer = new IntersectionObserver(callback, options);
 

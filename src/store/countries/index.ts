@@ -1,7 +1,11 @@
 import StateModule from "@src/store/module";
 import qs from "@src/utils/search-params";
 import diff from "@src/utils/diff";
-import ICountries from "./type";
+import ICountries, {
+  ICountriesData,
+  ICountriesResponse,
+  ICountry,
+} from "./type";
 
 /**
  * Состояние товара
@@ -9,7 +13,6 @@ import ICountries from "./type";
 class CountriesState extends StateModule {
   /**
    * Начальное состояние
-   * @return {Object}
    */
   initState(): ICountries {
     return {
@@ -29,11 +32,11 @@ class CountriesState extends StateModule {
   /**
    * Загрузка списка стран
    */
-  async load() {
+  async load(): Promise<void> {
     this.setState({ waiting: true, items: [] }, "Ожидание загрузки стран");
 
     const params = { fields: "_id,title, code", limit: "10" };
-    const json = await this.services.api.request({
+    const json: ICountriesResponse = await this.services.api.request({
       url: `/api/v1/countries/${qs.stringify(params)}&sort=title.ru`,
     });
 
@@ -46,7 +49,7 @@ class CountriesState extends StateModule {
     );
   }
 
-  async setParams(params = {}) {
+  async setParams(params = {}): Promise<void> {
     const newParams = { ...this.getState().params, ...params };
 
     const apiParams = diff(
@@ -63,7 +66,7 @@ class CountriesState extends StateModule {
     );
 
     // ?search[query]=text
-    const json = await this.services.api.request({
+    const json: ICountriesResponse = await this.services.api.request({
       url: `/api/v1/countries${qs.stringify(apiParams)}`,
     });
 

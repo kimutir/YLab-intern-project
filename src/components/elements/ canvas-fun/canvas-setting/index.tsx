@@ -1,24 +1,32 @@
 import React from "react";
-import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
+import { IFigure } from "../type";
 import SettingCircle from "./setting-items/setting-circle";
 import SettingTriangle from "./setting-items/setting-triangle";
 
-const CanvasSetting = (props) => {
+interface CanvasSettingProps {
+  selected: number;
+  figures: IFigure;
+  onSubmitChanges: (coord: number[] | number[][]) => void;
+}
+
+function CanvasSetting(props: CanvasSettingProps) {
   const cn = bem("CanvasSetting");
 
-  const render = React.useCallback(() => {
-    const selected = props.figures[props.selected];
-    if (selected?.type === "circle") {
-      const [x, y, r] = selected.coordinates;
+  const render: () => any = React.useCallback(() => {
+    const selected: IFigure = props.figures[props.selected];
+
+    if (selected.type === "circle") {
+      const [x, y, r] = selected.coordinates as number[];
 
       return (
         <SettingCircle x={x} y={y} r={r} onSubmit={props.onSubmitChanges} />
       );
     }
-    if (selected?.type === "triangle") {
-      const [a, b, c] = selected.coordinates;
+
+    if (selected.type === "triangle") {
+      const [a, b, c] = selected.coordinates as number[][];
 
       return (
         <SettingTriangle
@@ -30,10 +38,6 @@ const CanvasSetting = (props) => {
   }, [props.selected, props.figures]);
 
   return props.selected ? render() : "Выберите фигуру";
-};
-
-CanvasSetting.propTypes = {};
-
-CanvasSetting.defaultProps = {};
+}
 
 export default React.memo(CanvasSetting);

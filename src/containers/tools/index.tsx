@@ -31,6 +31,7 @@ function ToolsContainer() {
     }, []),
   };
 
+  // Ссылки на другие страницы
   const options = {
     menu: useMemo(
       () => [

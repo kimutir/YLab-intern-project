@@ -1,34 +1,33 @@
 import React from "react";
-import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
+import { ICountry } from "@src/store/countries/type";
 
-type SelectorItemProps = {
+interface SelectorItemProps {
   tab?: number;
   key?: string;
-  item: {
-    _id: string;
-    title: string;
-    code: string;
+  item: ICountry & {
     icon?: string;
   };
   selected?: boolean;
-  onSelect: (id: string) => void;
+  onSelect?: (id: string) => void;
   head?: boolean;
-};
+}
 
 function SelectorItem(props: SelectorItemProps) {
   const cn = bem("SelectorItem");
-  const itemRef = React.useRef<HTMLDivElement>(null);
-  const iconRef = React.useRef<HTMLDivElement>(null);
-  const titleRef = React.useRef<HTMLDivElement>(null);
+  const itemRef = React.useRef<HTMLDivElement | null>(null);
+  const iconRef = React.useRef<HTMLDivElement | null>(null);
+  const titleRef = React.useRef<HTMLDivElement | null>(null);
 
+  // Состояние на длину названия item
   const [isLong, setIsLong] = React.useState(false);
 
+  // Изменение вида item, если выходит за границы
   React.useEffect(() => {
     itemRef.current?.addEventListener("keydown", (e) => {
       e.preventDefault();
-      if (e.code === "Enter") {
+      if (e.code === "Enter" && props.onSelect) {
         props.onSelect(props.item._id);
       }
     });
@@ -40,10 +39,10 @@ function SelectorItem(props: SelectorItemProps) {
         setIsLong(true);
       }
     }
-  });
+  }, [props.item]);
 
   const iconCreator = React.useCallback(
-    (name) => name?.slice(0, 2).toUpperCase(),
+    (name: string) => name?.slice(0, 2).toUpperCase(),
     []
   );
 
@@ -54,7 +53,7 @@ function SelectorItem(props: SelectorItemProps) {
       className={
         props.selected ? cn("selected") : props.head ? cn("head") : cn()
       }
-      onClick={() => props.onSelect(props.item._id)}
+      onClick={() => props.onSelect && props.onSelect(props.item._id)}
       tabIndex={props.tab}
       title={isLong ? props.item.title : ""}
     >
@@ -68,11 +67,5 @@ function SelectorItem(props: SelectorItemProps) {
     </div>
   );
 }
-
-SelectorItem.propTypes = {};
-
-SelectorItem.defaultProps = {
-  onSelect: () => {},
-};
 
 export default React.memo(SelectorItem);

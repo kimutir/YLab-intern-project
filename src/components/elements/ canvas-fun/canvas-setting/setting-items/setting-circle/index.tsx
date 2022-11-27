@@ -1,9 +1,15 @@
 import React from "react";
-import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 
-const SettingCircle = (props) => {
+interface SettingCircleProps {
+  x: number;
+  y: number;
+  r: number;
+  onSubmit: (arg: number[]) => void;
+}
+
+function SettingCircle(props: SettingCircleProps) {
   const cn = bem("SettingCircle");
 
   const [x, setX] = React.useState(props.x);
@@ -28,25 +34,21 @@ const SettingCircle = (props) => {
       <input
         type="text"
         value={Math.round(x)}
-        onChange={(e) => setX(e.target.value)}
+        onChange={(e) => setX(Number(e.target.value))}
       />
       <input
         type="text"
         value={Math.round(y)}
-        onChange={(e) => setY(e.target.value)}
+        onChange={(e) => setY(Number(e.target.value))}
       />
       <input
         type="text"
         value={Math.round(r)}
-        onChange={(e) => setR(e.target.value)}
+        onChange={(e) => setR(Number(e.target.value))}
       />
       <input type="submit" value="Enter" />
     </form>
   );
-};
-
-SettingCircle.propTypes = {};
-
-SettingCircle.defaultProps = {};
+}
 
 export default React.memo(SettingCircle);

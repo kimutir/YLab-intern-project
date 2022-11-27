@@ -1,9 +1,13 @@
 import React from "react";
-import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 
-const SettingTriangle = (props) => {
+interface SettingTriangleProps {
+  coordinates: number[][];
+  onSubmit: (coord: number[][]) => void;
+}
+
+const SettingTriangle = (props: SettingTriangleProps) => {
   const cn = bem("SettingTriangle");
 
   const [coords, setCoords] = React.useState(props.coordinates);
@@ -12,13 +16,20 @@ const SettingTriangle = (props) => {
     setCoords(props.coordinates);
   }, [props.coordinates]);
 
+  // Изменение координат треугольника
   const onChange = React.useCallback(
-    (e, index1, index2) => {
+    (
+      e: React.ChangeEvent<HTMLInputElement>,
+      index1: number,
+      index2: number
+    ) => {
       e.preventDefault();
       const arr = [...coords];
+      // Выбираем одну из вершин
       const newCoordinate = arr[index1];
+      // Изменяем x или y вершины
       newCoordinate[index2] = Number(e.target.value);
-      arr.slice(index1, 1, newCoordinate);
+      arr.splice(index1, 1, newCoordinate);
       setCoords(arr);
     },
     [coords]
@@ -51,9 +62,5 @@ const SettingTriangle = (props) => {
     </form>
   );
 };
-
-SettingTriangle.propTypes = {};
-
-SettingTriangle.defaultProps = {};
 
 export default React.memo(SettingTriangle);

@@ -1,17 +1,15 @@
 import React from "react";
-import propTypes from "prop-types";
 import { cn as bem } from "@bem-react/classname";
 import "./style.css";
 import SelectorItem from "./selector-item";
+import { ICountriesData } from "@src/store/countries/type";
 
-type CustomSelectorProps = {
+interface CustomSelectorProps extends ICountriesData {
   default: string;
-  // добавить value
-  value: any;
   onSearch: (query: string, page?: number, reset?: boolean) => Promise<void>;
   onSelect: (id: string) => void;
   selected: string;
-};
+}
 
 function CustomSelector(props: CustomSelectorProps) {
   const cn = bem("CustomSelector");
@@ -56,33 +54,33 @@ function CustomSelector(props: CustomSelectorProps) {
     }
   }, []);
 
-  // поиск
+  // Поиск
   const onChange = React.useCallback((e) => {
     setSearch(e.target.value);
     listRef.current?.scrollTo(0, 0);
     props.onSearch(e.target.value);
   }, []);
 
-  // выбор
+  // Выбор
   const onSelect = React.useCallback(
     (id: string) => {
       setVisible(false);
       props.onSearch("");
       props.onSelect(id);
     },
-    [props.value]
+    [props.items]
   );
 
-  // рендер выбранного элемента
+  // Рендер выбранного элемента
   const renderSelectedItem = React.useCallback(() => {
-    const selected = props.value.find((i) => i._id === props.selected);
+    const selected = props.items.find((i) => i._id === props.selected);
 
     if (selected) return <SelectorItem item={selected} head={true} />;
 
     return props.default;
   }, [props.selected]);
 
-  // навигация по стрелкам
+  // Навигация по стрелкам
   React.useEffect(() => {
     let x = -1;
     if (visible) {
@@ -139,7 +137,7 @@ function CustomSelector(props: CustomSelectorProps) {
             onChange={(e) => onChange(e)}
           />
           <div tabIndex={0} ref={listRef} className={cn("list")}>
-            {props.value.map((i, index) => (
+            {props.items.map((i, index) => (
               <SelectorItem
                 tab={index + 1}
                 key={i._id}

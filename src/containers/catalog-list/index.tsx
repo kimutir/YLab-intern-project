@@ -7,7 +7,7 @@ import Item from "@src/components/catalog/item";
 import { useLocation } from "react-router-dom";
 import ScrollList, { ScrollRefsType } from "@src/components/scroll/scroll-list";
 import Scroll from "../scroll";
-import { IArticleData } from "@src/store/article/type";
+import { ICatalogItem } from "@src/store/catalog/type";
 
 function CatalogList() {
   const store = useStore();
@@ -74,8 +74,8 @@ function CatalogList() {
 
   const renders = {
     item: useCallback(
-      (item: IArticleData) => (
-        <Item<IArticleData>
+      (item: ICatalogItem) => (
+        <Item
           item={item}
           onOpenAddAmount={callbacks.onOpenAddAmount}
           onAdd={callbacks.onAddSelected}

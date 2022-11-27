@@ -8,7 +8,7 @@ import ScrollList, { ScrollRefsType } from "@src/components/scroll/scroll-list";
 import LayoutModal from "@src/components/layouts/layout-modal";
 import Scroll from "@src/containers/scroll";
 import CatalogFilter from "@src/containers/catalog-filter";
-import { IArticleData } from "@src/store/article/type";
+import { ICatalogItem } from "@src/store/catalog/type";
 
 interface ModalCatalogProps {
   closeModal: (name: string) => void;
@@ -74,8 +74,8 @@ function ModalCatalog(props: ModalCatalogProps) {
 
   const renders = {
     item: useCallback(
-      (item: IArticleData) => (
-        <Item<IArticleData>
+      (item: ICatalogItem) => (
+        <Item
           inModal={true}
           closeModal={props.closeModal}
           selectedItems={selectedItems}

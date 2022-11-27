@@ -114,7 +114,7 @@ function CatalogFilter(props: CatalogFilterProps) {
       <button onClick={callbacks.onReset}>{t("filter.reset")}</button>
       <CustomSelector
         default="Выберите страну"
-        value={select.countries}
+        items={select.countries}
         onSearch={callbacks.onSearchCountries}
         onSelect={callbacks.onSelect}
         selected={select.selectedCountry}

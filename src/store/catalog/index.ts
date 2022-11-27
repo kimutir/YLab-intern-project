@@ -1,7 +1,13 @@
 import StateModule from "@src/store/module";
 import qs from "@src/utils/search-params";
 import diff from "@src/utils/diff";
-import { ICatalog, IParams, IValidParams } from "./type";
+import {
+  ICatalog,
+  ICatalogItem,
+  ICatalogResponse,
+  IParams,
+  IValidParams,
+} from "./type";
 
 /**
  * Состояние каталога
@@ -99,9 +105,11 @@ class CatalogState extends StateModule {
     );
 
     // ?search[query]=text&search[category]=id
-    const json = await this.services.api.request({
+    const json: ICatalogResponse = await this.services.api.request({
       url: `/api/v1/articles${qs.stringify(apiParams)}`,
     });
+
+    console.log(json.result);
 
     // Установка полученных данных и сброс признака загрузки
     this.setState(

@@ -18,6 +18,7 @@ function Protected({ children, redirect }: ProtectedProps) {
   }));
 
   useEffect(() => {
+    // Если не залогинен, то переход на страницу логина
     if (!select.exists && !select.waiting) {
       navigate(redirect, { state: { back: location.pathname } });
     }
